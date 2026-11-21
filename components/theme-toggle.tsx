@@ -7,11 +7,11 @@ import * as React from "react"
 
 import { Button } from "@/components/ui/button"
 
+import { useIsMounted } from "@/hooks/use-is-mounted"
+
 export function ThemeToggle() {
   const { resolvedTheme, setTheme } = useTheme()
-  const [mounted, setMounted] = React.useState(false)
-
-  React.useEffect(() => setMounted(true), [])
+  const mounted = useIsMounted()
 
   if (!mounted) {
     return <div className="size-10" aria-hidden="true" />

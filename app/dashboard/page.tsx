@@ -6,7 +6,9 @@ import { DashboardNav } from "@/components/dashboard/dashboard-nav"
 import { MetricCard } from "@/components/dashboard/metric-card"
 import { RecentApplications } from "@/components/dashboard/recent-applications"
 import { RevenueChart } from "@/components/dashboard/revenue-chart"
+import { visibleDestinations } from "@/lib/navigation"
 import { getDashboardData } from "@/lib/server/dashboard"
+import { resolvePermissions } from "@/lib/server/auth"
 import { getCurrentSession } from "@/lib/server/auth/session"
 
 const money = (value: number, currency: string) =>
@@ -19,6 +21,11 @@ export default async function DashboardPage() {
   const data = await getDashboardData(session.org)
   if (!data) redirect("/login")
 
+  // Presentation-only filtering: hide destinations the session's role cannot
+  // see. Route access remains enforced at each server boundary.
+  const granted = resolvePermissions([], session.role ?? undefined)
+  const navigation = visibleDestinations(granted)
+
   return (
     <main className="min-h-svh p-4 sm:p-6 lg:p-8">
       <div className="mx-auto grid w-full max-w-[1600px] gap-6 lg:grid-cols-[220px_minmax(0,1fr)]">
@@ -27,7 +34,7 @@ export default async function DashboardPage() {
             <div className="flex size-8 items-center justify-center rounded-xl bg-primary/15 text-primary"><Building2 className="size-4" /></div>
             <span className="truncate text-sm font-semibold">{data.organization.name}</span>
           </div>
-          <DashboardNav />
+          <DashboardNav items={navigation} />
         </aside>
         <div className="min-w-0 space-y-6">
           <DashboardHeader organizationName={data.organization.name} />
