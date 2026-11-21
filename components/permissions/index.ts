@@ -1,0 +1,7 @@
+export { AccessScopeSelector, roleScopeLabel } from "./access-scope-selector"
+export { PermissionGuard } from "./permission-guard"
+export { PermissionMatrix } from "./permission-matrix"
+export { RoleBadge } from "./role-badge"
+export { RoleSelector } from "./role-selector"
+export { UserRoleManager } from "./user-role-manager"
+export type { RoleManagedUser } from "./user-role-manager"

@@ -1,3 +1,5 @@
+import Link from "next/link"
+
 import { Button } from "@/components/ui/button"
 import { ThemeToggle } from "@/components/theme-toggle"
 
@@ -14,7 +16,9 @@ export default function Page() {
               <p className="max-w-lg text-base leading-relaxed text-muted-foreground sm:text-lg">Your workspace is ready. A polished glass interface, motion-powered interactions, and a theme that follows your preference.</p>
             </div>
             <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center">
-              <Button className="rounded-full px-6">Get started</Button>
+              <Button asChild className="rounded-full px-6">
+                <Link href="/login">Get started</Link>
+              </Button>
               <span className="text-xs leading-relaxed text-muted-foreground">Press <kbd className="rounded-md border border-border bg-muted px-1.5 py-0.5 font-mono">D</kbd> anytime to switch themes</span>
             </div>
           </div>

@@ -355,6 +355,104 @@ export function permissionIsGranted(
   granted: ReadonlySet<PermissionCode> | readonly PermissionCode[],
   required: PermissionCode,
 ): boolean {
-  if (granted instanceof Set) return granted.has(required)
-  return granted.includes(required)
+  if ("has" in granted) return granted.has(required)
+  return (granted as readonly PermissionCode[]).includes(required)
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Canonical persisted role.
+//
+// `MembershipRole` mirrors the enum in prisma/schema.prisma (owned by the data
+// layer). A user's authorization is derived by expanding their persisted
+// MembershipRole into the fine-grained permission set below. The richer 13-role
+// functional catalog above (RoleCode / ROLE_DEFINITIONS) is the target model;
+// until the schema is extended it maps onto these five persisted roles.
+// ─────────────────────────────────────────────────────────────────────────────
+export const MEMBERSHIP_ROLES = [
+  "OWNER",
+  "ADMIN",
+  "MANAGER",
+  "STAFF",
+  "VIEWER",
+] as const
+
+export type MembershipRole = (typeof MEMBERSHIP_ROLES)[number]
+
+export const MEMBERSHIP_ROLE_DEFINITIONS: Record<
+  MembershipRole,
+  { name: string; description: string }
+> = {
+  OWNER: {
+    name: "Owner",
+    description: "Full control of the organization, including billing and member management.",
+  },
+  ADMIN: {
+    name: "Administrator",
+    description: "Manages franchise operations, finance, and configuration within the organization.",
+  },
+  MANAGER: {
+    name: "Manager",
+    description: "Manages day-to-day branch/area operations, compliance, and staff.",
+  },
+  STAFF: {
+    name: "Staff",
+    description: "Operational staff with access to assigned tasks and read-only business data.",
+  },
+  VIEWER: {
+    name: "Viewer",
+    description: "Read-only access for auditors and observers.",
+  },
+}
+
+/** Expands a persisted MembershipRole into its fine-grained permission set. */
+export const MEMBERSHIP_ROLE_PERMISSIONS: Record<MembershipRole, PermissionCode[]> = {
+  OWNER: ALL,
+  ADMIN: [
+    PERMISSIONS.ORG_READ, PERMISSIONS.ORG_WRITE,
+    PERMISSIONS.FRANCHISE_READ, PERMISSIONS.FRANCHISE_WRITE,
+    PERMISSIONS.FRANCHISE_APPLICATION_REVIEW, PERMISSIONS.FRANCHISE_AGREEMENT_MANAGE,
+    PERMISSIONS.BRAND_READ, PERMISSIONS.BRAND_WRITE, PERMISSIONS.BRANCH_READ,
+    PERMISSIONS.BRANCH_WRITE, PERMISSIONS.FINANCE_READ, PERMISSIONS.FINANCE_INVOICE_WRITE,
+    PERMISSIONS.FINANCE_PAYMENT_WRITE, PERMISSIONS.FINANCE_ROYALTY_CALCULATE,
+    PERMISSIONS.FINANCE_ROYALTY_APPROVE, PERMISSIONS.FINANCE_REFUND_APPROVE,
+    PERMISSIONS.SALES_READ, PERMISSIONS.SALES_WRITE, PERMISSIONS.POS_INTEGRATION_MANAGE,
+    PERMISSIONS.INVENTORY_READ, PERMISSIONS.INVENTORY_WRITE, PERMISSIONS.PROCUREMENT_READ,
+    PERMISSIONS.PROCUREMENT_PO_WRITE, PERMISSIONS.PROCUREMENT_PO_APPROVE,
+    PERMISSIONS.SUPPLIER_MANAGE, PERMISSIONS.HR_READ, PERMISSIONS.HR_WRITE,
+    PERMISSIONS.PAYROLL_ACCESS, PERMISSIONS.OPERATIONS_READ, PERMISSIONS.OPERATIONS_WRITE,
+    PERMISSIONS.INSPECTION_MANAGE, PERMISSIONS.CORRECTIVE_ACTION_MANAGE,
+    PERMISSIONS.KNOWLEDGE_READ, PERMISSIONS.KNOWLEDGE_MANAGE, PERMISSIONS.DOCUMENT_READ,
+    PERMISSIONS.DOCUMENT_UPLOAD, PERMISSIONS.DOCUMENT_DELETE, PERMISSIONS.USER_READ,
+    PERMISSIONS.USER_MANAGE, PERMISSIONS.ROLE_MANAGE, PERMISSIONS.AUDIT_READ,
+    PERMISSIONS.SETTINGS_MANAGE, PERMISSIONS.AI_ASSISTANT_USE,
+  ],
+  MANAGER: [
+    PERMISSIONS.FRANCHISE_READ, PERMISSIONS.BRAND_READ, PERMISSIONS.BRANCH_READ,
+    PERMISSIONS.BRANCH_WRITE, PERMISSIONS.FINANCE_READ, PERMISSIONS.SALES_READ,
+    PERMISSIONS.SALES_WRITE, PERMISSIONS.INVENTORY_READ, PERMISSIONS.INVENTORY_WRITE,
+    PERMISSIONS.PROCUREMENT_READ, PERMISSIONS.PROCUREMENT_PO_WRITE, PERMISSIONS.HR_READ,
+    PERMISSIONS.OPERATIONS_READ, PERMISSIONS.OPERATIONS_WRITE,
+    PERMISSIONS.INSPECTION_MANAGE, PERMISSIONS.CORRECTIVE_ACTION_MANAGE,
+    PERMISSIONS.KNOWLEDGE_READ, PERMISSIONS.KNOWLEDGE_MANAGE, PERMISSIONS.DOCUMENT_READ,
+    PERMISSIONS.DOCUMENT_UPLOAD, PERMISSIONS.USER_READ, PERMISSIONS.AI_ASSISTANT_USE,
+  ],
+  STAFF: [
+    PERMISSIONS.BRANCH_READ, PERMISSIONS.SALES_READ, PERMISSIONS.INVENTORY_READ,
+    PERMISSIONS.OPERATIONS_READ, PERMISSIONS.KNOWLEDGE_READ, PERMISSIONS.DOCUMENT_READ,
+    PERMISSIONS.AI_ASSISTANT_USE,
+  ],
+  VIEWER: [
+    PERMISSIONS.ORG_READ, PERMISSIONS.FRANCHISE_READ, PERMISSIONS.BRAND_READ,
+    PERMISSIONS.BRANCH_READ, PERMISSIONS.FINANCE_READ, PERMISSIONS.SALES_READ,
+    PERMISSIONS.INVENTORY_READ, PERMISSIONS.PROCUREMENT_READ, PERMISSIONS.HR_READ,
+    PERMISSIONS.OPERATIONS_READ, PERMISSIONS.KNOWLEDGE_READ, PERMISSIONS.DOCUMENT_READ,
+    PERMISSIONS.AUDIT_READ, PERMISSIONS.AI_ASSISTANT_USE,
+  ],
+}
+
+/** Returns the resolved permission set for a persisted membership role. */
+export function permissionsForMembershipRole(
+  role: MembershipRole,
+): ReadonlySet<PermissionCode> {
+  return new Set(MEMBERSHIP_ROLE_PERMISSIONS[role])
 }
