@@ -175,7 +175,7 @@ export const QueueItemFile = ({
     {...props}
   >
     <PaperclipIcon size={12} />
-    <span className="max-w-[100px] truncate">{children}</span>
+    <span className="max-w-[min(100px,35vw)] truncate">{children}</span>
   </span>
 );
 

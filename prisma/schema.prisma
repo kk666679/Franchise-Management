@@ -1,0 +1,511 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserStatus {
+  INVITED
+  ACTIVE
+  SUSPENDED
+  DEACTIVATED
+}
+
+enum MembershipRole {
+  OWNER
+  ADMIN
+  MANAGER
+  STAFF
+  VIEWER
+}
+
+enum BrandStatus {
+  DRAFT
+  ACTIVE
+  PAUSED
+  ARCHIVED
+}
+
+enum FranchiseeStatus {
+  PROSPECT
+  ACTIVE
+  ON_HOLD
+  EXITED
+}
+
+enum LocationStatus {
+  PLANNING
+  ACTIVE
+  TEMPORARILY_CLOSED
+  CLOSED
+}
+
+enum ApplicationStatus {
+  DRAFT
+  SUBMITTED
+  UNDER_REVIEW
+  APPROVED
+  REJECTED
+  WITHDRAWN
+}
+
+enum AgreementStatus {
+  DRAFT
+  PENDING_SIGNATURE
+  ACTIVE
+  EXPIRED
+  TERMINATED
+}
+
+enum InvoiceStatus {
+  DRAFT
+  ISSUED
+  PARTIALLY_PAID
+  PAID
+  OVERDUE
+  VOID
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCEEDED
+  FAILED
+  REFUNDED
+}
+
+enum PaymentMethod {
+  BANK_TRANSFER
+  CARD
+  CASH
+  DIRECT_DEBIT
+  OTHER
+}
+
+enum DocumentType {
+  APPLICATION
+  AGREEMENT
+  LICENSE
+  INSURANCE
+  FINANCIAL
+  TAX
+  COMPLIANCE
+  OTHER
+}
+
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  WAITING_ON_CUSTOMER
+  RESOLVED
+  CLOSED
+}
+
+enum TicketPriority {
+  LOW
+  NORMAL
+  HIGH
+  URGENT
+}
+
+enum AuditAction {
+  CREATE
+  UPDATE
+  DELETE
+  LOGIN
+  LOGOUT
+  INVITE
+  EXPORT
+}
+
+model Organization {
+  id          String       @id @default(cuid())
+  name        String
+  slug        String       @unique
+  description String?
+  logoUrl     String?
+  websiteUrl  String?
+  timezone    String       @default("UTC")
+  currency    String       @default("USD") @db.VarChar(3)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  memberships      Membership[]
+  brands           FranchiseBrand[]
+  feeSchedules     FeeSchedule[]
+  franchisees      Franchisee[]
+  locations        FranchiseLocation[]
+  applications     FranchiseApplication[]
+  agreements       FranchiseAgreement[]
+  invoices         Invoice[]
+  payments         Payment[]
+  documents        Document[]
+  supportTickets   SupportTicket[]
+  auditLogs        AuditLog[]
+
+  @@index([slug])
+}
+
+model User {
+  id             String       @id @default(cuid())
+  email          String       @unique
+  name           String?
+  phone          String?
+  avatarUrl      String?
+  passwordHash   String?
+  status         UserStatus   @default(INVITED)
+  lastLoginAt    DateTime?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  memberships        Membership[]
+  submittedApplications FranchiseApplication[] @relation("ApplicationSubmitter")
+  uploadedDocuments Document[] @relation("DocumentUploader")
+  createdTickets    SupportTicket[] @relation("TicketCreator")
+  assignedTickets   SupportTicket[] @relation("TicketAssignee")
+  auditLogs         AuditLog[]
+
+  @@index([status])
+}
+
+model Membership {
+  id             String         @id @default(cuid())
+  organizationId String
+  userId         String
+  role           MembershipRole @default(STAFF)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, userId])
+  @@index([userId])
+}
+
+model FranchiseBrand {
+  id             String      @id @default(cuid())
+  organizationId String
+  name           String
+  slug           String
+  description    String?
+  status         BrandStatus @default(DRAFT)
+  foundedYear    Int?
+  websiteUrl     String?
+  logoUrl        String?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  organization   Organization           @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  applications   FranchiseApplication[]
+  agreements     FranchiseAgreement[]
+  franchisees    Franchisee[]
+  locations      FranchiseLocation[]
+  feeSchedules   FeeSchedule[]
+  documents      Document[]
+
+  @@unique([organizationId, slug])
+  @@index([organizationId, status])
+}
+
+model Franchisee {
+  id             String           @id @default(cuid())
+  organizationId String
+  brandId        String?
+  legalName      String
+  tradingName    String?
+  registrationNo String?
+  taxId          String?
+  email          String?
+  phone          String?
+  status         FranchiseeStatus @default(PROSPECT)
+  notes          String?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  organization Organization           @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  brand        FranchiseBrand?        @relation(fields: [brandId], references: [id], onDelete: SetNull)
+  contacts     FranchiseeContact[]
+  applications FranchiseApplication[]
+  agreements   FranchiseAgreement[]
+  locations    FranchiseLocation[]
+  invoices     Invoice[]
+  tickets      SupportTicket[]
+  documents    Document[]
+
+  @@unique([organizationId, registrationNo])
+  @@index([organizationId, status])
+  @@index([brandId])
+}
+
+model FranchiseeContact {
+  id          String   @id @default(cuid())
+  franchiseeId String
+  name        String
+  email       String?
+  phone       String?
+  title       String?
+  isPrimary   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  franchisee Franchisee @relation(fields: [franchiseeId], references: [id], onDelete: Cascade)
+
+  @@index([franchiseeId, isPrimary])
+}
+
+model FranchiseLocation {
+  id             String         @id @default(cuid())
+  organizationId String
+  brandId        String
+  franchiseeId   String?
+  name           String
+  code           String
+  status         LocationStatus @default(PLANNING)
+  addressLine1   String
+  addressLine2   String?
+  city           String
+  state          String?
+  postalCode     String
+  country        String         @default("US")
+  latitude       Decimal?       @db.Decimal(9, 6)
+  longitude      Decimal?       @db.Decimal(9, 6)
+  openedAt       DateTime?
+  closedAt       DateTime?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  organization Organization           @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  brand        FranchiseBrand         @relation(fields: [brandId], references: [id], onDelete: Restrict)
+  franchisee   Franchisee?            @relation(fields: [franchiseeId], references: [id], onDelete: SetNull)
+  agreements   FranchiseAgreement[]
+  documents    Document[]
+  tickets      SupportTicket[]
+
+  @@unique([organizationId, code])
+  @@index([brandId, status])
+  @@index([franchiseeId])
+}
+
+model FranchiseApplication {
+  id             String            @id @default(cuid())
+  organizationId String
+  brandId        String
+  franchiseeId   String?
+  submittedById  String?
+  status         ApplicationStatus @default(DRAFT)
+  referenceNo    String
+  submittedAt    DateTime?
+  reviewedAt     DateTime?
+  decisionNotes  String?
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+
+  organization Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  brand        FranchiseBrand     @relation(fields: [brandId], references: [id], onDelete: Restrict)
+  franchisee   Franchisee?        @relation(fields: [franchiseeId], references: [id], onDelete: SetNull)
+  submittedBy  User?              @relation("ApplicationSubmitter", fields: [submittedById], references: [id], onDelete: SetNull)
+  agreement    FranchiseAgreement?
+  documents    Document[]
+
+  @@unique([organizationId, referenceNo])
+  @@index([organizationId, status])
+  @@index([brandId, status])
+}
+
+model FranchiseAgreement {
+  id             String          @id @default(cuid())
+  organizationId String
+  brandId        String
+  franchiseeId   String
+  locationId     String?
+  applicationId  String?         @unique
+  agreementNo    String
+  status         AgreementStatus @default(DRAFT)
+  signedAt       DateTime?
+  startDate      DateTime
+  endDate        DateTime?
+  renewalDate    DateTime?
+  initialFee     Decimal         @db.Decimal(12, 2)
+  royaltyRate    Decimal         @db.Decimal(5, 2)
+  marketingRate  Decimal         @default(0) @db.Decimal(5, 2)
+  terms          Json?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  organization Organization        @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  brand        FranchiseBrand      @relation(fields: [brandId], references: [id], onDelete: Restrict)
+  franchisee   Franchisee          @relation(fields: [franchiseeId], references: [id], onDelete: Restrict)
+  location     FranchiseLocation?  @relation(fields: [locationId], references: [id], onDelete: SetNull)
+  application  FranchiseApplication? @relation(fields: [applicationId], references: [id], onDelete: SetNull)
+  invoices     Invoice[]
+  documents    Document[]
+
+  @@unique([organizationId, agreementNo])
+  @@index([franchiseeId, status])
+  @@index([brandId, status])
+  @@index([endDate])
+}
+
+model FeeSchedule {
+  id             String   @id @default(cuid())
+  organizationId String
+  brandId        String
+  name           String
+  description    String?
+  initialFee     Decimal  @default(0) @db.Decimal(12, 2)
+  royaltyRate    Decimal  @default(0) @db.Decimal(5, 2)
+  marketingRate  Decimal  @default(0) @db.Decimal(5, 2)
+  active         Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  brand        FranchiseBrand @relation(fields: [brandId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId, brandId, active])
+}
+
+model Invoice {
+  id             String        @id @default(cuid())
+  organizationId String
+  franchiseeId   String
+  agreementId    String?
+  invoiceNo      String
+  status         InvoiceStatus @default(DRAFT)
+  issueDate      DateTime      @default(now())
+  dueDate        DateTime
+  subtotal       Decimal       @db.Decimal(12, 2)
+  tax            Decimal       @default(0) @db.Decimal(12, 2)
+  total          Decimal       @db.Decimal(12, 2)
+  amountPaid     Decimal       @default(0) @db.Decimal(12, 2)
+  notes          String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  organization Organization        @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  franchisee   Franchisee          @relation(fields: [franchiseeId], references: [id], onDelete: Restrict)
+  agreement    FranchiseAgreement? @relation(fields: [agreementId], references: [id], onDelete: SetNull)
+  lines        InvoiceLine[]
+  payments     Payment[]
+
+  @@unique([organizationId, invoiceNo])
+  @@index([franchiseeId, status])
+  @@index([dueDate, status])
+}
+
+model InvoiceLine {
+  id          String   @id @default(cuid())
+  invoiceId   String
+  description String
+  quantity    Decimal  @default(1) @db.Decimal(10, 2)
+  unitPrice   Decimal  @db.Decimal(12, 2)
+  amount      Decimal  @db.Decimal(12, 2)
+  createdAt   DateTime @default(now())
+
+  invoice Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  @@index([invoiceId])
+}
+
+model Payment {
+  id             String        @id @default(cuid())
+  organizationId String
+  invoiceId      String
+  reference      String?
+  amount         Decimal       @db.Decimal(12, 2)
+  method         PaymentMethod
+  status         PaymentStatus @default(PENDING)
+  paidAt         DateTime?
+  provider       String?
+  providerRef    String?
+  notes          String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  invoice      Invoice      @relation(fields: [invoiceId], references: [id], onDelete: Restrict)
+
+  @@index([invoiceId, status])
+  @@index([organizationId, paidAt])
+  @@unique([provider, providerRef])
+}
+
+model Document {
+  id             String       @id @default(cuid())
+  organizationId String
+  brandId        String?
+  franchiseeId   String?
+  locationId     String?
+  applicationId  String?
+  agreementId    String?
+  uploadedById   String?
+  type           DocumentType
+  name           String
+  storageKey     String       @unique
+  contentType    String?
+  sizeBytes      BigInt?
+  checksum       String?
+  expiresAt      DateTime?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  organization Organization           @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  brand        FranchiseBrand?        @relation(fields: [brandId], references: [id], onDelete: SetNull)
+  franchisee   Franchisee?            @relation(fields: [franchiseeId], references: [id], onDelete: SetNull)
+  location     FranchiseLocation?     @relation(fields: [locationId], references: [id], onDelete: SetNull)
+  application  FranchiseApplication?  @relation(fields: [applicationId], references: [id], onDelete: SetNull)
+  agreement    FranchiseAgreement?    @relation(fields: [agreementId], references: [id], onDelete: SetNull)
+  uploadedBy   User?                  @relation("DocumentUploader", fields: [uploadedById], references: [id], onDelete: SetNull)
+
+  @@index([organizationId, type])
+  @@index([franchiseeId])
+  @@index([expiresAt])
+}
+
+model SupportTicket {
+  id             String         @id @default(cuid())
+  organizationId String
+  franchiseeId   String?
+  locationId     String?
+  createdById    String
+  assignedToId   String?
+  subject        String
+  description    String
+  status         TicketStatus   @default(OPEN)
+  priority       TicketPriority @default(NORMAL)
+  resolvedAt     DateTime?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  organization Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  franchisee   Franchisee?        @relation(fields: [franchiseeId], references: [id], onDelete: SetNull)
+  location     FranchiseLocation? @relation(fields: [locationId], references: [id], onDelete: SetNull)
+  createdBy    User               @relation("TicketCreator", fields: [createdById], references: [id], onDelete: Restrict)
+  assignedTo   User?              @relation("TicketAssignee", fields: [assignedToId], references: [id], onDelete: SetNull)
+
+  @@index([organizationId, status, priority])
+  @@index([assignedToId, status])
+  @@index([franchiseeId])
+}
+
+model AuditLog {
+  id             String      @id @default(cuid())
+  organizationId String
+  actorId        String?
+  action         AuditAction
+  entity         String
+  entityId       String
+  changes        Json?
+  ipAddress      String?
+  userAgent      String?
+  createdAt      DateTime    @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  actor        User?        @relation(fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([organizationId, createdAt])
+  @@index([entity, entityId])
+  @@index([actorId])
+}

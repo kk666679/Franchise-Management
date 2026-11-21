@@ -45,7 +45,7 @@ export const SandboxHeader = ({
 }: SandboxHeaderProps) => (
   <CollapsibleTrigger
     className={cn(
-      "flex w-full items-center justify-between gap-4 p-3",
+      "flex w-full flex-wrap items-center justify-between gap-3 p-3 sm:flex-nowrap sm:gap-4",
       className
     )}
     {...props}
