@@ -1,29 +1,31 @@
+"use client"
+
 import * as React from "react"
+import { cn } from "cn"
+import { Checkbox as CheckboxPrimitive } from "radix-ui"
+import { CheckIcon } from "lucide-react"
 
-import { cn } from "@/lib/utils"
-
-export type CheckboxProps = Omit<React.ComponentProps<"input">, "type"> & {
-  checked?: boolean
-  onCheckedChange?: (checked: boolean) => void
+function Checkbox({
+  className,
+  ...props
+}: React.ComponentProps<typeof CheckboxPrimitive.Root>) {
+  return (
+    <CheckboxPrimitive.Root
+      data-slot="checkbox"
+      className={cn(
+        "peer size-4 shrink-0 rounded-md border border-border bg-background transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/30 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:border-primary data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground aria-invalid:border-destructive",
+        className,
+      )}
+      {...props}
+    >
+      <CheckboxPrimitive.Indicator
+        data-slot="checkbox-indicator"
+        className="flex items-center justify-center text-current"
+      >
+        <CheckIcon className="size-3" />
+      </CheckboxPrimitive.Indicator>
+    </CheckboxPrimitive.Root>
+  )
 }
 
-export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(function Checkbox(
-  { className, checked, defaultChecked, onCheckedChange, onChange, ...props },
-  ref,
-) {
-  return (
-    <input
-      {...props}
-      aria-checked={checked}
-      className={cn("size-4 accent-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2", className)}
-      checked={checked}
-      defaultChecked={defaultChecked}
-      onChange={(event) => {
-        onChange?.(event)
-        onCheckedChange?.(event.currentTarget.checked)
-      }}
-      ref={ref}
-      type="checkbox"
-    />
-  )
-})
+export { Checkbox }

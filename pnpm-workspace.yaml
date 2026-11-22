@@ -1,0 +1,17 @@
+allowBuilds:
+  '@prisma/engines': true
+  esbuild: true
+  prisma: true
+permissions:
+  '@tanstack/react-table':
+    skills: [getting-started, migrate-v8-to-v9, table-state]
+  ai:
+    skills: true
+skills:
+  dirs:
+    - .agent/skills
+    - .agents/skills
+    - .claude/skills
+    - .cursor/skills
+    - .gemini/skills
+    - .github/skills

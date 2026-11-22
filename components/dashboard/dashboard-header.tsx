@@ -10,13 +10,13 @@ export function DashboardHeader({ organizationName }: { organizationName: string
         <p className="truncate text-sm text-muted-foreground">{organizationName}</p>
         <h1 className="mt-1 text-2xl font-semibold tracking-tight sm:text-3xl">Executive overview</h1>
       </div>
-      <div className="flex items-center gap-2">
-        <Button variant="outline" size="icon" className="rounded-full" aria-label="Notifications">
-          <Bell className="size-4" />
+      <div className="flex items-center gap-2" aria-label="Dashboard actions">
+        <Button type="button" variant="outline" size="icon" className="rounded-full" aria-label="Notifications">
+          <Bell className="size-4" aria-hidden="true" />
         </Button>
         <ThemeToggle />
-        <Button className="hidden rounded-full sm:inline-flex">
-          <Plus className="size-4" />
+        <Button type="button" className="hidden rounded-full sm:inline-flex">
+          <Plus className="size-4" aria-hidden="true" />
           New application
         </Button>
       </div>

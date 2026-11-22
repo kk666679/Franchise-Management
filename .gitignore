@@ -1,3 +1,22 @@
+# Autoclaw runtime data
+.autoclaw/
+
+# Local environment
+.env
+.env.*
+!.env.example
+
+# Dependencies
+node_modules/
+
+# Build outputs
+.next/
+dist/
+build/
+
+# Logs
+*.log
+
 # dependencies
 /node_modules
 /.pnp
@@ -41,3 +60,9 @@ next-env.d.ts
 .clinerules/
 .kilo/
 .merge-worktree/
+.agents/
+.agent/
+.claude/
+.cursor/
+.gemini/
+.kilo/

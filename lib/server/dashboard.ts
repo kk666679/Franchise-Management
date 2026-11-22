@@ -8,6 +8,8 @@ export type DashboardData = {
     franchisees: number
     outstandingBalance: number
     collectedThisMonth: number
+    salesToday: number
+    salesTodayCount: number
   }
   revenue: Array<{ label: string; value: number }>
   applications: Array<{
@@ -18,13 +20,23 @@ export type DashboardData = {
     franchiseeName: string
     submittedAt: Date | null
   }>
+  recentTransactions: Array<{
+    id: string
+    receiptNo: string
+    total: number
+    soldAt: Date
+    status: string
+  }>
 }
 
 function dayLabel(date: Date) {
   return new Intl.DateTimeFormat("en", { weekday: "short" }).format(date)
 }
 
-export async function getDashboardData(organizationId: string): Promise<DashboardData | null> {
+export async function getDashboardData(
+  organizationId: string
+): Promise<DashboardData | null> {
+  if (!organizationId) return null
   const organization = await prisma.organization.findUnique({
     where: { id: organizationId },
     select: { id: true, name: true, currency: true },
@@ -38,48 +50,84 @@ export async function getDashboardData(organizationId: string): Promise<Dashboar
   sevenDaysAgo.setHours(0, 0, 0, 0)
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6)
 
-  const [brands, activeLocations, franchisees, invoiceTotals, monthPayments, recentPayments, applications] =
-    await Promise.all([
-      prisma.franchiseBrand.count({ where: { organizationId, status: "ACTIVE" } }),
-      prisma.franchiseLocation.count({ where: { organizationId, status: "ACTIVE" } }),
-      prisma.franchisee.count({ where: { organizationId, status: "ACTIVE" } }),
-      prisma.invoice.aggregate({
-        where: {
-          organizationId,
-          status: { in: ["ISSUED", "PARTIALLY_PAID", "OVERDUE"] },
+  const [
+    brands,
+    activeLocations,
+    franchisees,
+    invoiceTotals,
+    monthPayments,
+    recentPayments,
+    applications,
+    todaySales,
+    recentSales,
+  ] = await Promise.all([
+    prisma.franchiseBrand.count({
+      where: { organizationId, status: "ACTIVE" },
+    }),
+    prisma.franchiseLocation.count({
+      where: { organizationId, status: "ACTIVE" },
+    }),
+    prisma.franchisee.count({ where: { organizationId, status: "ACTIVE" } }),
+    prisma.invoice.aggregate({
+      where: {
+        organizationId,
+        status: { in: ["ISSUED", "PARTIALLY_PAID", "OVERDUE"] },
+      },
+      _sum: { total: true, amountPaid: true },
+    }),
+    prisma.payment.aggregate({
+      where: {
+        organizationId,
+        status: "SUCCEEDED",
+        paidAt: { gte: monthStart },
+      },
+      _sum: { amount: true },
+    }),
+    prisma.payment.findMany({
+      where: {
+        organizationId,
+        status: "SUCCEEDED",
+        paidAt: { gte: sevenDaysAgo },
+      },
+      select: { amount: true, paidAt: true },
+    }),
+    prisma.franchiseApplication.findMany({
+      where: { organizationId },
+      orderBy: { updatedAt: "desc" },
+      take: 5,
+      select: {
+        id: true,
+        referenceNo: true,
+        status: true,
+        submittedAt: true,
+        brand: { select: { name: true } },
+        franchisee: { select: { legalName: true, tradingName: true } },
+      },
+    }),
+    prisma.sale.aggregate({
+      where: {
+        organizationId,
+        status: "COMPLETED",
+        soldAt: {
+          gte: new Date(now.getFullYear(), now.getMonth(), now.getDate()),
         },
-        _sum: { total: true, amountPaid: true },
-      }),
-      prisma.payment.aggregate({
-        where: {
-          organizationId,
-          status: "SUCCEEDED",
-          paidAt: { gte: monthStart },
-        },
-        _sum: { amount: true },
-      }),
-      prisma.payment.findMany({
-        where: {
-          organizationId,
-          status: "SUCCEEDED",
-          paidAt: { gte: sevenDaysAgo },
-        },
-        select: { amount: true, paidAt: true },
-      }),
-      prisma.franchiseApplication.findMany({
-        where: { organizationId },
-        orderBy: { updatedAt: "desc" },
-        take: 5,
-        select: {
-          id: true,
-          referenceNo: true,
-          status: true,
-          submittedAt: true,
-          brand: { select: { name: true } },
-          franchisee: { select: { legalName: true, tradingName: true } },
-        },
-      }),
-    ])
+      },
+      _sum: { total: true },
+      _count: { id: true },
+    }),
+    prisma.sale.findMany({
+      where: { organizationId },
+      orderBy: { soldAt: "desc" },
+      take: 5,
+      select: {
+        id: true,
+        receiptNo: true,
+        total: true,
+        soldAt: true,
+        status: true,
+      },
+    }),
+  ])
 
   const revenue = Array.from({ length: 7 }, (_, index) => {
     const date = new Date(sevenDaysAgo)
@@ -89,7 +137,12 @@ export async function getDashboardData(organizationId: string): Promise<Dashboar
     dayEnd.setDate(dayEnd.getDate() + 1)
 
     const value = recentPayments
-      .filter((payment) => payment.paidAt && payment.paidAt >= dayStart && payment.paidAt < dayEnd)
+      .filter(
+        (payment) =>
+          payment.paidAt &&
+          payment.paidAt >= dayStart &&
+          payment.paidAt < dayEnd
+      )
       .reduce((total, payment) => total + Number(payment.amount), 0)
 
     return { label: dayLabel(date), value }
@@ -101,8 +154,12 @@ export async function getDashboardData(organizationId: string): Promise<Dashboar
       brands,
       activeLocations,
       franchisees,
-      outstandingBalance: Number(invoiceTotals._sum.total ?? 0) - Number(invoiceTotals._sum.amountPaid ?? 0),
+      outstandingBalance:
+        Number(invoiceTotals._sum.total ?? 0) -
+        Number(invoiceTotals._sum.amountPaid ?? 0),
       collectedThisMonth: Number(monthPayments._sum.amount ?? 0),
+      salesToday: Number(todaySales._sum.total ?? 0),
+      salesTodayCount: todaySales._count.id,
     },
     revenue,
     applications: applications.map((application) => ({
@@ -110,8 +167,18 @@ export async function getDashboardData(organizationId: string): Promise<Dashboar
       referenceNo: application.referenceNo,
       status: application.status,
       brandName: application.brand.name,
-      franchiseeName: application.franchisee?.tradingName ?? application.franchisee?.legalName ?? "Unassigned applicant",
+      franchiseeName:
+        application.franchisee?.tradingName ??
+        application.franchisee?.legalName ??
+        "Unassigned applicant",
       submittedAt: application.submittedAt,
+    })),
+    recentTransactions: recentSales.map((sale) => ({
+      id: sale.id,
+      receiptNo: sale.receiptNo,
+      total: Number(sale.total),
+      soldAt: sale.soldAt,
+      status: sale.status,
     })),
   }
 }

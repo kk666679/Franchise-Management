@@ -119,52 +119,177 @@ enum AuditAction {
   EXPORT
 }
 
+enum FinancialAccountType {
+  ASSET
+  LIABILITY
+  EQUITY
+  REVENUE
+  EXPENSE
+}
+
+enum FinancialAccountStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum FinancialPeriodStatus {
+  OPEN
+  CLOSED
+}
+
+enum JournalEntryStatus {
+  DRAFT
+  POSTED
+  REVERSED
+}
+
+enum JournalEntrySource {
+  MANUAL
+  INVOICE
+  PAYMENT
+  SALE
+  REFUND
+  ADJUSTMENT
+}
+
+enum PaymentAllocationStatus {
+  UNALLOCATED
+  PARTIALLY_ALLOCATED
+  ALLOCATED
+}
+
+enum BankReconciliationStatus {
+  UNMATCHED
+  MATCHED
+  EXCLUDED
+}
+
+enum SalesQuoteStatus {
+  DRAFT
+  SENT
+  ACCEPTED
+  EXPIRED
+  REJECTED
+}
+
+enum SalesOrderStatus {
+  DRAFT
+  CONFIRMED
+  FULFILLED
+  CANCELLED
+}
+
+enum SalesInvoiceStatus {
+  DRAFT
+  ISSUED
+  PARTIALLY_PAID
+  PAID
+  VOID
+}
+
+enum SaleStatus {
+  COMPLETED
+  VOIDED
+  REFUNDED
+  PARTIALLY_REFUNDED
+}
+
+enum SalesReturnStatus {
+  REQUESTED
+  APPROVED
+  COMPLETED
+  REJECTED
+}
+
+enum RefundStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  VOIDED
+}
+
+enum DiscountType {
+  PERCENTAGE
+  FIXED
+}
+
+enum POSShiftStatus {
+  OPEN
+  CLOSED
+}
+
+enum CashMovementType {
+  FLOAT
+  CASH_IN
+  CASH_OUT
+  CASH_DROP
+  ADJUSTMENT
+}
+
 model Organization {
-  id          String       @id @default(cuid())
+  id          String   @id @default(cuid())
   name        String
-  slug        String       @unique
+  slug        String   @unique
   description String?
   logoUrl     String?
   websiteUrl  String?
-  timezone    String       @default("UTC")
-  currency    String       @default("USD") @db.VarChar(3)
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  timezone    String   @default("UTC")
+  currency    String   @default("USD") @db.VarChar(3)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  memberships      Membership[]
-  brands           FranchiseBrand[]
-  feeSchedules     FeeSchedule[]
-  franchisees      Franchisee[]
-  locations        FranchiseLocation[]
-  applications     FranchiseApplication[]
-  agreements       FranchiseAgreement[]
-  invoices         Invoice[]
-  payments         Payment[]
-  documents        Document[]
-  supportTickets   SupportTicket[]
-  auditLogs        AuditLog[]
+  memberships        Membership[]
+  brands             FranchiseBrand[]
+  feeSchedules       FeeSchedule[]
+  franchisees        Franchisee[]
+  locations          FranchiseLocation[]
+  applications       FranchiseApplication[]
+  agreements         FranchiseAgreement[]
+  invoices           Invoice[]
+  payments           Payment[]
+  documents          Document[]
+  supportTickets     SupportTicket[]
+  auditLogs          AuditLog[]
+  financialAccounts  FinancialAccount[]
+  financialPeriods   FinancialPeriod[]
+  journalEntries     JournalEntry[]
+  bankAccounts       BankAccount[]
+  paymentAllocations PaymentAllocation[]
+  customers          Customer[]
+  products           Product[]
+  salesQuotations    SalesQuotation[]
+  salesOrders        SalesOrder[]
+  salesInvoices      SalesInvoice[]
+  promotions         Promotion[]
+  sales              Sale[]
+  posTerminals       POSTerminal[]
+  cashierShifts      CashierShift[]
+  salesReturns       SalesReturn[]
+  refunds            Refund[]
 
   @@index([slug])
 }
 
 model User {
-  id             String       @id @default(cuid())
-  email          String       @unique
-  name           String?
-  phone          String?
-  avatarUrl      String?
-  passwordHash   String?
-  status         UserStatus   @default(INVITED)
-  lastLoginAt    DateTime?
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
+  id           String     @id @default(cuid())
+  email        String     @unique
+  name         String?
+  phone        String?
+  avatarUrl    String?
+  passwordHash String?
+  status       UserStatus @default(INVITED)
+  lastLoginAt  DateTime?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
 
-  memberships        Membership[]
+  memberships           Membership[]
+  magicLinkTokens       MagicLinkToken[]
   submittedApplications FranchiseApplication[] @relation("ApplicationSubmitter")
-  uploadedDocuments Document[] @relation("DocumentUploader")
-  createdTickets    SupportTicket[] @relation("TicketCreator")
-  assignedTickets   SupportTicket[] @relation("TicketAssignee")
-  auditLogs         AuditLog[]
+  uploadedDocuments     Document[]             @relation("DocumentUploader")
+  createdTickets        SupportTicket[]        @relation("TicketCreator")
+  assignedTickets       SupportTicket[]        @relation("TicketAssignee")
+  cashierShifts         CashierShift[]         @relation("CashierShifts")
+  auditLogs             AuditLog[]
 
   @@index([status])
 }
@@ -184,6 +309,20 @@ model Membership {
   @@index([userId])
 }
 
+model MagicLinkToken {
+  id         String    @id @default(cuid())
+  userId     String
+  tokenHash  String    @unique
+  expiresAt  DateTime
+  consumedAt DateTime?
+  createdAt  DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, expiresAt])
+  @@index([expiresAt])
+}
+
 model FranchiseBrand {
   id             String      @id @default(cuid())
   organizationId String
@@ -197,13 +336,13 @@ model FranchiseBrand {
   createdAt      DateTime    @default(now())
   updatedAt      DateTime    @updatedAt
 
-  organization   Organization           @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  applications   FranchiseApplication[]
-  agreements     FranchiseAgreement[]
-  franchisees    Franchisee[]
-  locations      FranchiseLocation[]
-  feeSchedules   FeeSchedule[]
-  documents      Document[]
+  organization Organization           @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  applications FranchiseApplication[]
+  agreements   FranchiseAgreement[]
+  franchisees  Franchisee[]
+  locations    FranchiseLocation[]
+  feeSchedules FeeSchedule[]
+  documents    Document[]
 
   @@unique([organizationId, slug])
   @@index([organizationId, status])
@@ -240,15 +379,15 @@ model Franchisee {
 }
 
 model FranchiseeContact {
-  id          String   @id @default(cuid())
+  id           String   @id @default(cuid())
   franchiseeId String
-  name        String
-  email       String?
-  phone       String?
-  title       String?
-  isPrimary   Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  name         String
+  email        String?
+  phone        String?
+  title        String?
+  isPrimary    Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   franchisee Franchisee @relation(fields: [franchiseeId], references: [id], onDelete: Cascade)
 
@@ -276,9 +415,9 @@ model FranchiseLocation {
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
 
-  organization Organization           @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  brand        FranchiseBrand         @relation(fields: [brandId], references: [id], onDelete: Restrict)
-  franchisee   Franchisee?            @relation(fields: [franchiseeId], references: [id], onDelete: SetNull)
+  organization Organization         @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  brand        FranchiseBrand       @relation(fields: [brandId], references: [id], onDelete: Restrict)
+  franchisee   Franchisee?          @relation(fields: [franchiseeId], references: [id], onDelete: SetNull)
   agreements   FranchiseAgreement[]
   documents    Document[]
   tickets      SupportTicket[]
@@ -302,10 +441,10 @@ model FranchiseApplication {
   createdAt      DateTime          @default(now())
   updatedAt      DateTime          @updatedAt
 
-  organization Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  brand        FranchiseBrand     @relation(fields: [brandId], references: [id], onDelete: Restrict)
-  franchisee   Franchisee?        @relation(fields: [franchiseeId], references: [id], onDelete: SetNull)
-  submittedBy  User?              @relation("ApplicationSubmitter", fields: [submittedById], references: [id], onDelete: SetNull)
+  organization Organization        @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  brand        FranchiseBrand      @relation(fields: [brandId], references: [id], onDelete: Restrict)
+  franchisee   Franchisee?         @relation(fields: [franchiseeId], references: [id], onDelete: SetNull)
+  submittedBy  User?               @relation("ApplicationSubmitter", fields: [submittedById], references: [id], onDelete: SetNull)
   agreement    FranchiseAgreement?
   documents    Document[]
 
@@ -334,10 +473,10 @@ model FranchiseAgreement {
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
 
-  organization Organization        @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  brand        FranchiseBrand      @relation(fields: [brandId], references: [id], onDelete: Restrict)
-  franchisee   Franchisee          @relation(fields: [franchiseeId], references: [id], onDelete: Restrict)
-  location     FranchiseLocation?  @relation(fields: [locationId], references: [id], onDelete: SetNull)
+  organization Organization          @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  brand        FranchiseBrand        @relation(fields: [brandId], references: [id], onDelete: Restrict)
+  franchisee   Franchisee            @relation(fields: [franchiseeId], references: [id], onDelete: Restrict)
+  location     FranchiseLocation?    @relation(fields: [locationId], references: [id], onDelete: SetNull)
   application  FranchiseApplication? @relation(fields: [applicationId], references: [id], onDelete: SetNull)
   invoices     Invoice[]
   documents    Document[]
@@ -384,11 +523,12 @@ model Invoice {
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
 
-  organization Organization        @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  franchisee   Franchisee          @relation(fields: [franchiseeId], references: [id], onDelete: Restrict)
-  agreement    FranchiseAgreement? @relation(fields: [agreementId], references: [id], onDelete: SetNull)
-  lines        InvoiceLine[]
-  payments     Payment[]
+  organization       Organization        @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  franchisee         Franchisee          @relation(fields: [franchiseeId], references: [id], onDelete: Restrict)
+  agreement          FranchiseAgreement? @relation(fields: [agreementId], references: [id], onDelete: SetNull)
+  lines              InvoiceLine[]
+  payments           Payment[]
+  paymentAllocations PaymentAllocation[]
 
   @@unique([organizationId, invoiceNo])
   @@index([franchiseeId, status])
@@ -424,12 +564,533 @@ model Payment {
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
 
-  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  invoice      Invoice      @relation(fields: [invoiceId], references: [id], onDelete: Restrict)
+  organization Organization        @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  invoice      Invoice             @relation(fields: [invoiceId], references: [id], onDelete: Restrict)
+  allocations  PaymentAllocation[]
 
+  @@unique([provider, providerRef])
   @@index([invoiceId, status])
   @@index([organizationId, paidAt])
-  @@unique([provider, providerRef])
+}
+
+model FinancialAccount {
+  id             String                 @id @default(cuid())
+  organizationId String
+  parentId       String?
+  code           String
+  name           String
+  type           FinancialAccountType
+  status         FinancialAccountStatus @default(ACTIVE)
+  currency       String                 @default("USD") @db.VarChar(3)
+  createdAt      DateTime               @default(now())
+  updatedAt      DateTime               @updatedAt
+
+  organization Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  parent       FinancialAccount?  @relation("AccountHierarchy", fields: [parentId], references: [id], onDelete: SetNull)
+  children     FinancialAccount[] @relation("AccountHierarchy")
+  journalLines JournalLine[]
+
+  @@unique([organizationId, code])
+  @@index([organizationId, type, status])
+  @@index([parentId])
+}
+
+model FinancialPeriod {
+  id             String                @id @default(cuid())
+  organizationId String
+  name           String
+  startsAt       DateTime
+  endsAt         DateTime
+  status         FinancialPeriodStatus @default(OPEN)
+  closedAt       DateTime?
+  createdAt      DateTime              @default(now())
+  updatedAt      DateTime              @updatedAt
+
+  organization   Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  journalEntries JournalEntry[]
+
+  @@unique([organizationId, name])
+  @@index([organizationId, startsAt, endsAt])
+}
+
+model JournalEntry {
+  id             String             @id @default(cuid())
+  organizationId String
+  periodId       String
+  entryNo        String
+  status         JournalEntryStatus @default(DRAFT)
+  source         JournalEntrySource
+  sourceId       String?
+  idempotencyKey String?
+  description    String
+  postedAt       DateTime?
+  reversedAt     DateTime?
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+
+  organization Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  period       FinancialPeriod @relation(fields: [periodId], references: [id], onDelete: Restrict)
+  lines        JournalLine[]
+
+  @@unique([organizationId, entryNo])
+  @@unique([organizationId, idempotencyKey])
+  @@index([organizationId, status, postedAt])
+  @@index([source, sourceId])
+}
+
+model JournalLine {
+  id             String   @id @default(cuid())
+  journalEntryId String
+  accountId      String
+  description    String?
+  debit          Decimal  @default(0) @db.Decimal(18, 2)
+  credit         Decimal  @default(0) @db.Decimal(18, 2)
+  referenceType  String?
+  referenceId    String?
+  createdAt      DateTime @default(now())
+
+  journalEntry JournalEntry     @relation(fields: [journalEntryId], references: [id], onDelete: Cascade)
+  account      FinancialAccount @relation(fields: [accountId], references: [id], onDelete: Restrict)
+
+  @@index([accountId, createdAt])
+  @@index([referenceType, referenceId])
+}
+
+model PaymentAllocation {
+  id             String   @id @default(cuid())
+  organizationId String
+  paymentId      String
+  invoiceId      String
+  idempotencyKey String?
+  amount         Decimal  @db.Decimal(18, 2)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  payment      Payment      @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+  invoice      Invoice      @relation(fields: [invoiceId], references: [id], onDelete: Restrict)
+
+  @@unique([paymentId, invoiceId])
+  @@unique([organizationId, idempotencyKey])
+  @@index([organizationId, invoiceId])
+}
+
+model BankAccount {
+  id             String   @id @default(cuid())
+  organizationId String
+  name           String
+  accountNumber  String?
+  currency       String   @default("USD") @db.VarChar(3)
+  active         Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  transactions BankTransaction[]
+
+  @@index([organizationId, active])
+}
+
+model BankTransaction {
+  id              String                   @id @default(cuid())
+  bankAccountId   String
+  externalId      String?
+  reference       String?
+  amount          Decimal                  @db.Decimal(18, 2)
+  transactionDate DateTime
+  status          BankReconciliationStatus @default(UNMATCHED)
+  createdAt       DateTime                 @default(now())
+  updatedAt       DateTime                 @updatedAt
+
+  bankAccount BankAccount @relation(fields: [bankAccountId], references: [id], onDelete: Cascade)
+
+  @@unique([bankAccountId, externalId])
+  @@index([bankAccountId, transactionDate, status])
+}
+
+model Customer {
+  id             String   @id @default(cuid())
+  organizationId String
+  customerNo     String
+  name           String
+  email          String?
+  phone          String?
+  taxId          String?
+  address        Json?
+  active         Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  quotations   SalesQuotation[]
+  orders       SalesOrder[]
+  invoices     SalesInvoice[]
+  sales        Sale[]
+  returns      SalesReturn[]
+
+  @@unique([organizationId, customerNo])
+  @@index([organizationId, name])
+  @@index([organizationId, email])
+}
+
+model Product {
+  id             String   @id @default(cuid())
+  organizationId String
+  sku            String
+  barcode        String?
+  name           String
+  description    String?
+  unitPrice      Decimal  @db.Decimal(18, 2)
+  costPrice      Decimal  @default(0) @db.Decimal(18, 2)
+  taxRate        Decimal  @default(0) @db.Decimal(5, 2)
+  active         Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization Organization         @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  quoteLines   SalesQuotationLine[]
+  orderLines   SalesOrderLine[]
+  invoiceLines SalesInvoiceLine[]
+  saleLines    SaleLine[]
+  returnLines  SalesReturnLine[]
+
+  @@unique([organizationId, sku])
+  @@unique([organizationId, barcode])
+  @@index([organizationId, name])
+  @@index([organizationId, active])
+}
+
+model SalesQuotation {
+  id             String           @id @default(cuid())
+  organizationId String
+  customerId     String
+  quoteNo        String
+  status         SalesQuoteStatus @default(DRAFT)
+  issueDate      DateTime         @default(now())
+  validUntil     DateTime?
+  subtotal       Decimal          @db.Decimal(18, 2)
+  discount       Decimal          @default(0) @db.Decimal(18, 2)
+  tax            Decimal          @default(0) @db.Decimal(18, 2)
+  total          Decimal          @db.Decimal(18, 2)
+  notes          String?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  organization Organization         @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  customer     Customer             @relation(fields: [customerId], references: [id], onDelete: Restrict)
+  lines        SalesQuotationLine[]
+  orders       SalesOrder[]
+
+  @@unique([organizationId, quoteNo])
+  @@index([organizationId, status])
+}
+
+model SalesQuotationLine {
+  id          String  @id @default(cuid())
+  quotationId String
+  productId   String
+  description String
+  quantity    Decimal @db.Decimal(18, 3)
+  unitPrice   Decimal @db.Decimal(18, 2)
+  discount    Decimal @default(0) @db.Decimal(18, 2)
+  tax         Decimal @default(0) @db.Decimal(18, 2)
+  total       Decimal @db.Decimal(18, 2)
+
+  quotation SalesQuotation @relation(fields: [quotationId], references: [id], onDelete: Cascade)
+  product   Product        @relation(fields: [productId], references: [id], onDelete: Restrict)
+
+  @@index([quotationId])
+}
+
+model SalesOrder {
+  id             String           @id @default(cuid())
+  organizationId String
+  customerId     String
+  quotationId    String?
+  orderNo        String
+  status         SalesOrderStatus @default(DRAFT)
+  orderDate      DateTime         @default(now())
+  subtotal       Decimal          @db.Decimal(18, 2)
+  discount       Decimal          @default(0) @db.Decimal(18, 2)
+  tax            Decimal          @default(0) @db.Decimal(18, 2)
+  total          Decimal          @db.Decimal(18, 2)
+  notes          String?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  organization Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  customer     Customer         @relation(fields: [customerId], references: [id], onDelete: Restrict)
+  quotation    SalesQuotation?  @relation(fields: [quotationId], references: [id], onDelete: SetNull)
+  lines        SalesOrderLine[]
+  invoices     SalesInvoice[]
+
+  @@unique([organizationId, orderNo])
+  @@index([organizationId, status])
+}
+
+model SalesOrderLine {
+  id          String  @id @default(cuid())
+  orderId     String
+  productId   String
+  description String
+  quantity    Decimal @db.Decimal(18, 3)
+  unitPrice   Decimal @db.Decimal(18, 2)
+  discount    Decimal @default(0) @db.Decimal(18, 2)
+  tax         Decimal @default(0) @db.Decimal(18, 2)
+  total       Decimal @db.Decimal(18, 2)
+
+  order   SalesOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product Product    @relation(fields: [productId], references: [id], onDelete: Restrict)
+
+  @@index([orderId])
+}
+
+model SalesInvoice {
+  id             String             @id @default(cuid())
+  organizationId String
+  customerId     String
+  orderId        String?
+  invoiceNo      String
+  status         SalesInvoiceStatus @default(DRAFT)
+  issueDate      DateTime           @default(now())
+  dueDate        DateTime?
+  subtotal       Decimal            @db.Decimal(18, 2)
+  discount       Decimal            @default(0) @db.Decimal(18, 2)
+  tax            Decimal            @default(0) @db.Decimal(18, 2)
+  total          Decimal            @db.Decimal(18, 2)
+  amountPaid     Decimal            @default(0) @db.Decimal(18, 2)
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+
+  organization Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  customer     Customer           @relation(fields: [customerId], references: [id], onDelete: Restrict)
+  order        SalesOrder?        @relation(fields: [orderId], references: [id], onDelete: SetNull)
+  lines        SalesInvoiceLine[]
+  payments     SalePayment[]
+
+  @@unique([organizationId, invoiceNo])
+  @@index([organizationId, status])
+}
+
+model SalesInvoiceLine {
+  id          String  @id @default(cuid())
+  invoiceId   String
+  productId   String
+  description String
+  quantity    Decimal @db.Decimal(18, 3)
+  unitPrice   Decimal @db.Decimal(18, 2)
+  discount    Decimal @default(0) @db.Decimal(18, 2)
+  tax         Decimal @default(0) @db.Decimal(18, 2)
+  total       Decimal @db.Decimal(18, 2)
+
+  invoice SalesInvoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  product Product      @relation(fields: [productId], references: [id], onDelete: Restrict)
+
+  @@index([invoiceId])
+}
+
+model Promotion {
+  id             String       @id @default(cuid())
+  organizationId String
+  code           String
+  name           String
+  type           DiscountType
+  value          Decimal      @db.Decimal(18, 2)
+  startsAt       DateTime?
+  endsAt         DateTime?
+  active         Boolean      @default(true)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  sales        Sale[]
+
+  @@unique([organizationId, code])
+  @@index([organizationId, active])
+}
+
+model POSTerminal {
+  id             String   @id @default(cuid())
+  organizationId String
+  locationId     String?
+  code           String
+  name           String
+  active         Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  shifts       CashierShift[]
+  sales        Sale[]
+
+  @@unique([organizationId, code])
+  @@index([organizationId, active])
+}
+
+model CashierShift {
+  id             String         @id @default(cuid())
+  organizationId String
+  terminalId     String
+  cashierId      String
+  status         POSShiftStatus @default(OPEN)
+  openedAt       DateTime       @default(now())
+  closedAt       DateTime?
+  openingFloat   Decimal        @db.Decimal(18, 2)
+  expectedCash   Decimal?       @db.Decimal(18, 2)
+  countedCash    Decimal?       @db.Decimal(18, 2)
+  variance       Decimal?       @db.Decimal(18, 2)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  organization Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  terminal     POSTerminal    @relation(fields: [terminalId], references: [id], onDelete: Restrict)
+  cashier      User           @relation("CashierShifts", fields: [cashierId], references: [id], onDelete: Restrict)
+  sales        Sale[]
+  movements    CashMovement[]
+
+  @@index([organizationId, status])
+  @@index([terminalId, openedAt])
+}
+
+model Sale {
+  id             String     @id @default(cuid())
+  organizationId String
+  customerId     String?
+  terminalId     String?
+  shiftId        String?
+  promotionId    String?
+  receiptNo      String
+  idempotencyKey String?
+  status         SaleStatus @default(COMPLETED)
+  soldAt         DateTime   @default(now())
+  subtotal       Decimal    @db.Decimal(18, 2)
+  discount       Decimal    @default(0) @db.Decimal(18, 2)
+  tax            Decimal    @default(0) @db.Decimal(18, 2)
+  total          Decimal    @db.Decimal(18, 2)
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+
+  organization Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  customer     Customer?     @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  terminal     POSTerminal?  @relation(fields: [terminalId], references: [id], onDelete: SetNull)
+  shift        CashierShift? @relation(fields: [shiftId], references: [id], onDelete: SetNull)
+  promotion    Promotion?    @relation(fields: [promotionId], references: [id], onDelete: SetNull)
+  lines        SaleLine[]
+  payments     SalePayment[]
+  returns      SalesReturn[]
+  refunds      Refund[]
+
+  @@unique([organizationId, receiptNo])
+  @@unique([organizationId, idempotencyKey])
+  @@index([organizationId, soldAt])
+  @@index([organizationId, status])
+}
+
+model SaleLine {
+  id          String  @id @default(cuid())
+  saleId      String
+  productId   String
+  description String
+  quantity    Decimal @db.Decimal(18, 3)
+  unitPrice   Decimal @db.Decimal(18, 2)
+  discount    Decimal @default(0) @db.Decimal(18, 2)
+  tax         Decimal @default(0) @db.Decimal(18, 2)
+  total       Decimal @db.Decimal(18, 2)
+
+  sale    Sale    @relation(fields: [saleId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Restrict)
+
+  @@index([saleId])
+}
+
+model SalePayment {
+  id          String        @id @default(cuid())
+  saleId      String?
+  invoiceId   String?
+  method      PaymentMethod
+  amount      Decimal       @db.Decimal(18, 2)
+  reference   String?
+  status      PaymentStatus @default(SUCCEEDED)
+  providerRef String?
+  paidAt      DateTime      @default(now())
+  createdAt   DateTime      @default(now())
+
+  sale    Sale?         @relation(fields: [saleId], references: [id], onDelete: Cascade)
+  invoice SalesInvoice? @relation(fields: [invoiceId], references: [id], onDelete: SetNull)
+
+  @@index([saleId, status])
+  @@index([invoiceId, status])
+}
+
+model SalesReturn {
+  id             String            @id @default(cuid())
+  organizationId String
+  saleId         String
+  customerId     String?
+  returnNo       String
+  status         SalesReturnStatus @default(REQUESTED)
+  reason         String?
+  total          Decimal           @db.Decimal(18, 2)
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+
+  organization Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  sale         Sale              @relation(fields: [saleId], references: [id], onDelete: Restrict)
+  customer     Customer?         @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  lines        SalesReturnLine[]
+  refunds      Refund[]
+
+  @@unique([organizationId, returnNo])
+  @@index([organizationId, status])
+}
+
+model SalesReturnLine {
+  id          String  @id @default(cuid())
+  returnId    String
+  productId   String
+  description String
+  quantity    Decimal @db.Decimal(18, 3)
+  amount      Decimal @db.Decimal(18, 2)
+
+  return  SalesReturn @relation(fields: [returnId], references: [id], onDelete: Cascade)
+  product Product     @relation(fields: [productId], references: [id], onDelete: Restrict)
+
+  @@index([returnId])
+}
+
+model Refund {
+  id             String        @id @default(cuid())
+  organizationId String
+  saleId         String?
+  returnId       String?
+  amount         Decimal       @db.Decimal(18, 2)
+  method         PaymentMethod
+  status         RefundStatus  @default(PENDING)
+  idempotencyKey String?
+  reference      String?
+  refundedAt     DateTime?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  sale         Sale?        @relation(fields: [saleId], references: [id], onDelete: SetNull)
+  return       SalesReturn? @relation(fields: [returnId], references: [id], onDelete: SetNull)
+
+  @@unique([organizationId, idempotencyKey])
+  @@index([organizationId, status])
+}
+
+model CashMovement {
+  id        String           @id @default(cuid())
+  shiftId   String
+  type      CashMovementType
+  amount    Decimal          @db.Decimal(18, 2)
+  reference String?
+  createdAt DateTime         @default(now())
+
+  shift CashierShift @relation(fields: [shiftId], references: [id], onDelete: Cascade)
+
+  @@index([shiftId, createdAt])
 }
 
 model Document {
@@ -451,13 +1112,13 @@ model Document {
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
 
-  organization Organization           @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  brand        FranchiseBrand?        @relation(fields: [brandId], references: [id], onDelete: SetNull)
-  franchisee   Franchisee?            @relation(fields: [franchiseeId], references: [id], onDelete: SetNull)
-  location     FranchiseLocation?     @relation(fields: [locationId], references: [id], onDelete: SetNull)
-  application  FranchiseApplication?  @relation(fields: [applicationId], references: [id], onDelete: SetNull)
-  agreement    FranchiseAgreement?    @relation(fields: [agreementId], references: [id], onDelete: SetNull)
-  uploadedBy   User?                  @relation("DocumentUploader", fields: [uploadedById], references: [id], onDelete: SetNull)
+  organization Organization          @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  brand        FranchiseBrand?       @relation(fields: [brandId], references: [id], onDelete: SetNull)
+  franchisee   Franchisee?           @relation(fields: [franchiseeId], references: [id], onDelete: SetNull)
+  location     FranchiseLocation?    @relation(fields: [locationId], references: [id], onDelete: SetNull)
+  application  FranchiseApplication? @relation(fields: [applicationId], references: [id], onDelete: SetNull)
+  agreement    FranchiseAgreement?   @relation(fields: [agreementId], references: [id], onDelete: SetNull)
+  uploadedBy   User?                 @relation("DocumentUploader", fields: [uploadedById], references: [id], onDelete: SetNull)
 
   @@index([organizationId, type])
   @@index([franchiseeId])

@@ -28,6 +28,8 @@ const envSchema = z.object({
   S3_SECRET_ACCESS_KEY: z.string().optional(),
 
   EMAIL_FROM: z.string().default("Franchise Management <no-reply@example.com>"),
+  RESEND_API_KEY: z.string().optional(),
+  MAGIC_LINK_TTL_MINUTES: z.coerce.number().int().min(5).max(60).default(20),
 
   AI_DEFAULT_MODEL: z.string().optional(),
 })
@@ -52,6 +54,8 @@ export const env = envSchema.parse({
   S3_ACCESS_KEY_ID: process.env.S3_ACCESS_KEY_ID,
   S3_SECRET_ACCESS_KEY: process.env.S3_SECRET_ACCESS_KEY,
   EMAIL_FROM: process.env.EMAIL_FROM,
+  RESEND_API_KEY: process.env.RESEND_API_KEY,
+  MAGIC_LINK_TTL_MINUTES: process.env.MAGIC_LINK_TTL_MINUTES,
   AI_DEFAULT_MODEL: process.env.AI_DEFAULT_MODEL,
 })
 

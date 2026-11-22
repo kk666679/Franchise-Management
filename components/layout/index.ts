@@ -1,5 +1,5 @@
 export { AppHeader } from "./app-header"
 export { AppShell } from "./app-shell"
-export type { AppNavigationItem, AppShellProps } from "./app-shell"
+export type { AppShellProps } from "./app-shell"
 export { PageContainer } from "./page-container"
 export { PageHeader } from "./page-header"

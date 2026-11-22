@@ -7,21 +7,63 @@ import {
   createSessionToken,
   SESSION_COOKIE,
   sessionCookieOptions,
-} from "@/lib/server/auth/session"
-import { verifyPassword } from "@/lib/server/auth/password"
+} from "@lib/server/auth/session"
+import { verifyPassword } from "@lib/server/auth/password"
+import {
+  issueMagicLink,
+  sendMagicLinkEmail,
+} from "@lib/server/auth/magic-link"
 
 export type LoginState = {
-  status: "idle" | "error" | "success"
+  status: "idle" | "error" | "success" | "magic-link-sent"
   message: string
+}
+
+export async function magicLinkAction(
+  _previousState: LoginState,
+  formData: FormData
+): Promise<LoginState> {
+  const email = String(formData.get("email") ?? "")
+    .trim()
+    .toLowerCase()
+  if (!email || !email.includes("@")) {
+    return { status: "error", message: "Enter a valid work email." }
+  }
+
+  try {
+    const user = await prisma.user.findUnique({ where: { email } })
+    if (user) {
+      const link = await issueMagicLink(user.id)
+      await sendMagicLinkEmail({
+        to: user.email,
+        name: user.name,
+        url: link.url,
+        expiresAt: link.expiresAt,
+      })
+    }
+  } catch {
+    return {
+      status: "error",
+      message: "Magic-link email is not configured yet.",
+    }
+  }
+
+  return {
+    status: "magic-link-sent",
+    message:
+      "If an account exists for that email, a secure sign-in link has been sent.",
+  }
 }
 
 const INVALID_CREDENTIALS = "Invalid email or password."
 
 export async function loginAction(
   _previousState: LoginState,
-  formData: FormData,
+  formData: FormData
 ): Promise<LoginState> {
-  const email = String(formData.get("email") ?? "").trim().toLowerCase()
+  const email = String(formData.get("email") ?? "")
+    .trim()
+    .toLowerCase()
   const password = String(formData.get("password") ?? "")
 
   if (!email || !email.includes("@") || !password) {
