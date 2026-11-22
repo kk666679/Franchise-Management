@@ -14,7 +14,6 @@ import { visibleDestinations } from "@/lib/navigation"
 import { PERMISSIONS } from "@/lib/rbac"
 import { prisma } from "@/lib/prisma"
 import { PageAccessNotice } from "@/components/auth/page-access-notice"
-import { PageAccessNotice } from "@/components/auth/page-access-notice"
 
 const STATUS_TONE = {
   DRAFT: "neutral",
@@ -83,15 +82,6 @@ export default async function ApplicationDetailPage({
       />
     )
   }
-  if (!session?.org) {
-    return (
-      <PageAccessNotice
-        title="Application details"
-        description="This application page is open to everyone. Sign in to view organization application details."
-      />
-    )
-  }
-
   const ctx = {
     userId: session.sub,
     organizationId: session.org,

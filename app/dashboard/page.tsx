@@ -8,28 +8,53 @@ import { RevenueChart } from "@/components/dashboard/revenue-chart"
 import { AppShell } from "@/components/layout/app-shell"
 import { PageContainer } from "@/components/layout/page-container"
 import { visibleDestinations } from "@/lib/navigation"
+import { prisma } from "@/lib/prisma"
 import { getDashboardData } from "@lib/server/dashboard"
 import { resolvePermissions } from "@lib/server/auth"
 import { getCurrentSession } from "@lib/server/auth/session"
-import { PageAccessNotice } from "@/components/auth/page-access-notice"
 
 const money = (value: number, currency: string) =>
   new Intl.NumberFormat("en", { style: "currency", currency, maximumFractionDigits: 0 }).format(value)
 
+function EmptyDashboard() {
+  const navigation = visibleDestinations(resolvePermissions())
+
+  return (
+    <AppShell
+      brand={<span className="text-sm font-semibold">Franchise Management</span>}
+      sidebar={<DashboardNav items={navigation} />}
+    >
+      <PageContainer className="space-y-6">
+        <DashboardHeader organizationName="Franchise Management" />
+        <section
+          aria-labelledby="dashboard-empty-title"
+          className="glass rounded-2xl border border-dashed border-border p-8 text-center sm:p-12"
+          role="status"
+        >
+          <h2 id="dashboard-empty-title" className="text-lg font-semibold">
+            No organization data yet
+          </h2>
+          <p className="mx-auto mt-2 max-w-xl text-sm leading-relaxed text-muted-foreground">
+            The dashboard is open without signing in. Configure a real
+            organization and its records to see live metrics here; sample data
+            is not used.
+          </p>
+        </section>
+      </PageContainer>
+    </AppShell>
+  )
+}
+
 export default async function DashboardPage() {
   const session = await getCurrentSession()
-  if (!session?.org) {
-    return (
-      <PageAccessNotice
-        title="Dashboard"
-        description="The dashboard is available without signing in. Sign in to view organization data and metrics."
-      />
-    )
-  }
+  const organizationId =
+    session?.org ??
+    (await prisma.organization.findFirst({ select: { id: true } }))?.id ??
+    ""
+  if (!organizationId) return <EmptyDashboard />
 
-  const orgId = session.org
-  const data = await getDashboardData(orgId)
-  if (!data) return null
+  const data = await getDashboardData(organizationId)
+  if (!data) return <EmptyDashboard />
 
   // Presentation-only filtering: hide destinations the session's role cannot
   // see. Route access remains enforced at each server boundary.

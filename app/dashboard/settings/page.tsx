@@ -15,7 +15,6 @@ import { PERMISSIONS, MEMBERSHIP_ROLE_PERMISSIONS, MEMBERSHIP_ROLES } from "@/li
 import { prisma } from "@/lib/prisma"
 import { listAuditLogs } from "@lib/server/services/franchise"
 import { PageAccessNotice } from "@/components/auth/page-access-notice"
-import { PageAccessNotice } from "@/components/auth/page-access-notice"
 
 const dateFmt = new Intl.DateTimeFormat("en", {
   month: "short",
@@ -42,15 +41,6 @@ export default async function SettingsPage() {
       />
     )
   }
-  if (!session?.org) {
-    return (
-      <PageAccessNotice
-        title="Settings"
-        description="This settings page is open to everyone. Sign in to view organization members, roles, and audit records."
-      />
-    )
-  }
-
   const ctx = {
     userId: session.sub,
     organizationId: session.org,

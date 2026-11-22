@@ -18,7 +18,6 @@ import { getFranchisee } from "@lib/server/services/franchise"
 import { prisma } from "@/lib/prisma"
 import { NotFoundError } from "@lib/server/errors"
 import { PageAccessNotice } from "@/components/auth/page-access-notice"
-import { PageAccessNotice } from "@/components/auth/page-access-notice"
 
 const dateFmt = new Intl.DateTimeFormat("en", { month: "short", day: "numeric", year: "numeric" })
 
@@ -44,15 +43,6 @@ export default async function FranchiseeDetailPage({
       />
     )
   }
-  if (!session?.org) {
-    return (
-      <PageAccessNotice
-        title="Franchise details"
-        description="This franchise page is open to everyone. Sign in to view organization franchise details."
-      />
-    )
-  }
-
   const ctx = {
     userId: session.sub,
     organizationId: session.org,

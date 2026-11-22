@@ -30,6 +30,10 @@ export interface SessionPayload {
 }
 
 function getSecretKey(): Uint8Array {
+  if (!env.AUTH_SECRET) {
+    throw new Error("AUTH_SECRET is required to create or verify sessions")
+  }
+
   return new TextEncoder().encode(env.AUTH_SECRET)
 }
 

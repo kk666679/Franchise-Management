@@ -1,11 +1,13 @@
 import { z } from "zod"
 
+import { resolveDatabaseUrls } from "@/lib/database-urls"
+
 /**
  * Runtime environment contract.
  *
- * All environment access is centralized here so that (a) invalid or missing
- * values fail fast with a clear message, and (b) secrets are never referenced
- * ad-hoc from deep inside business logic.
+ * Runtime configuration is centralized here so invalid required values fail
+ * fast and database URL aliases stay consistent. Authentication secrets are
+ * optional for public routes and checked when a session is signed.
  */
 const envSchema = z.object({
   NODE_ENV: z
@@ -18,7 +20,10 @@ const envSchema = z.object({
   DIRECT_DATABASE_URL: z.string().min(1).optional(),
   SHADOW_DATABASE_URL: z.string().min(1).optional(),
 
-  AUTH_SECRET: z.string().min(16, "AUTH_SECRET must be at least 16 characters"),
+  AUTH_SECRET: z
+    .string()
+    .min(16, "AUTH_SECRET must be at least 16 characters")
+    .optional(),
   REDIS_URL: z.string().optional(),
 
   S3_ENDPOINT: z.string().optional(),
@@ -40,11 +45,13 @@ const envSchema = z.object({
  * NOTE: this module runs on the server only. It is never imported from a
  * Server Component boundary that would leak values to the browser bundle.
  */
+const databaseUrls = resolveDatabaseUrls(process.env)
+
 export const env = envSchema.parse({
   NODE_ENV: process.env.NODE_ENV,
   APP_URL: process.env.APP_URL,
-  DATABASE_URL: process.env.DATABASE_URL,
-  DIRECT_DATABASE_URL: process.env.DIRECT_DATABASE_URL,
+  DATABASE_URL: databaseUrls.runtimeUrl,
+  DIRECT_DATABASE_URL: databaseUrls.directUrl,
   SHADOW_DATABASE_URL: process.env.SHADOW_DATABASE_URL,
   AUTH_SECRET: process.env.AUTH_SECRET,
   REDIS_URL: process.env.REDIS_URL,
