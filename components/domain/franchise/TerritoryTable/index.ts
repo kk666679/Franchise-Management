@@ -1,0 +1,1 @@
+export { TerritoryTable } from './TerritoryTable'

@@ -262,7 +262,7 @@ model Organization {
   salesInvoices      SalesInvoice[]
   promotions         Promotion[]
   sales              Sale[]
-  posTerminals       POSTerminal[]
+  posTerminals       PosTerminal[]
   cashierShifts      CashierShift[]
   salesReturns       SalesReturn[]
   refunds            Refund[]
@@ -569,6 +569,7 @@ model Payment {
   allocations  PaymentAllocation[]
 
   @@unique([provider, providerRef])
+  @@unique([organizationId, provider, providerRef])
   @@index([invoiceId, status])
   @@index([organizationId, paidAt])
 }
@@ -909,7 +910,7 @@ model Promotion {
   @@index([organizationId, active])
 }
 
-model POSTerminal {
+model PosTerminal {
   id             String   @id @default(cuid())
   organizationId String
   locationId     String?
@@ -925,6 +926,8 @@ model POSTerminal {
 
   @@unique([organizationId, code])
   @@index([organizationId, active])
+
+  @@map("POSTerminal")
 }
 
 model CashierShift {
@@ -943,7 +946,7 @@ model CashierShift {
   updatedAt      DateTime       @updatedAt
 
   organization Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  terminal     POSTerminal    @relation(fields: [terminalId], references: [id], onDelete: Restrict)
+  terminal     PosTerminal    @relation(fields: [terminalId], references: [id], onDelete: Restrict)
   cashier      User           @relation("CashierShifts", fields: [cashierId], references: [id], onDelete: Restrict)
   sales        Sale[]
   movements    CashMovement[]
@@ -972,7 +975,7 @@ model Sale {
 
   organization Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   customer     Customer?     @relation(fields: [customerId], references: [id], onDelete: SetNull)
-  terminal     POSTerminal?  @relation(fields: [terminalId], references: [id], onDelete: SetNull)
+  terminal     PosTerminal?  @relation(fields: [terminalId], references: [id], onDelete: SetNull)
   shift        CashierShift? @relation(fields: [shiftId], references: [id], onDelete: SetNull)
   promotion    Promotion?    @relation(fields: [promotionId], references: [id], onDelete: SetNull)
   lines        SaleLine[]

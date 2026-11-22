@@ -2,7 +2,6 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "@prisma/client";
 
 import { resolveDatabaseUrls } from "@/lib/database-urls";
-import { env } from "@/lib/env";
 
 const { runtimeUrl: databaseUrl } = resolveDatabaseUrls(process.env);
 
@@ -18,12 +17,8 @@ const prisma = new PrismaClient({
 const SEED_PASSWORD_HASH =
   "$2b$10$rXz9y8k7q6w5v4u3t2s1r0q9p8o7n6m5l4k3j2h1g0f9e8d7c6b5a";
 
-function slugify(name: string): string {
-  return name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/-+$/, "").replace(/^-+/, "");
-}
-
 async function main() {
-  console.log("🌱 Starting comprehensive database seed...");
+  console.log("Starting comprehensive database seed...");
 
   // ── 1. Organization ──────────────────────────────────────────────
   const org = await prisma.organization.upsert({
@@ -38,7 +33,7 @@ async function main() {
       currency: "USD",
     },
   });
-  console.log(`✓ Organization: ${org.name} (${org.id})`);
+  console.log(`Organization: ${org.name} (${org.id})`);
 
   // ── 2. Users ─────────────────────────────────────────────────────
   const users = await Promise.all([
@@ -93,7 +88,7 @@ async function main() {
       },
     }),
   ]);
-  console.log(`✓ Users: ${users.length} created`);
+  console.log(`Users: ${users.length} created`);
 
   // ── 3. Memberships ───────────────────────────────────────────────
   const memberships = await Promise.all([
@@ -123,7 +118,7 @@ async function main() {
       create: { organizationId: org.id, userId: users[4].id, role: "VIEWER" },
     }),
   ]);
-  console.log(`✓ Memberships: ${memberships.length} created`);
+  console.log(`Memberships: ${memberships.length} created`);
 
   // ── 4. Franchise Brand ───────────────────────────────────────────
   const brand = await prisma.franchiseBrand.upsert({
@@ -139,7 +134,7 @@ async function main() {
       websiteUrl: "https://quickbite.example.com",
     },
   });
-  console.log(`✓ Brand: ${brand.name} (${brand.id})`);
+  console.log(`Brand: ${brand.name} (${brand.id})`);
 
   // ── 5. Franchisee ────────────────────────────────────────────────
   const franchisee = await prisma.franchisee.upsert({
@@ -158,7 +153,7 @@ async function main() {
       notes: "Flagship location franchisee",
     },
   });
-  console.log(`✓ Franchisee: ${franchisee.tradingName ?? franchisee.legalName} (${franchisee.id})`);
+  console.log(`Franchisee: ${franchisee.tradingName ?? franchisee.legalName} (${franchisee.id})`);
 
   // ── 6. Franchisee Contacts ───────────────────────────────────────
   await prisma.franchiseeContact.createMany({
@@ -182,95 +177,97 @@ async function main() {
     ],
     skipDuplicates: true,
   });
-  console.log(`✓ Franchisee contacts: 2 created`);
+  console.log("Franchisee contacts: 2 created");
 
-  // ── 7. Franchise Locations ───────────────────────────────────────
-  const locations = await Promise.all([
-    prisma.franchiseLocation.upsert({
-      where: { organizationId_code: { organizationId: org.id, code: "QB-MS-001" } },
-      update: {},
-      create: {
-        organizationId: org.id,
-        brandId: brand.id,
-        franchiseeId: franchisee.id,
-        name: "QuickBite Main Street",
-        code: "QB-MS-001",
-        status: "ACTIVE",
-        addressLine1: "123 Main Street",
-        addressLine2: "Suite 100",
-        city: "Austin",
-        state: "TX",
-        postalCode: "78701",
-        country: "US",
-        latitude: 30.2672,
-        longitude: -97.7431,
-        openedAt: new Date("2024-01-15"),
-      },
-    }),
-    prisma.franchiseLocation.upsert({
-      where: { organizationId_code: { organizationId: org.id, code: "QB-DT-002" } },
-      update: {},
-      create: {
-        organizationId: org.id,
-        brandId: brand.id,
-        franchiseeId: franchisee.id,
-        name: "QuickBite Downtown",
-        code: "QB-DT-002",
-        status: "ACTIVE",
-        addressLine1: "456 Congress Avenue",
-        city: "Austin",
-        state: "TX",
-        postalCode: "78701",
-        country: "US",
-        latitude: 30.2675,
-        longitude: -97.7428,
-        openedAt: new Date("2024-06-01"),
-      },
-    }),
-  ]);
-  console.log(`✓ Locations: ${locations.length} created`);
-
-  // ── 8. Franchise Application ─────────────────────────────────────
-  const application = await prisma.franchiseApplication.upsert({
-    where: { organizationId_referenceNo: { organizationId: org.id, referenceNo: "APP-2024-001" } },
+// ── 7. Franchise Locations ───────────────────────────────────────
+const locations = await Promise.all([
+  prisma.franchiseLocation.upsert({
+    where: { organizationId_code: { organizationId: org.id, code: "QB-MS-001" } },
     update: {},
     create: {
       organizationId: org.id,
       brandId: brand.id,
       franchiseeId: franchisee.id,
-      submittedById: users[0].id,
-      status: "APPROVED",
-      referenceNo: "APP-2024-001",
-      submittedAt: new Date("2024-01-10"),
-      reviewedAt: new Date("2024-01-12"),
-      decisionNotes: "Approved after review of financials and territory.",
-    },
-  });
-  console.log(`✓ Application: ${application.referenceNo} (${application.id})`);
-
-  // ── 9. Franchise Agreement ───────────────────────────────────────
-  const agreement = await prisma.franchiseAgreement.upsert({
-    where: { organizationId_agreementNo: { organizationId: org.id, agreementNo: "FA-2024-001" } },
-    update: {},
-    create: {
-      organizationId: org.id,
-      brandId: brand.id,
-      franchiseeId: franchisee.id,
-      locationId: locations[0].id,
-      applicationId: application.id,
-      agreementNo: "FA-2024-001",
+      name: "QuickBite Main Street",
+      code: "QB-MS-001",
       status: "ACTIVE",
-      signedAt: new Date("2024-01-15"),
-      startDate: new Date("2024-02-01"),
-      endDate: new Date("2029-01-31"),
-      renewalDate: new Date("2028-12-01"),
-      initialFee: 50000,
-      royaltyRate: 6.0,
-      marketingRate: 2.0,
-      terms: { territory: "Austin metro area", exclusive: true },
+      addressLine1: "123 Main Street",
+      addressLine2: "Suite 100",
+      city: "Austin",
+      state: "TX",
+      postalCode: "78701",
+      country: "US",
+      latitude: 30.2672,
+      longitude: -97.7431,
+      openedAt: new Date("2024-01-15"),
     },
-  });
-  console.log(`✓ Agreement: ${agreement.agreementNo} (${agreement.id})`);// -- 10. Financial Accounts -----------------------------------------
+  }),
+  prisma.franchiseLocation.upsert({
+    where: { organizationId_code: { organizationId: org.id, code: "QB-DT-002" } },
+    update: {},
+    create: {
+      organizationId: org.id,
+      brandId: brand.id,
+      franchiseeId: franchisee.id,
+      name: "QuickBite Downtown",
+      code: "QB-DT-002",
+      status: "ACTIVE",
+      addressLine1: "456 Congress Avenue",
+      city: "Austin",
+      state: "TX",
+      postalCode: "78701",
+      country: "US",
+      latitude: 30.2675,
+      longitude: -97.7428,
+      openedAt: new Date("2024-06-01"),
+    },
+  }),
+]);
+console.log(`Locations: ${locations.length} created`);
+
+// -- 8. Franchise Application -------------------------------------
+const application = await prisma.franchiseApplication.upsert({
+  where: { organizationId_referenceNo: { organizationId: org.id, referenceNo: "APP-2024-001" } },
+  update: {},
+  create: {
+    organizationId: org.id,
+    brandId: brand.id,
+    franchiseeId: franchisee.id,
+    submittedById: users[0].id,
+    status: "APPROVED",
+    referenceNo: "APP-2024-001",
+    submittedAt: new Date("2024-01-10"),
+    reviewedAt: new Date("2024-01-12"),
+    decisionNotes: "Approved after review of financials and territory.",
+  },
+});
+console.log(`Application: ${application.referenceNo} (${application.id})`);
+
+// -- 9. Franchise Agreement ---------------------------------------
+const agreement = await prisma.franchiseAgreement.upsert({
+  where: { organizationId_agreementNo: { organizationId: org.id, agreementNo: "FA-2024-001" } },
+  update: {},
+  create: {
+    organizationId: org.id,
+    brandId: brand.id,
+    franchiseeId: franchisee.id,
+    locationId: locations[0].id,
+    applicationId: application.id,
+    agreementNo: "FA-2024-001",
+    status: "ACTIVE",
+    signedAt: new Date("2024-01-15"),
+    startDate: new Date("2024-02-01"),
+    endDate: new Date("2029-01-31"),
+    renewalDate: new Date("2028-12-01"),
+    initialFee: 50000,
+    royaltyRate: 6.0,
+    marketingRate: 2.0,
+    terms: { territory: "Austin metro area", exclusive: true },
+  },
+});
+console.log(`Agreement: ${agreement.agreementNo} (${agreement.id})`);
+
+// -- 10. Financial Accounts -----------------------------------------
 const accounts = await Promise.all([
   prisma.financialAccount.upsert({
     where: { organizationId_code: { organizationId: org.id, code: "1000" } },
@@ -339,7 +336,7 @@ const accounts = await Promise.all([
     },
   }),
 ]);
-console.log(`? Financial accounts: ${accounts.length} created`);
+console.log(`Financial accounts: ${accounts.length} created`);
 
 // -- 11. Financial Period -------------------------------------------
 const period = await prisma.financialPeriod.upsert({
@@ -353,7 +350,7 @@ const period = await prisma.financialPeriod.upsert({
     status: "OPEN",
   },
 });
-console.log(`? Financial period: ${period.name} (${period.id})`);
+console.log(`Financial period: ${period.name} (${period.id})`);
 
 // -- 12. Invoices ---------------------------------------------------
 const invoices = await Promise.all([
@@ -412,7 +409,7 @@ const invoices = await Promise.all([
     },
   }),
 ]);
-console.log(`? Invoices: ${invoices.length} created`);
+console.log(`Invoices: ${invoices.length} created`);
 
 // -- 13. Invoice Lines ----------------------------------------------
 for (const inv of invoices) {
@@ -435,12 +432,10 @@ for (const inv of invoices) {
     },
   });
 }
-console.log(`? Invoice lines: ${invoices.length * 2} created`);
-
-// -- 14. Payments ---------------------------------------------------
+// ── 14. Payments ───────────────────────────────────────────────────
 const payments = await Promise.all([
   prisma.payment.upsert({
-    where: { provider_providerRef: { provider: "stripe", providerRef: "ch_20240201_001" } },
+    where: { organizationId_provider_providerRef: { organizationId: org.id, provider: "stripe", providerRef: "ch_20240201_001" } },
     update: {},
     create: {
       organizationId: org.id,
@@ -456,7 +451,7 @@ const payments = await Promise.all([
     },
   }),
   prisma.payment.upsert({
-    where: { provider_providerRef: { provider: "stripe", providerRef: "ch_20240305_001" } },
+    where: { organizationId_provider_providerRef: { organizationId: org.id, provider: "stripe", providerRef: "ch_20240305_001" } },
     update: {},
     create: {
       organizationId: org.id,
@@ -472,9 +467,9 @@ const payments = await Promise.all([
     },
   }),
 ]);
-console.log(`? Payments: ${payments.length} created`);
+console.log(`Payments: ${payments.length} created`);
 
-// -- 15. Customers --------------------------------------------------
+// ── 15. Customers ──────────────────────────────────────────────────
 const customers = await Promise.all([
   prisma.customer.upsert({
     where: { organizationId_customerNo: { organizationId: org.id, customerNo: "CUST-001" } },
@@ -505,9 +500,9 @@ const customers = await Promise.all([
     },
   }),
 ]);
-console.log(`? Customers: ${customers.length} created`);
+console.log(`Customers: ${customers.length} created`);
 
-// -- 16. Products ---------------------------------------------------
+// ── 16. Products ───────────────────────────────────────────────────
 const products = await Promise.all([
   prisma.product.upsert({
     where: { organizationId_sku: { organizationId: org.id, sku: "QB-BGR-001" } },
@@ -552,10 +547,10 @@ const products = await Promise.all([
     },
   }),
 ]);
-console.log(`? Products: ${products.length} created`);
+console.log(`Products: ${products.length} created`);
 
-// -- 17. POS Terminal -----------------------------------------------
-const terminal = await prisma.pOSTerminal.upsert({
+// ── 17. POS Terminal ───────────────────────────────────────────────
+const terminal = await prisma.posTerminal.upsert({
   where: { organizationId_code: { organizationId: org.id, code: "POS-MS-01" } },
   update: {},
   create: {
@@ -566,9 +561,9 @@ const terminal = await prisma.pOSTerminal.upsert({
     active: true,
   },
 });
-console.log(`? POS Terminal: ${terminal.name} (${terminal.id})`);
+console.log(`POS Terminal: ${terminal.name} (${terminal.id})`);
 
-// -- 18. Cashier Shift ----------------------------------------------
+// ── 18. Cashier Shift ──────────────────────────────────────────────
 const shift = await prisma.cashierShift.upsert({
   where: { id: "shift-seed-001" },
   update: {},
@@ -586,20 +581,9 @@ const shift = await prisma.cashierShift.upsert({
     variance: -4.50,
   },
 });
-console.log(`? Cashier shift: ${shift.id} (${shift.status})`);
+console.log(`Cashier shift: ${shift.id} (${shift.status})`);
 
-}
-
-main()
-  .catch((error) => {
-    console.error(error);
-    process.exitCode = 1;
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
-
-// -- 19. Sales ----------------------------------------------------
+// ── 19. Sales ────────────────────────────────────────────────────
 const sales = await Promise.all([
   prisma.sale.upsert({
     where: { organizationId_receiptNo: { organizationId: org.id, receiptNo: "RCP-20240115-001" } },
@@ -638,9 +622,9 @@ const sales = await Promise.all([
     },
   }),
 ]);
-console.log(`? Sales: ${sales.length} created`);
+console.log(`Sales: ${sales.length} created`);
 
-// -- 20. Sale Lines -----------------------------------------------
+// ── 20. Sale Lines ───────────────────────────────────────────────
 await prisma.saleLine.createMany({
   data: [
     { saleId: sales[0].id, productId: products[0].id, description: "Classic Burger", quantity: 1, unitPrice: 12.99, discount: 0, tax: 1.07, total: 14.06 },
@@ -649,14 +633,137 @@ await prisma.saleLine.createMany({
     { saleId: sales[1].id, productId: products[2].id, description: "Soft Drink", quantity: 1, unitPrice: 2.99, discount: 2.00, tax: 0.08, total: 1.07 },
   ],
 });
-console.log(`? Sale lines: 4 created`);
-
-// -- 21. Sale Payments --------------------------------------------
+// ── 21. Sale Payments ────────────────────────────────────────────
 await prisma.salePayment.createMany({
   data: [
     { saleId: sales[0].id, method: "CARD", amount: 22.70, reference: "card-001", status: "SUCCEEDED", paidAt: new Date("2024-01-15T12:30:00") },
     { saleId: sales[1].id, method: "CASH", amount: 17.30, reference: "cash-001", status: "SUCCEEDED", paidAt: new Date("2024-01-15T13:15:00") },
   ],
 });
-console.log(`? Sale payments: 2 created`);
+console.log("Sale payments: 2 created");
 
+// ── 22. Cash Movements ───────────────────────────────────────────
+await prisma.cashMovement.createMany({
+  data: [
+    { shiftId: shift.id, type: "FLOAT", amount: 200.00, reference: "opening-float" },
+    { shiftId: shift.id, type: "CASH_IN", amount: 17.30, reference: "sale-cash-001" },
+    { shiftId: shift.id, type: "CASH_DROP", amount: 100.00, reference: "mid-day-drop" },
+  ],
+});
+console.log("Cash movements: 3 created");
+
+// ── 23. Documents ────────────────────────────────────────────────
+await prisma.document.createMany({
+  data: [
+    {
+      organizationId: org.id,
+      franchiseeId: franchisee.id,
+      type: "AGREEMENT",
+      name: "Franchise Agreement - Main Street",
+      storageKey: "docs/franchise-agreement-main-street.pdf",
+      contentType: "application/pdf",
+      sizeBytes: 245760,
+      checksum: "sha256:abc123def456",
+      uploadedById: users[0].id,
+    },
+    {
+      organizationId: org.id,
+      locationId: locations[0].id,
+      type: "LICENSE",
+      name: "Health Department License",
+      storageKey: "docs/health-license-qb-ms-001.pdf",
+      contentType: "application/pdf",
+      sizeBytes: 128000,
+      checksum: "sha256:def789ghi012",
+      uploadedById: users[1].id,
+    },
+  ],
+});
+console.log("Documents: 2 created");
+
+// ── 24. Support Tickets ──────────────────────────────────────────
+await prisma.supportTicket.createMany({
+  data: [
+    {
+      organizationId: org.id,
+      franchiseeId: franchisee.id,
+      locationId: locations[0].id,
+      createdById: users[3].id,
+      assignedToId: users[2].id,
+      subject: "POS terminal receipt printer jam",
+      description: "Receipt printer on POS-MS-01 is jamming every 3-4 transactions.",
+      status: "IN_PROGRESS",
+      priority: "HIGH",
+    },
+    {
+      organizationId: org.id,
+      franchiseeId: franchisee.id,
+      createdById: users[3].id,
+      subject: "Inventory count discrepancy",
+      description: "Weekly inventory count shows 15 units of beef patties missing.",
+      status: "OPEN",
+      priority: "NORMAL",
+    },
+  ],
+});
+console.log("Support tickets: 2 created");
+
+// ── 25. Audit Logs ───────────────────────────────────────────────
+await prisma.auditLog.createMany({
+  data: [
+    {
+      organizationId: org.id,
+      actorId: users[0].id,
+      action: "CREATE",
+      entity: "Organization",
+      entityId: org.id,
+      changes: { name: "Franchise Demo Organization" },
+      ipAddress: "192.168.1.100",
+      userAgent: "seed-script/1.0",
+    },
+    {
+      organizationId: org.id,
+      actorId: users[1].id,
+      action: "UPDATE",
+      entity: "FranchiseAgreement",
+      entityId: agreement.id,
+      changes: { status: "ACTIVE" },
+      ipAddress: "192.168.1.101",
+      userAgent: "seed-script/1.0",
+    },
+  ],
+});
+console.log("Audit logs: 2 created");
+
+console.log(`Invoice lines: ${invoices.length * 2} created`);
+console.log("");
+console.log("Seed complete! Summary:");
+console.log(`  Organization:   1`);
+console.log(`  Users:          ${users.length}`);
+console.log(`  Memberships:    ${memberships.length}`);
+console.log(`  Brands:         1`);
+console.log(`  Franchisees:    1`);
+console.log(`  Locations:      ${locations.length}`);
+console.log(`  Applications:   1`);
+console.log(`  Agreements:     1`);
+console.log(`  Invoices:       ${invoices.length}`);
+console.log(`  Payments:       ${payments.length}`);
+console.log(`  Customers:      ${customers.length}`);
+console.log(`  Products:       ${products.length}`);
+console.log(`  Sales:          ${sales.length}`);
+console.log(`  Documents:      2`);
+console.log(`  Support tickets: 2`);
+console.log(`  Audit logs:     2`);
+console.log("");
+console.log("Test credentials:");
+users.forEach((u) => console.log(`  ${u.email} / <seed-password>`));
+}
+
+main()
+  .catch((error) => {
+    console.error(error);
+    process.exitCode = 1;
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });
