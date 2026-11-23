@@ -1,3 +1,4 @@
+import type { MembershipRole } from "@/lib/rbac"
 import NextAuth from "next-auth"
 import GitHubProvider from "next-auth/providers/github"
 import GoogleProvider from "next-auth/providers/google"
@@ -6,7 +7,7 @@ import CredentialsProvider from "next-auth/providers/credentials"
 import { prisma } from "@/lib/prisma"
 import { MEMBERSHIP_ROLES, MEMBERSHIP_ROLE_PERMISSIONS } from "@/lib/rbac"
 
-import type { NextAuthConfig } from "next/auth"
+import type { AuthOptions } from "next-auth"
 
 async function getUserByCredentials(email: string) {
   const user = await prisma.user.findUnique({ where: { email } })
@@ -18,7 +19,7 @@ async function getUserByCredentials(email: string) {
 
   if (!membership) return { user, role: "EMPLOYEE" as const }
 
-  return { user, role: (membership.role as MEMBERSHIP_ROLES)[0] }
+  return { user, role: (membership.role as MembershipRole) }
 }
 
 async function getUserByMagicLink(email: string) {
@@ -29,7 +30,7 @@ async function getUserByMagicLink(email: string) {
     where: { userId: user.id },
   })
 
-  return { user, role: (membership?.role as MEMBERSHIP_ROLES)[0] || "EMPLOYEE" }
+  return { user, role: (membership?.role as MembershipRole) || "EMPLOYEE" }
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -78,15 +79,15 @@ const callbacks = {
     session.user.organizationId = token.organizationId as string | undefined
     return session
   },
-  async jwt({ user, account, profile, isNewUser }) {
+  async jwt({ user, token }) {
     if (user) {
       const role: MembershipRole | "EMPLOYEE" = (user as any).role ?? "EMPLOYEE"
       const orgId = (user as any).organizationId
       return { id: user.id, name: user.name, email: user.email, role, organizationId: orgId }
     }
-    return { id: user?.id, name: user?.name, email: user?.email, role: user?.role, organizationId: user?.organizationId }
+    return token
   },
-} satisfies NextAuth["callbacks"]
+} satisfies AuthOptions["callbacks"]
 
 // ──────────────────────────────────────────────────────────────────────
 // Providers: credentials (email/password) + optional OAuth
@@ -115,7 +116,7 @@ const providers = [
         name: user.user.name,
         email: user.user.email,
         role: user.role,
-        organizationId: user.organizationId ?? undefined,
+        organizationId: (user as { organizationId?: string }).organizationId ?? undefined,
       }
     },
   }),
@@ -130,13 +131,13 @@ const providers = [
     clientId: process.env.GOOGLE_ID ?? "",
     clientSecret: process.env.GOOGLE_SECRET ?? "",
   } as any),
-] satisfies NextAuth["providers"]
+] satisfies AuthOptions["providers"]
 
 // ──────────────────────────────────────────────────────────────────────
 // Next-auth configuration
 // ──────────────────────────────────────────────────────────────────────
 
-export const authOptions: NextAuthConfig = {
+export const authOptions: AuthOptions = {
   pages: {
     signIn: "/auth/signin",
     signOut: "/auth/signout",
@@ -144,7 +145,7 @@ export const authOptions: NextAuthConfig = {
   },
   callbacks,
   providers,
-  session: "jwt",
+  session: { strategy: 'jwt' },
   secret: process.env.AUTH_SECRET,
 }
 
@@ -154,7 +155,7 @@ export const authOptions: NextAuthConfig = {
 
 import { hasPermission, permissionIsGranted, type PermissionCode } from "@/lib/rbac"
 
-export type { MembershipRole }
+
 export { hasPermission, permissionIsGranted }
 export type { PermissionCode }
 

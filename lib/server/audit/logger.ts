@@ -1,3 +1,4 @@
+import { Prisma } from '@prisma/client'
 /** Centralized audit logging for the Franchise Management platform.
  *
  * Logs all create, update, delete, login, invite, and export actions with
@@ -26,7 +27,7 @@ export async function logAction(params: {
       action: params.action,
       entity: params.entity,
       entityId: params.entityId,
-      changes: params.changes ?? null,
+      changes: params.changes === null ? Prisma.DbNull : (params.changes as Prisma.InputJsonValue),
       ipAddress: params.ipAddress,
       userAgent: params.userAgent,
     },

@@ -1,4 +1,4 @@
-import { Card } from '@/components/ui/Card'
+import { Card } from '@/components/ui/card'
 import { PageHeader } from '@/components/layout/PageHeader'
 import { Section } from '@/components/layout/Section'
 import { FormattedDate } from '@/components/common/FormattedDate'
@@ -10,7 +10,7 @@ export function FranchiseDetail({ franchise }: { franchise: FranchiseView }) {
     <div className="space-y-6">
       <PageHeader
         title={franchise.name}
-        description={franchise.legalName}
+        description={franchise.legalName ?? undefined}
         actions={<FranchiseStatusBadge status={franchise.status} />}
       />
 

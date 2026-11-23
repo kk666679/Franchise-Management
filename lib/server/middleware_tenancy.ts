@@ -1,3 +1,4 @@
+import type { MembershipRole } from "@/lib/rbac"
 /** Tenancy middleware for organization-scoped server components and API routes.
  *
  * Provides helpers to extract the current organization context from session
@@ -11,7 +12,7 @@ import { prisma } from "@/lib/prisma"
 
 /** Extract organization context from the current session. */
 export async function getOrganizationContext(): Promise<AuthorizationContext | null> {
-  const session = await getServerSession(authOptions)
+  const session = (await getServerSession(authOptions)) as { user?: { id: string; organizationId?: string; role?: import("@/lib/rbac").MembershipRole } } | null
 
   if (!session?.user) return null
 

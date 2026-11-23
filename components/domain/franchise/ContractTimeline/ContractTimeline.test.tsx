@@ -16,13 +16,13 @@ it('renders events', () => {
       ]}
     />,
   )
-  expect(screen.getByText(/draft/i)).toBeInTheDocument()
-  expect(screen.getByText(/alice@example.com/)).toBeInTheDocument()
+  expect(screen.getByText(/draft/i)).toBeTruthy()
+  expect(screen.getByText(/alice@example.com/)).toBeTruthy()
 })
 
 it('renders empty state', () => {
   render(<ContractTimeline events={[]} />)
-  expect(screen.getByText(/no events recorded/i)).toBeInTheDocument()
+  expect(screen.getByText(/no events recorded/i)).toBeTruthy()
 })
 
 it('has no a11y violations', async () => {

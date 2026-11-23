@@ -16,10 +16,10 @@ const franchise: FranchiseView = {
 
 it('renders all fields', () => {
   render(<FranchiseDetail franchise={franchise} />)
-  expect(screen.getByRole('heading', { name: 'Acme North' })).toBeInTheDocument()
-  expect(screen.getByText('Acme Inc')).toBeInTheDocument()
-  expect(screen.getByText('North Region')).toBeInTheDocument()
-  expect(screen.getByText('3')).toBeInTheDocument()
+  expect(screen.getByRole('heading', { name: 'Acme North' })).toBeTruthy()
+  expect(screen.getByText('Acme Inc')).toBeTruthy()
+  expect(screen.getByText('North Region')).toBeTruthy()
+  expect(screen.getByText('3')).toBeTruthy()
 })
 
 it('has no a11y violations', async () => {

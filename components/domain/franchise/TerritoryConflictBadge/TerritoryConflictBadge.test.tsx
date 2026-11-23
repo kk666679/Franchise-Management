@@ -4,7 +4,7 @@ import { TerritoryConflictBadge } from './TerritoryConflictBadge'
 
 it('renders conflict label and aria-label', () => {
   render(<TerritoryConflictBadge />)
-  expect(screen.getByLabelText(/territory conflict/i)).toBeInTheDocument()
+  expect(screen.getByLabelText(/territory conflict/i)).toBeTruthy()
 })
 
 it('has no a11y violations', async () => {

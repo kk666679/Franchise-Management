@@ -1,3 +1,4 @@
+import { vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { axe } from 'jest-axe'
@@ -9,8 +10,8 @@ vi.mock('@/components/auth/PermissionGate', () => ({
 
 it('shows available transitions for status', () => {
   render(<ContractTransitionActions contractId="c1" status="draft" onTransition={vi.fn()} />)
-  expect(screen.getByRole('button', { name: /submit for approval/i })).toBeInTheDocument()
-  expect(screen.queryByRole('button', { name: /terminate/i })).not.toBeInTheDocument()
+  expect(screen.getByRole('button', { name: /submit for approval/i })).toBeTruthy()
+  expect(screen.queryByRole('button', { name: /terminate/i })).not.toBeTruthy()
 })
 
 it('calls onTransition', async () => {

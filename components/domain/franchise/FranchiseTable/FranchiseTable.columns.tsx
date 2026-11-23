@@ -7,7 +7,7 @@ import { FormattedDate } from '@/components/common/FormattedDate'
 import { FranchiseStatusBadge } from '../FranchiseStatusBadge'
 import type { FranchiseView } from '../mappers'
 
-export const franchiseColumns: ColumnDef<FranchiseView>[] = [
+export const franchiseColumns: ColumnDef<any, FranchiseView>[] = [
   {
     accessorKey: 'name',
     header: ({ column }) => <DataTableColumnHeader column={column} title="Franchise" />,

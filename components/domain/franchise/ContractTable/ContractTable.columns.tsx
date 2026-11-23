@@ -7,7 +7,7 @@ import { FormattedDate } from '@/components/common/FormattedDate'
 import { ContractLifecycleBadge } from '../ContractLifecycleBadge'
 import type { ContractView } from '../mappers'
 
-export const contractColumns: ColumnDef<ContractView>[] = [
+export const contractColumns: ColumnDef<any, ContractView>[] = [
   {
     accessorKey: 'franchiseName',
     header: ({ column }) => <DataTableColumnHeader column={column} title="Franchise" />,

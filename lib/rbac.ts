@@ -456,3 +456,11 @@ export function permissionsForMembershipRole(
 ): ReadonlySet<PermissionCode> {
   return new Set(MEMBERSHIP_ROLE_PERMISSIONS[role])
 }
+
+export function hasPermission(
+  granted: ReadonlySet<PermissionCode> | readonly PermissionCode[] | { has(k: PermissionCode): boolean },
+  required: PermissionCode,
+): boolean {
+  if ('has' in granted) return granted.has(required)
+  return (granted as readonly PermissionCode[]).includes(required)
+}

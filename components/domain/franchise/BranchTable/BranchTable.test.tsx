@@ -18,8 +18,8 @@ it('renders branch rows', () => {
       ]}
     />,
   )
-  expect(screen.getByText('Downtown')).toBeInTheDocument()
-  expect(screen.getByText('Springfield, IL')).toBeInTheDocument()
+  expect(screen.getByText('Downtown')).toBeTruthy()
+  expect(screen.getByText('Springfield, IL')).toBeTruthy()
 })
 
 it('has no a11y violations', async () => {

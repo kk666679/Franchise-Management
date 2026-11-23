@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Form, FormField, FormActions, SubmitButton } from '@/components/form'
-import { Input } from '@/components/ui/Input'
+import { Input } from '@/components/ui/input'
 
 const schema = z.object({
   name: z.string().min(1).max(120),

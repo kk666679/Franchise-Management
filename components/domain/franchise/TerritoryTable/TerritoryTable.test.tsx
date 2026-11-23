@@ -10,7 +10,7 @@ it('shows conflict badge', () => {
       ]}
     />,
   )
-  expect(screen.getByText(/conflict/i)).toBeInTheDocument()
+  expect(screen.getByText(/conflict/i)).toBeTruthy()
 })
 
 it('has no a11y violations', async () => {

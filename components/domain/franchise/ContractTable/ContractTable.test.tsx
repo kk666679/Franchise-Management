@@ -17,8 +17,8 @@ it('renders contract rows', () => {
       ]}
     />,
   )
-  expect(screen.getByText('Acme North')).toBeInTheDocument()
-  expect(screen.getByText('5%')).toBeInTheDocument()
+  expect(screen.getByText('Acme North')).toBeTruthy()
+  expect(screen.getByText('5%')).toBeTruthy()
 })
 
 it('has no a11y violations', async () => {

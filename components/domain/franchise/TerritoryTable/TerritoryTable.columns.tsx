@@ -5,7 +5,7 @@ import { DataTableColumnHeader } from '@/components/data/DataTableColumnHeader'
 import { TerritoryConflictBadge } from '../TerritoryConflictBadge'
 import type { TerritoryView } from '../mappers'
 
-export const territoryColumns: ColumnDef<TerritoryView>[] = [
+export const territoryColumns: ColumnDef<any, TerritoryView>[] = [
   {
     accessorKey: 'name',
     header: ({ column }) => <DataTableColumnHeader column={column} title="Territory" />,

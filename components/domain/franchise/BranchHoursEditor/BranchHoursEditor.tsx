@@ -1,8 +1,8 @@
 'use client'
 
-import { Input } from '@/components/ui/Input'
-import { Checkbox } from '@/components/ui/Checkbox'
-import { Label } from '@/components/ui/Label'
+import { Input } from '@/components/ui/input'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Label } from '@/components/ui/label'
 import type { DaySchedule, WeekSchedule } from './BranchHoursEditor.types'
 
 const DAYS: { key: keyof WeekSchedule; label: string }[] = [

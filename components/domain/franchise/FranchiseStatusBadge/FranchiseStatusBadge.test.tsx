@@ -6,7 +6,7 @@ it.each(['draft', 'active', 'suspended', 'terminated'] as const)(
   'renders label and aria-label for %s',
   (status) => {
     render(<FranchiseStatusBadge status={status} />)
-    expect(screen.getByLabelText(/Franchise status:/i)).toBeInTheDocument()
+    expect(screen.getByLabelText(/Franchise status:/i)).toBeTruthy()
   },
 )
 

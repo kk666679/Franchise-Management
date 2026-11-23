@@ -18,14 +18,14 @@ const rows: FranchiseView[] = [
 
 it('renders franchise rows', () => {
   render(<FranchiseTable data={rows} />)
-  expect(screen.getByText('Acme North')).toBeInTheDocument()
-  expect(screen.getByText('Acme Inc')).toBeInTheDocument()
-  expect(screen.getByText('3')).toBeInTheDocument()
+  expect(screen.getByText('Acme North')).toBeTruthy()
+  expect(screen.getByText('Acme Inc')).toBeTruthy()
+  expect(screen.getByText('3')).toBeTruthy()
 })
 
 it('renders empty state when no data', () => {
   render(<FranchiseTable data={[]} />)
-  expect(screen.getByText(/no franchises yet/i)).toBeInTheDocument()
+  expect(screen.getByText(/no franchises yet/i)).toBeTruthy()
 })
 
 it('has no a11y violations', async () => {

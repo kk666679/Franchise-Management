@@ -2,10 +2,10 @@
 
 import { useTransition } from 'react'
 import { Form, FormField, FormSection, FormActions, SubmitButton } from '@/components/form'
-import { Input } from '@/components/ui/Input'
-import { Switch } from '@/components/ui/Switch'
-import { Button } from '@/components/ui/Button'
-import { Select } from '@/components/ui/Select'
+import { Input } from '@/components/ui/input'
+import { Switch } from '@/components/ui/switch'
+import { Button } from '@/components/ui/button'
+import { Select } from '@/components/form'
 import { branchFormSchema, type BranchFormValues } from './BranchForm.schema'
 
 export function BranchForm({

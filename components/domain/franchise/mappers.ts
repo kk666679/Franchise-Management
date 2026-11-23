@@ -9,7 +9,7 @@ import type {
 export type FranchiseView = {
   id: string
   name: string
-  legalName: string
+  legalName: string | null
   status: FranchiseDTO['status']
   organizationName: string
   territoryName: string | null

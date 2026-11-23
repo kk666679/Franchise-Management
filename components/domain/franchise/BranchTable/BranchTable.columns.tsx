@@ -3,10 +3,10 @@
 import Link from 'next/link'
 import type { ColumnDef } from '@tanstack/react-table'
 import { DataTableColumnHeader } from '@/components/data/DataTableColumnHeader'
-import { Badge } from '@/components/ui/Badge'
+import { Badge } from '@/components/ui/badge'
 import type { BranchView } from '../mappers'
 
-export const branchColumns: ColumnDef<BranchView>[] = [
+export const branchColumns: ColumnDef<any, BranchView>[] = [
   {
     accessorKey: 'name',
     header: ({ column }) => <DataTableColumnHeader column={column} title="Branch" />,

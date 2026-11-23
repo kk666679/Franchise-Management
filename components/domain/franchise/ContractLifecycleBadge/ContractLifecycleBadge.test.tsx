@@ -10,7 +10,7 @@ it.each([
   'terminated',
 ] as const)('renders %s', (s) => {
   render(<ContractLifecycleBadge status={s} />)
-  expect(screen.getByLabelText(/contract status:/i)).toBeInTheDocument()
+  expect(screen.getByLabelText(/contract status:/i)).toBeTruthy()
 })
 
 it('has no a11y violations', async () => {
