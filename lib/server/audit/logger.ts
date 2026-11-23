@@ -26,7 +26,7 @@ export async function logAction(params: {
       action: params.action,
       entity: params.entity,
       entityId: params.entityId,
-      changes: params.changes ?? null,
+      changes: (params.changes ?? null) as any,
       ipAddress: params.ipAddress,
       userAgent: params.userAgent,
     },

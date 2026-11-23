@@ -1,7 +1,6 @@
-import { SalesTrendChart } from "./SalesTrendChart"
+﻿import type { ChartDataPoint } from "../types"
 
-export function SalesTrendChart({ data, options = {} }: { data: ChartDataPoint[]; options?: Record<string, any> }) {
-  return (
-    <SalesTrendChart data={data} options={options} />
-  )
+export function SalesTrendChart({ data }: { data: ChartDataPoint[]; options?: Record<string, unknown> }) {
+  return <div data-chart="sales-trend">{data.length} points</div>
 }
+

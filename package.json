@@ -23,7 +23,9 @@
     "prisma:migrate:deploy": "prisma7 migrate deploy",
     "prisma:studio": "prisma7 studio",
     "prisma:validate": "prisma7 validate",
-    "db:seed": "prisma7 db seed"
+    "db:seed": "prisma7 db seed",
+    "inventory:audit": "tsx scripts/inventory-audit.ts",
+    "check": "pnpm lint && pnpm typecheck && pnpm test && pnpm inventory:audit"
   },
   "dependencies": {
     "@hookform/resolvers": "7.0.8",
@@ -75,6 +77,8 @@
     "zod": "4.6.7"
   },
   "devDependencies": {
+    "@eslint/compat": "^2.1.1",
+    "@next/eslint-plugin-next": "16.4.6",
     "@prisma/prisma7": "^7.10.1",
     "@tailwindcss/postcss": "4.3.5",
     "@testing-library/jest-dom": "^8.0.0",
@@ -86,6 +90,14 @@
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
     "@vitejs/plugin-react": "^6.3.0",
+    "eslint-config-next": "16.4.6",
+    "eslint-import-resolver-node": "^0.3.10",
+    "eslint-import-resolver-typescript": "^3.10.1",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "globals": "16.4.0",
     "jest-axe": "^11.0.0",
     "jsdom": "^31.0.1",
     "prettier": "3.10.1",

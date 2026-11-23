@@ -1,9 +1,11 @@
-import { ErrorState } from "./types"
+export interface ChartEmptyStateProps {
+  message?: string
+}
 
 export function ChartEmptyState({ message }: ChartEmptyStateProps) {
   return (
-    <div className="bg-gray-100 border border-gray-300 rounded p-4 text-center text-sm">
-      {message ? `<p className="text-red-600">${message}</p>` : "No chart data to display"}
+    <div className="rounded border border-gray-300 bg-gray-100 p-4 text-center text-sm text-gray-500">
+      {message ?? "No chart data to display"}
     </div>
   )
 }

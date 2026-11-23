@@ -1,5 +1,5 @@
-export { OrderVolumeChart } from './operational/OrderVolumeChart'
-export { InventoryMovementChart } from './operational/InventoryMovementChart'
-export { BranchPerformanceChart } from './operational/BranchPerformanceChart'
-export { StaffPerformanceChart } from './operational/StaffPerformanceChart'
-export { CustomerGrowthChart } from './operational/CustomerGrowthChart'
+﻿export { OrderVolumeChart } from "./OrderVolumeChart"
+export { InventoryMovementChart } from "./InventoryMovementChart"
+export { BranchPerformanceChart } from "./BranchPerformanceChart"
+export { StaffPerformanceChart } from "./StaffPerformanceChart"
+export { CustomerGrowthChart } from "./CustomerGrowthChart"

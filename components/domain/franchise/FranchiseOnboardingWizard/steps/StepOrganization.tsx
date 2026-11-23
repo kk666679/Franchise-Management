@@ -25,7 +25,7 @@ export function StepOrganization({
     defaultValues: value ?? { name: '', legalName: '', taxId: '' },
   })
   return (
-    <Form {...form} schema={schema} onSubmit={onNext}>
+    <Form methods={form} onSubmit={onNext}>
       <FormField name="name" label="Organization name">
         <Input />
       </FormField>

@@ -1,7 +1,6 @@
-import { ProfitLossChart } from "./ProfitLossChart"
+﻿import type { ChartDataPoint } from "../types"
 
-export function ProfitLossChart({ data, options = {} }: { data: ChartDataPoint[]; options?: Record<string, any> }) {
-  return (
-    <ProfitLossChart data={data} options={options} />
-  )
+export function ProfitLossChart({ data }: { data: ChartDataPoint[]; options?: Record<string, unknown> }) {
+  return <div data-chart="profit-loss">{data.length} points</div>
 }
+

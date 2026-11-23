@@ -1,4 +1,4 @@
-import { ChartConfig } from "./types"
+import type { ChartConfig } from "./types"
 
 export const defaultChartConfig: ChartConfig = {
   title: "Franchise Dashboard",

@@ -1,10 +1,10 @@
 import { describe, it, expect } from "vitest"
-import { RevenueChart } from "./financial/RevenueChart"
-import { ProfitLossChart } from "./financial/ProfitLossChart"
-import { CashFlowChart } from "./financial/CashFlowChart"
-import { SalesTrendChart } from "./financial/SalesTrendChart"
-import { ExpenseBreakdownChart } from "./financial/ExpenseBreakdownChart"
-import { RevenueComparisonChart } from "./financial/RevenueComparisonChart"
+import { RevenueChart } from "@/components/charts/financial/RevenueChart"
+import { ProfitLossChart } from "@/components/charts/financial/ProfitLossChart"
+import { CashFlowChart } from "@/components/charts/financial/CashFlowChart"
+import { SalesTrendChart } from "@/components/charts/financial/SalesTrendChart"
+import { ExpenseBreakdownChart } from "@/components/charts/financial/ExpenseBreakdownChart"
+import { RevenueComparisonChart } from "@/components/charts/financial/RevenueComparisonChart"
 
 describe("Charts", () => {
   it("exports charts", () => {

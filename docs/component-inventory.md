@@ -1,0 +1,40 @@
+﻿# Component Inventory
+
+Machine-auditable inventory for `components/**`. Update in the same PR as component changes.
+
+Status: `planned | scaffold | implemented | tested | stable | deprecated | moved`
+
+| name | path | category | owner | server_client | status | dependencies | consumers | tests | a11y | notes |
+|---|---|---|---|---|---|---|---|---|---|---|
+| AppProviders | `components/providers/AppProviders.tsx` | providers | platform-ui | client | planned | theme/query/session/toast providers | `app/layout.tsx` | no | n/a | Canonical root provider mount (T06). |
+| ThemeProvider (legacy root) | `components/theme-provider.tsx` | providers-legacy | platform-ui | client | implemented | `next-themes` | `app/layout.tsx` | no | n/a | Compat path; migrate to `components/providers/ThemeProvider.tsx`. |
+| ThemeToggle (legacy root) | `components/theme-toggle.tsx` | shell-legacy | platform-ui | client | implemented | `next-themes`, `ui/button` | layout/header | no | partial | Move to `components/shell/ThemeToggle.tsx`. |
+| UI primitives | `components/ui` | ui | design-system | mixed | implemented | radix/shadcn/tokens | app/components | partial | partial | Missing spec-named primitives/aliases tracked in T07. |
+| Layout primitives | `components/layout` | layout | design-system | mixed | implemented | ui | app/shell | partial | partial | Missing Stack/Grid/Container/SplitPane/Content/TwoColumn; app-shell belongs in shell. |
+| Feedback primitives | `components/feedback` | feedback | design-system | mixed | implemented | ui | app/domain | partial | partial | Duplicate empty-state naming; missing ConfirmDialog/InlineError/AsyncBoundary/LoadingState. |
+| Form primitives | `components/form` | form | design-system | client | implemented | react-hook-form,zod,ui | domain forms | partial | partial | Missing FormItem/Control/Message/useZodForm typed contract. |
+| Data table | `components/data/DataTable.tsx` | data | design-system | client | implemented | feedback | domain tables | partial | partial | Simple client table; TanStack v9 contract pending (T12). |
+| Data table legacy | `components/ui/data-table.tsx` | data-legacy | design-system | client | deprecated | ui/input | unknown | no | partial | Parallel DataTableSimple contract; deprecate/migrate. |
+| Charts | `components/charts` | chart-legacy | data-viz | mixed | implemented | recharts,ui | dashboard/domain | partial | partial | Canonical target `components/chart/`; index/export/test hygiene needed. |
+| Dashboard widgets (legacy) | `components/dashboard/widgets/index.tsx` | widgets-legacy | dashboard | mixed | implemented | dashboard data,ui | dashboard | partial | partial | Move to `components/widgets/*` and registry `lib/widgets/registry.ts`. |
+| Shell (legacy) | `components/layout/app-shell.tsx` | shell-legacy | platform-ui | client | implemented | ui,branding | dashboard layouts | no | partial | Move to `components/shell/AppShell.tsx`. |
+| Auth PermissionGate | `components/auth/PermissionGate.tsx` | auth | security-ui | client | scaffold | none (stub) | domain franchise contract actions | partial (mocked) | n/a | Stub; replace with real typed client gate/server RequirePermission (T15). |
+| Permissions UI | `components/permissions` | permissions | security-ui | mixed | implemented | lib/rbac,ui | admin/settings | partial | partial | Consolidate boundaries with auth; PermissionGuard is UI-only. |
+| Common helpers | `components/common` | common | design-system | mixed | scaffold | Intl/utils | shared/domain | partial | partial | Minimal; merge/dedupe with `components/shared/*`. |
+| Shared helpers (legacy) | `components/shared` | common-legacy | design-system | mixed | implemented | Intl/utils | app/components | partial | partial | Migrate to `components/common/*` with compat re-exports. |
+| Domain franchise | `components/domain/franchise` | domain | franchise | mixed | scaffold | form,data,feedback,domain mappers | franchise flows | yes (tests present) | partial | Wired readiness; 16 exports/subdirs present; stable criteria pending. |
+| Domain finance | `components/domain/finance` | domain | finance | mixed | scaffold | form,data,feedback | finance flows | yes | partial | Wired readiness; 8 exports present. |
+| Domain pos | `components/domain/pos` | domain | pos | mixed | scaffold | ui,data,feedback | pos flows | yes | partial | Wired readiness; 8 exports present. |
+| Domain documents | `components/domain/documents` | domain | documents | mixed | scaffold | ui,data,feedback | document flows | yes | partial | Wired readiness; 5 exports present. |
+| Domain audit | `components/domain/audit` | domain | audit | mixed | scaffold | data,feedback | audit flows | yes | partial | Wired readiness; 3 exports present. |
+| Domain inventory | `components/domain/inventory` | domain | inventory | mixed | scaffold | data,form,feedback | inventory flows | yes | partial | UI scaffold; blocked on Phase 9 schema. |
+| Domain hr | `components/domain/hr` | domain | hr | mixed | scaffold | data,form,feedback | hr flows | yes | partial | UI scaffold; blocked on Phase 9 schema. |
+| Domain compliance | `components/domain/compliance` | domain | compliance | mixed | scaffold | data,form,feedback | compliance flows | yes | partial | UI scaffold; blocked on Phase 9 schema. |
+| Domain notifications | `components/domain/notifications` | domain | notifications | mixed | scaffold | ui,feedback | notification flows | yes | partial | UI scaffold; blocked on Phase 9 schema. |
+| Domain workflows | `components/domain/workflows` | domain | workflows | mixed | scaffold | data,feedback | workflow flows | yes | partial | UI scaffold; blocked on Phase 9 schema. |
+| Domain reporting | `components/domain/reporting` | domain | reporting | mixed | scaffold | data,feedback | reporting flows | yes | partial | UI scaffold; blocked on Phase 9 schema. |
+| AI Elements (vendor) | `components/ai-elements` | vendor | platform-ui | client | implemented | ai-sdk,streamdown,ui | ai features | no | unknown | Vendor/generated surface; excluded from some lint rules. |
+| Branding | `components/branding` | shared-ui | platform-ui | mixed | implemented | ui/assets | shell/auth | no | partial | Branding assets/components. |
+| POS legacy | `components/pos` | domain-legacy | pos | mixed | implemented | ui/domain pos | pos routes | partial | partial | Legacy location; consolidate with domain/pos. |
+| Shell scaffold | `components/shell` | shell | platform-ui | mixed | scaffold | layout,ui | app layouts | no | partial | Canonical shell target; currently compat/re-exports. |
+| Widgets scaffold | `components/widgets` | widgets | dashboard | mixed | scaffold | ui,dashboard widgets | dashboard | no | partial | Canonical widgets target; currently compat/re-exports. |

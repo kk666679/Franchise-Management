@@ -1,7 +1,7 @@
 import { Geist, Geist_Mono, Inter } from "next/font/google"
 
 import "./globals.css"
-import { ThemeProvider } from "@/components/theme-provider"
+import { AppProviders } from "@/components/providers"
 import { cn } from "@/lib/utils";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
@@ -23,7 +23,7 @@ export default function RootLayout({
       className={cn("antialiased", fontMono.variable, inter.variable)}
     >
       <body>
-        <ThemeProvider>{children}</ThemeProvider>
+        <AppProviders>{children}</AppProviders>
       </body>
     </html>
   )

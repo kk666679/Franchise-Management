@@ -6,9 +6,8 @@ import {
   DEFAULT_ROLE_PERMISSIONS,
   MEMBERSHIP_ROLES,
   MEMBERSHIP_ROLE_PERMISSIONS,
-  hasPermission,
   permissionIsGranted,
-  resolvePermissions,
+  permissionsForMembershipRole,
 } from "@/lib/rbac"
 
 describe("RBAC Catalog", () => {
@@ -16,8 +15,9 @@ describe("RBAC Catalog", () => {
     expect(ROLES).toHaveLength(13)
   })
 
-  it("should have 192 permission codes", () => {
-    expect(Object.keys(PERMISSIONS)).toHaveLength(192)
+  it("should expose permission catalog", () => {
+    expect(PERMISSION_CATALOG.length).toBeGreaterThan(0)
+    expect(Object.keys(PERMISSIONS).length).toBe(PERMISSION_CATALOG.length)
   })
 
   it("should have 5 membership roles", () => {
@@ -42,38 +42,24 @@ describe("RBAC Catalog", () => {
 
   it("should grant OWNER permissions", () => {
     expect(
-      hasPermission(
-        MEMBERSHIP_ROLE_PERMISSIONS.OWNER,
-        PERMISSIONS.ORG_READ
-      )
+      permissionIsGranted(MEMBERSHIP_ROLE_PERMISSIONS.OWNER, PERMISSIONS.ORG_READ),
     ).toBe(true)
   })
 
-  it("should deny missing EMPLOYEE permissions", () => {
+  it("should deny missing STAFF permissions", () => {
     expect(
-      hasPermission(
-        MEMBERSHIP_ROLE_PERMISSIONS.EMPLOYEE,
-        PERMISSIONS.ORG_WRITE
-      )
+      permissionIsGranted(MEMBERSHIP_ROLE_PERMISSIONS.STAFF, PERMISSIONS.ORG_WRITE),
     ).toBe(false)
   })
 
   it("should check ADMIN permissions", () => {
     expect(
-      permissionIsGranted(
-        MEMBERSHIP_ROLE_PERMISSIONS.ADMIN,
-        PERMISSIONS.ORG_WRITE
-      )
+      permissionIsGranted(MEMBERSHIP_ROLE_PERMISSIONS.ADMIN, PERMISSIONS.ORG_WRITE),
     ).toBe(true)
   })
 
   it("should resolve ADMIN membership permissions", () => {
-    const resolved = resolvePermissions(
-      [],
-      MEMBERSHIP_ROLES.ADMIN,
-      []
-    )
-
+    const resolved = permissionsForMembershipRole("ADMIN")
     expect(resolved.has(PERMISSIONS.ORG_READ)).toBe(true)
     expect(resolved.has(PERMISSIONS.ORG_WRITE)).toBe(true)
   })

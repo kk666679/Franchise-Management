@@ -1,5 +1,6 @@
 import { render } from "@testing-library/react"
-import { ChartContainer } from "./core/ChartContainer"
+import { describe, it, expect } from "vitest"
+import { ChartContainer } from "@/components/charts/core/ChartContainer"
 
 describe("ChartContainer", () => {
   it("renders children", () => {

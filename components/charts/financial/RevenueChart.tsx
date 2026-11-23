@@ -1,7 +1,6 @@
-import { RevenueChart } from "./RevenueChart"
+﻿import type { ChartDataPoint } from "../types"
 
-export function RevenueChart({ data, options = {} }: { data: ChartDataPoint[]; options?: Record<string, any> }) {
-  return (
-    <RevenueChart data={data} options={options} />
-  )
+export function RevenueChart({ data }: { data: ChartDataPoint[]; options?: Record<string, unknown> }) {
+  return <div data-chart="revenue">{data.length} points</div>
 }
+

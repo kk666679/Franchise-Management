@@ -1,19 +1,12 @@
-import { ExportOption } from "./types"
+export interface ChartExportProps {
+  filename?: string
+  format?: "png" | "svg" | "csv"
+}
 
-export function ChartExport({ filename, format }: ChartExportProps) {
-  const formats: Record<string, string> = { png: "png", svg: "svg", csv: "csv" }
-  const ext = format === "png" ? ".png" : format === "svg" ? ".svg" : ".csv"
+export function ChartExport({ filename = "chart", format = "png" }: ChartExportProps) {
   return (
-    <div className="w-full max-w-md border-2 border-dashed rounded shadow-sm">
-      <label className="block text-sm font-medium mb-2">Export</label>
-      <select value={filename} onChange={(e) => {}}>
-        <option value="">-- Select --</option>
-      </select>
-      <select value={format} onChange={(e) => {}}>
-        <option value="png">PNG</option>
-        <option value="svg">SVG</option>
-        <option value="csv">CSV</option>
-      </select>
+    <div className="w-full max-w-md rounded border-2 border-dashed p-2 shadow-sm">
+      <span className="block text-sm font-medium">Export: {filename}.{format}</span>
     </div>
   )
 }

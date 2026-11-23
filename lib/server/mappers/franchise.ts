@@ -19,6 +19,7 @@ export async function toFranchiseDTO(
     where: { id },
     select: {
       id: true,
+      organizationId: true,
       legalName: true,
       tradingName: true,
       status: true,
@@ -36,7 +37,7 @@ export async function toFranchiseDTO(
     name: record.legalName,
     legalName: record.legalName,
     status: record.status,
-    organization: { name: record.brand.name },
+    organization: { name: record.brand?.name ?? "" },
     territory: record.brand ? { name: record.brand.name } : null,
     _count: { branches: record.locations.length },
     createdAt: record.createdAt,
@@ -54,6 +55,7 @@ export async function toBranchDTO(
     where: { id },
     select: {
       id: true,
+      organizationId: true,
       name: true,
       addressLine1: true,
       city: true,
@@ -90,6 +92,7 @@ export async function toTerritoryDTO(
     where: { id },
     select: {
       id: true,
+      organizationId: true,
       name: true,
       status: true,
       franchisees: { select: { id: true } },
@@ -119,6 +122,7 @@ export async function toContractDTO(
     where: { id },
     select: {
       id: true,
+      organizationId: true,
       agreementNo: true,
       status: true,
       startDate: true,
@@ -166,7 +170,7 @@ export async function listFranchiseDTOs(
     name: r.legalName,
     legalName: r.legalName,
     status: r.status,
-    organization: { name: r.brand.name },
+    organization: { name: r.brand?.name ?? "" },
     territory: r.brand ? { name: r.brand.name } : null,
     _count: { branches: r.locations.length },
     createdAt: r.createdAt,

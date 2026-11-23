@@ -5,7 +5,84 @@ import { cn } from "cn"
 import { Select as SelectPrimitive } from "radix-ui"
 import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from "lucide-react"
 
-function Select(props: React.ComponentProps<typeof SelectPrimitive.Root>) {
+type SelectOption = { value: string; label: string; disabled?: boolean }
+
+type ConvenienceSelectProps = {
+  options: SelectOption[]
+  placeholder?: string
+  allowClear?: boolean
+  value?: string | null
+  defaultValue?: string
+  onValueChange?: (value: string) => void
+  onChange?: (value: string | null) => void
+  onBlur?: () => void
+  disabled?: boolean
+  name?: string
+  id?: string
+  "aria-invalid"?: boolean
+  className?: string
+}
+
+function isConvenienceProps(
+  props: React.ComponentProps<typeof SelectPrimitive.Root> | ConvenienceSelectProps,
+): props is ConvenienceSelectProps {
+  return Array.isArray((props as ConvenienceSelectProps).options)
+}
+
+function Select(props: React.ComponentProps<typeof SelectPrimitive.Root> | ConvenienceSelectProps) {
+  if (isConvenienceProps(props)) {
+    const {
+      options,
+      placeholder,
+      allowClear,
+      value,
+      defaultValue,
+      onValueChange,
+      onChange,
+      onBlur,
+      disabled,
+      name,
+      id,
+      className,
+      "aria-invalid": ariaInvalid,
+    } = props
+
+    const currentValue = value ?? undefined
+
+    return (
+      <SelectPrimitive.Root
+        data-slot="select"
+        value={currentValue === null ? "" : currentValue}
+        defaultValue={defaultValue}
+        disabled={disabled}
+        name={name}
+        onValueChange={(next) => {
+          if (allowClear && next === "__clear__") {
+            onValueChange?.("")
+            onChange?.(null)
+            return
+          }
+          onValueChange?.(next)
+          onChange?.(next)
+        }}
+      >
+        <SelectTrigger id={id} aria-invalid={ariaInvalid} className={className} onBlur={onBlur}>
+          <SelectValue placeholder={placeholder} />
+        </SelectTrigger>
+        <SelectContent>
+          {allowClear ? (
+            <SelectItem value="__clear__">{placeholder ?? "None"}</SelectItem>
+          ) : null}
+          {options.map((option) => (
+            <SelectItem key={option.value} value={option.value} disabled={option.disabled}>
+              {option.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </SelectPrimitive.Root>
+    )
+  }
+
   return <SelectPrimitive.Root data-slot="select" {...props} />
 }
 

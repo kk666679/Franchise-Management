@@ -1,52 +1,26 @@
-import NextAuth from "next-auth"
+import type { NextAuthOptions, Session, User } from "next-auth"
+import type { JWT } from "next-auth/jwt"
 import GitHubProvider from "next-auth/providers/github"
 import GoogleProvider from "next-auth/providers/google"
 import CredentialsProvider from "next-auth/providers/credentials"
 
 import { prisma } from "@/lib/prisma"
-import { MEMBERSHIP_ROLES, MEMBERSHIP_ROLE_PERMISSIONS } from "@/lib/rbac"
+import { permissionIsGranted, type MembershipRole, type PermissionCode } from "@/lib/rbac"
+import { hasPermission } from "@/lib/server/auth/authorization"
 
-import type { NextAuthConfig } from "next/auth"
-
-async function getUserByCredentials(email: string) {
-  const user = await prisma.user.findUnique({ where: { email } })
-  if (!user) return null
-
-  const membership = await prisma.membership.findFirst({
-    where: { userId: user.id },
-  })
-
-  if (!membership) return { user, role: "EMPLOYEE" as const }
-
-  return { user, role: (membership.role as MEMBERSHIP_ROLES)[0] }
+type SessionUser = {
+  id: string
+  name: string | null
+  email: string | null
+  role: MembershipRole | "EMPLOYEE"
+  organizationId?: string
 }
-
-async function getUserByMagicLink(email: string) {
-  const user = await prisma.user.findUnique({ where: { email } })
-  if (!user) return null
-
-  const membership = await prisma.membership.findFirst({
-    where: { userId: user.id },
-  })
-
-  return { user, role: (membership?.role as MEMBERSHIP_ROLES)[0] || "EMPLOYEE" }
-}
-
-// ──────────────────────────────────────────────────────────────────────
-// next-auth module augmentation — add `role` + `organizationId` to `session.user`
-// ──────────────────────────────────────────────────────────────────────
 
 declare module "next-auth" {
   interface Session {
-    user: {
-      id: string
-      name: string | null
-      email: string | null
-      role: MembershipRole | "EMPLOYEE"
-      organizationId?: string
-    }
-    expires: string
+    user: SessionUser
   }
+
   interface User {
     id: string
     name?: string | null
@@ -56,107 +30,119 @@ declare module "next-auth" {
   }
 }
 
-// ──────────────────────────────────────────────────────────────────────
-// JWT payload — carried through session refresh
-// ──────────────────────────────────────────────────────────────────────
-
-interface JWT {
-  id: string
-  name?: string
-  email?: string
-  role?: MembershipRole | "EMPLOYEE"
-  organizationId?: string
+declare module "next-auth/jwt" {
+  interface JWT {
+    id?: string
+    role?: MembershipRole | "EMPLOYEE"
+    organizationId?: string
+  }
 }
 
-// ──────────────────────────────────────────────────────────────────────
-// Callbacks: populate `session.user.role` from MembershipRole
-// ──────────────────────────────────────────────────────────────────────
+async function getUserByCredentials(email: string) {
+  const user = await prisma.user.findUnique({ where: { email } })
+  if (!user) return null
 
-const callbacks = {
-  async session({ session, token }) {
-    session.user.role = token.role as MembershipRole | "EMPLOYEE"
-    session.user.organizationId = token.organizationId as string | undefined
-    return session
-  },
-  async jwt({ user, account, profile, isNewUser }) {
-    if (user) {
-      const role: MembershipRole | "EMPLOYEE" = (user as any).role ?? "EMPLOYEE"
-      const orgId = (user as any).organizationId
-      return { id: user.id, name: user.name, email: user.email, role, organizationId: orgId }
-    }
-    return { id: user?.id, name: user?.name, email: user?.email, role: user?.role, organizationId: user?.organizationId }
-  },
-} satisfies NextAuth["callbacks"]
+  const membership = await prisma.membership.findFirst({
+    where: { userId: user.id },
+    orderBy: { createdAt: "asc" },
+  })
 
-// ──────────────────────────────────────────────────────────────────────
-// Providers: credentials (email/password) + optional OAuth
-// ──────────────────────────────────────────────────────────────────────
+  return {
+    user,
+    role: (membership?.role ?? "EMPLOYEE") as MembershipRole | "EMPLOYEE",
+    organizationId: membership?.organizationId,
+  }
+}
 
-const providers = [
-  CredentialsProvider({
-    id: "credentials",
-    name: "Credentials",
-    credentials: {
-      email: { label: "Email", type: "email", placeholder: "user@example.com" },
-      password: { label: "Password", type: "password" },
-    },
-    async authorize(credentials) {
-      const user = await getUserByCredentials(credentials!.email)
-
-      if (!user || !user.user) return null
-
-      // Placeholder password check: accept any hash starting with $2b$ (seed bcrypt format)
-      const passwordOk = user.user.passwordHash?.startsWith("$2b$")
-
-      if (!passwordOk) return null
-
-      return {
-        id: user.user.id,
-        name: user.user.name,
-        email: user.user.email,
-        role: user.role,
-        organizationId: user.organizationId ?? undefined,
-      }
-    },
-  }),
-
-  // OAuth providers (optional; can be enabled when desired)
-  GitHubProvider({
-    clientId: process.env.GITHUB_ID ?? "",
-    clientSecret: process.env.GITHUB_SECRET ?? "",
-  } as any),
-
-  GoogleProvider({
-    clientId: process.env.GOOGLE_ID ?? "",
-    clientSecret: process.env.GOOGLE_SECRET ?? "",
-  } as any),
-] satisfies NextAuth["providers"]
-
-// ──────────────────────────────────────────────────────────────────────
-// Next-auth configuration
-// ──────────────────────────────────────────────────────────────────────
-
-export const authOptions: NextAuthConfig = {
+export const authOptions: NextAuthOptions = {
   pages: {
     signIn: "/auth/signin",
     signOut: "/auth/signout",
     error: "/auth/error",
   },
-  callbacks,
-  providers,
-  session: "jwt",
+  session: {
+    strategy: "jwt",
+  },
   secret: process.env.AUTH_SECRET,
+  providers: [
+    CredentialsProvider({
+      id: "credentials",
+      name: "Credentials",
+      credentials: {
+        email: { label: "Email", type: "email", placeholder: "user@example.com" },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials) {
+        const email = credentials?.email
+        if (!email) return null
+
+        const result = await getUserByCredentials(email)
+        if (!result) return null
+
+        const passwordOk = result.user.passwordHash?.startsWith("$2b$")
+        if (!passwordOk) return null
+
+        return {
+          id: result.user.id,
+          name: result.user.name,
+          email: result.user.email,
+          role: result.role,
+          organizationId: result.organizationId,
+        }
+      },
+    }),
+    GitHubProvider({
+      clientId: process.env.GITHUB_ID ?? "",
+      clientSecret: process.env.GITHUB_SECRET ?? "",
+    }),
+    GoogleProvider({
+      clientId: process.env.GOOGLE_ID ?? "",
+      clientSecret: process.env.GOOGLE_SECRET ?? "",
+    }),
+  ],
+  callbacks: {
+    async jwt({ token, user }: { token: JWT; user?: User }) {
+      if (user) {
+        token.id = user.id
+        token.name = user.name
+        token.email = user.email
+        token.role = user.role ?? "EMPLOYEE"
+        token.organizationId = user.organizationId
+      }
+      return token
+    },
+    async session({ session, token }: { session: Session; token: JWT }) {
+      if (session.user) {
+        session.user.id = (token.id ?? token.sub ?? "") as string
+        session.user.name = (token.name ?? session.user.name ?? null) as string | null
+        session.user.email = (token.email ?? session.user.email ?? null) as string | null
+        session.user.role = (token.role ?? "EMPLOYEE") as MembershipRole | "EMPLOYEE"
+        session.user.organizationId = token.organizationId
+      }
+      return session
+    },
+  },
 }
 
-// ──────────────────────────────────────────────────────────────────────
-// Export helpful types + helpers for consumers of this module
-// ──────────────────────────────────────────────────────────────────────
+export async function getUserByMagicLink(email: string) {
+  const user = await prisma.user.findUnique({ where: { email } })
+  if (!user) return null
 
-import { permissionIsGranted, type MembershipRole, type PermissionCode } from "@/lib/rbac"
-import { hasPermission } from "@/lib/server/auth/authorization"
+  const membership = await prisma.membership.findFirst({
+    where: { userId: user.id },
+    orderBy: { createdAt: "asc" },
+  })
 
-export type { MembershipRole }
+  return {
+    id: user.id,
+    email: user.email,
+    name: user.name,
+    role: (membership?.role ?? "EMPLOYEE") as MembershipRole | "EMPLOYEE",
+    organizationId: membership?.organizationId,
+  }
+}
+
+export type { MembershipRole, PermissionCode }
 export { hasPermission, permissionIsGranted }
-export type { PermissionCode }
 
 export default authOptions

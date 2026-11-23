@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
-import getUserByMagicLink from "@/lib/server/auth/config"
+import { getUserByMagicLink } from "@/lib/server/auth/config"
 import { logLogin } from "@/lib/server/audit/logger"
 
 export async function GET(request: Request) {

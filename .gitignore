@@ -58,7 +58,6 @@ pnpm-debug.log*
 next-env.d.ts
 .autoclaw/
 .clinerules/
-.kilo/
 .merge-worktree/
 .agents/
 .agent/
@@ -68,4 +67,4 @@ next-env.d.ts
 .kilo/
 .pnpm-patch-work/
 .kilocodemodes/
-.clinerules/
+.tsupgrader/

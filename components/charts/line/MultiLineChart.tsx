@@ -1,3 +1,4 @@
+import type { ChartDataPoint } from "../../../../types"
 import { MultiLineChart, MultiSeries, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "@recharts/react"
 
 export function MultiLineChart({ data, options = {} }: { data: ChartDataPoint[]; options?: Record<string, any> }) {
@@ -16,3 +17,4 @@ export function MultiLineChart({ data, options = {} }: { data: ChartDataPoint[];
     </ResponsiveContainer>
   )
 }
+

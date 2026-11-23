@@ -1,4 +1,4 @@
-import { AuthorizationContext } from "./core/ChartHeader"
+import type { ActionConfig } from "../types"
 
 export interface ChartHeaderProps {
   title?: string
@@ -8,10 +8,16 @@ export interface ChartHeaderProps {
 
 export function ChartHeader({ title, description, actions }: ChartHeaderProps) {
   return (
-    <header className="border-b border-gray-200 mb-4 pb-2">
-      <h1 className="text-lg font-bold">{title || "Chart Header"}</h1>
-      {description && <p className="text-sm text-muted-foreground">{description}</p>}
-      {actions && <div className="mt-2 space-y-1"><button className="px-3 py-1 rounded text-sm hover:bg-accent transition">{actions.type === "none" ? "Edit" : actions.type === "delete" ? "Delete" : "Action"}</button></div>}
+    <header className="mb-4 border-b border-gray-200 pb-2">
+      {title ? <h1 className="text-lg font-bold">{title}</h1> : null}
+      {description ? <p className="text-sm text-muted-foreground">{description}</p> : null}
+      {actions?.type && actions.type !== "none" ? (
+        <div className="mt-2">
+          <button type="button" className="rounded px-3 py-1 text-sm hover:bg-accent" onClick={actions.onClick}>
+            {actions.type}
+          </button>
+        </div>
+      ) : null}
     </header>
   )
 }

@@ -1,1 +1,2 @@
-export * from './index'
+export { useChartDimensions } from "./useChartDimensions"
+export { useChartTheme } from "./useChartTheme"

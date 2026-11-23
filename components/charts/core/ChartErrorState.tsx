@@ -1,9 +1,11 @@
-import { ErrorState } from "./types"
+export interface ChartErrorStateProps {
+  message?: string
+}
 
 export function ChartErrorState({ message }: ChartErrorStateProps) {
   return (
-    <div className="bg-red-100 border border-red-400 rounded p-4 text-red-700">
-      {message ? `<p className="text-white">${message}</p>` : "An error occurred while rendering the chart"}
+    <div className="rounded border border-red-400 bg-red-100 p-4 text-red-700">
+      {message ?? "An error occurred while rendering the chart"}
     </div>
   )
 }

@@ -22,7 +22,9 @@ export type MembershipRole =
 
 export interface ChartDataPoint {
   date?: string;
+  label?: string;
   value: number | string;
+  [key: string]: unknown;
 }
 
 export interface SeriesConfig {
@@ -43,6 +45,25 @@ export interface LegendItem {
 
 export interface ChartExportOption {
   format: "png" | "svg" | "csv";
+}
+
+export interface ActionConfig {
+  type?: "none" | "edit" | "delete";
+  onClick?: () => void;
+}
+
+export interface ChartConfig {
+  title?: string;
+  description?: string;
+  layout?: "vertical" | "horizontal";
+  position?: "top" | "right" | "bottom" | "left";
+  footer?: boolean;
+  legend?: boolean;
+  actions?: ActionConfig;
+  loading?: boolean;
+  error?: { message?: string } | null;
+  empty?: boolean;
+  export?: { png?: boolean; svg?: boolean; csv?: boolean };
 }
 
 export interface ChartHeaderProps {
