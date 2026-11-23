@@ -1,6 +1,15 @@
 import { Building2 } from "lucide-react"
-
-import { DashboardHeader } from "@/components/dashboard/dashboard-header" import { DashboardNav } from "@/components/dashboard/dashboard-nav" import { MetricCard } from "@/components/dashboard/metric-card" import { RecentApplications } from "@/components/dashboard/recent-applications" import { RevenueChart } from "@/components/dashboard/revenue-chart" import { ComplianceWidget, ApprovalsWidget, ActivityWidget, } from "@/components/dashboard/dashboard-widgets" import { AppShell } from "@/components/layout/app-shell" import { PageContainer } from "@/components/layout/page-container" import { visibleDestinations } from "@/lib/navigation" import { getDashboardData } from "@lib/server/dashboard" import { resolvePermissions } from "@lib/server/auth" import { getCurrentSession } from "@lib/server/auth/session"
+import { DashboardHeader } from "@/components/dashboard/dashboard-header"
+import { DashboardNav } from "@/components/dashboard/dashboard-nav" 
+import { MetricCard } from "@/components/dashboard/metric-card" 
+import { RecentApplications } from "@/components/dashboard/recent-applications" import { RevenueChart } from "@/components/dashboard/revenue-chart" 
+import { ComplianceWidget, ApprovalsWidget, ActivityWidget, } from "@/components/dashboard/dashboard-widgets" 
+import { AppShell } from "@/components/layout/app-shell" 
+import { PageContainer } from "@/components/layout/page-container" 
+import { visibleDestinations } from "@/lib/navigation" 
+import { getDashboardData } from "@lib/server/dashboard" 
+import { resolvePermissions } from "@lib/server/auth" 
+import { getCurrentSession } from "@lib/server/auth/session"
 
 const money = (value: number, currency: string) => new Intl.NumberFormat("en", { style: "currency", currency, maximumFractionDigits: 0, }).format(value)
 
