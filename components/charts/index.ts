@@ -1,3 +1,9 @@
-export { BarChart } from "./bar-chart"
-export type { BarChartDatum } from "./bar-chart"
-export { ChartContainer } from "./chart-container"
+export { ChartContainer } from './core/ChartContainer'
+export { LineChart } from './line/LineChart'
+export { BarChart } from './bar/BarChart'
+export { PieChart } from './pie/PieChart'
+export { ComposedChart } from './composed/ComposedChart'
+export { RevenueChart } from './financial/RevenueChart'
+export { RadarChart } from './analytics/RadarChart'
+export * from './hooks'
+export * from './__tests__/charts.test'
