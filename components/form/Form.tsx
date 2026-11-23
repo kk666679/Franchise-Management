@@ -5,25 +5,26 @@ import { FormProvider, useForm, type DefaultValues, type FieldValues, type Resol
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { ZodType } from 'zod'
 
-export function Form<T extends FieldValues>({
+export function Form({
   schema,
   defaultValues,
   onSubmit,
   children,
   className,
 }: {
-  schema: ZodType<T>
-  defaultValues: DefaultValues<T>
-  onSubmit: (values: T) => void | Promise<void>
+  schema: ZodType<any>
+  defaultValues: DefaultValues<any>
+  onSubmit: (values: any) => void | Promise<void>
   children: React.ReactNode
   className?: string
 }) {
-  const methods = useForm<T>({ resolver: zodResolver(schema) as Resolver<T>, defaultValues })
+  const methods = useForm({
+    resolver: zodResolver(schema),
+    defaultValues,
+  })
   return (
     <FormProvider {...methods}>
-      <form className={className} onSubmit={methods.handleSubmit(onSubmit)} noValidate>
-        {children}
-      </form>
+      <form className={className} onSubmit={methods.handleSubmit(onSubmit)} noValidate>{children}</form>
     </FormProvider>
   )
 }
