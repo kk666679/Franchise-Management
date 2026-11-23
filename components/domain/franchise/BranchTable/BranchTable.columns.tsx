@@ -1,39 +1,41 @@
 'use client'
 
 import Link from 'next/link'
-import type { ColumnDef } from '@tanstack/react-table'
-import { DataTableColumnHeader } from '@/components/data/DataTableColumnHeader'
-import { Badge } from '@/components/ui/Badge'
+import { Badge } from '@/components/ui/badge'
 import type { BranchView } from '../mappers'
 
-export const branchColumns: ColumnDef<BranchView>[] = [
+export const branchColumns = [
   {
     accessorKey: 'name',
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Branch" />,
-    cell: ({ row }) => (
+    header: 'Branch',
+    sortable: true,
+    cell: (row: BranchView) => (
       <Link
-        href={`/branches/${row.original.id}`}
+        href={`/branches/${row.id}`}
         className="font-medium underline-offset-4 hover:underline"
       >
-        {row.original.name}
+        {row.name}
       </Link>
     ),
   },
   {
     accessorKey: 'franchiseName',
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Franchise" />,
+    header: 'Franchise',
+    sortable: true,
   },
   {
-    id: 'location',
+    accessorKey: 'city',
     header: 'Location',
-    cell: ({ row }) => `${row.original.city}, ${row.original.region}`,
+    sortable: true,
+    cell: (row: BranchView) => `${row.city}, ${row.region}`,
   },
   {
     accessorKey: 'isActive',
     header: 'Active',
-    cell: ({ row }) => (
-      <Badge variant={row.original.isActive ? 'default' : 'outline'}>
-        {row.original.isActive ? 'Active' : 'Inactive'}
+    sortable: true,
+    cell: (row: BranchView) => (
+      <Badge variant={row.isActive ? 'default' : 'outline'}>
+        {row.isActive ? 'Active' : 'Inactive'}
       </Badge>
     ),
   },

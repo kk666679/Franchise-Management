@@ -1,4 +1,4 @@
-import { Card } from '@/components/ui/Card'
+import { Card } from '@/components/ui/card'
 import { PageHeader } from '@/components/layout/PageHeader'
 import { Section } from '@/components/layout/Section'
 import { FormattedDate } from '@/components/common/FormattedDate'

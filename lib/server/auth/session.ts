@@ -2,7 +2,8 @@ import { SignJWT, jwtVerify } from "jose"
 import { cookies } from "next/headers"
 
 import { env } from "@/lib/env"
-import type { MembershipRole } from "@/lib/rbac"
+import type { MembershipRole, PermissionCode } from "@/lib/rbac"
+import type { AuthorizationContext } from "@/lib/server/auth/authorization"
 
 /**
  * Stateless JWT session management (server-only).
@@ -91,4 +92,26 @@ export async function getCurrentSession(): Promise<SessionPayload | null> {
 
   if (!token) return null
   return verifySessionToken(token)
+}
+
+/** Converts a SessionPayload into an AuthorizationContext for permission checks. */
+export function toAuthorizationContext(
+  payload: SessionPayload
+): AuthorizationContext {
+  return {
+    userId: payload.sub,
+    organizationId: payload.org ?? "",
+    membershipRole: payload.role ?? undefined,
+  }
+}
+
+/** Require organization context. Throws if not authenticated or no org assigned. */
+export async function requireOrgContext(): Promise<AuthorizationContext> {
+  const payload = await getCurrentSession()
+  if (!payload || !payload.org) {
+    throw new Error(
+      "No organization context found. Sign in and join an organization first."
+    )
+  }
+  return toAuthorizationContext(payload)
 }

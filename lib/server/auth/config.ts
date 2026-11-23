@@ -152,7 +152,8 @@ export const authOptions: NextAuthConfig = {
 // Export helpful types + helpers for consumers of this module
 // ──────────────────────────────────────────────────────────────────────
 
-import { hasPermission, permissionIsGranted, type PermissionCode } from "@/lib/rbac"
+import { permissionIsGranted, type MembershipRole, type PermissionCode } from "@/lib/rbac"
+import { hasPermission } from "@/lib/server/auth/authorization"
 
 export type { MembershipRole }
 export { hasPermission, permissionIsGranted }

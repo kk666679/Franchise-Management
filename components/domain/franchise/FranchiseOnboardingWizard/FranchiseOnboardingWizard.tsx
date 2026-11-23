@@ -1,7 +1,7 @@
 'use client'
 
-import { Button } from '@/components/ui/Button'
-import { Progress } from '@/components/ui/Progress'
+import { Button } from '@/components/ui/button'
+import { Progress } from '@/components/ui/progress'
 import { useOnboardingState } from './useOnboardingState'
 import { StepOrganization } from './steps/StepOrganization'
 import { StepFranchise } from './steps/StepFranchise'

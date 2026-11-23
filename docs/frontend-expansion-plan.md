@@ -24,6 +24,7 @@ yet — those pages are blocked on Phase 9 (data platform) work owned by the dat
 Legend: ✅ = schema exists (buildable now) · ⛔ = needs schema/service first · perm = required PermissionCode
 
 ### Franchise network (Phase 10) — ✅ ready
+
 - `/dashboard/franchises` — franchisee list/table — `franchise:read`
 - `/dashboard/franchises/[id]` — profile, ownership, agreements, timeline — `franchise:read`
 - `/dashboard/franchises/[id]/edit` — `franchise:write`
@@ -33,12 +34,14 @@ Legend: ✅ = schema exists (buildable now) · ⛔ = needs schema/service first 
 - `/dashboard/agreements/[id]` — renewal/termination — `franchise:agreement:manage`
 
 ### Organization & hierarchy (Phase 10) — ✅ partial (Brand exists; Region/Area need schema)
+
 - `/dashboard/organization` — org profile — `org:read`
 - `/dashboard/brands` + `/dashboard/brands/[id]` — `brand:read`
 - `/dashboard/locations` + `/dashboard/locations/[id]` — branch profile, manager, hours, status — `branch:read`
 - ⛔ `/dashboard/regions`, `/dashboard/areas` — need Region/Area models
 
 ### Finance (Phase 11) — ✅ ready
+
 - `/dashboard/finance` — summary (receivables, collected, outstanding) — `finance:read`
 - `/dashboard/finance/invoices` + `[id]` — `finance:read` / `finance:invoice:write`
 - `/dashboard/finance/payments` — payment ledger — `finance:read` / `finance:payment:write`
@@ -46,26 +49,31 @@ Legend: ✅ = schema exists (buildable now) · ⛔ = needs schema/service first 
 - `/dashboard/finance/fee-schedules` — FeeSchedule admin — `finance:read`
 
 ### Documents (Phase 14) — ✅ ready
+
 - `/dashboard/documents` — list/cards, categories, search — `document:read`
 - `/dashboard/documents/[id]` — preview, version history, signed download — `document:read`
 - upload UI — `document:upload` (server-side storage + validation mandatory)
 
 ### Support & audit (Phase 15) — ✅ ready
+
 - `/dashboard/support` + `/dashboard/support/[id]` — SupportTicket queue/detail (add `support:read`)
 - `/dashboard/audit` — AuditLog timeline, entity/user activity — `audit:read`
 
 ### Settings & access (Phase 8) — ✅ partial
+
 - `/dashboard/settings` — org settings — `settings:manage`
 - `/dashboard/settings/users` — member admin — `user:manage`
 - `/dashboard/settings/roles` — role & permission matrix (reuse `components/permissions/*`) — `rbac:role:manage`
 
 ### Deferred (need Phase 9 schema) — ⛔
+
 - Sales/POS (`sales:*`), Inventory (`inventory:*`), Procurement (`procurement:*`),
   HR (`hr:*`), Operations/Compliance/Inspections (`operations:*`, `compliance:*`).
 
 ## 3. Component groups to build
 
 ### Shared platform (Phases 4–6) — unblocks every domain page
+
 - **Command palette / global search** (`cmdk` + `components/ui/command.tsx` already installed):
   route + entity search, recent + pinned destinations, keyboard shortcut. Feeds from `lib/navigation.ts`.
 - **Context selectors**: organization / brand / location pickers (only levels the schema supports).
@@ -79,6 +87,7 @@ Legend: ✅ = schema exists (buildable now) · ⛔ = needs schema/service first 
 - **Notification center** (Phase 14): bell, list, item states, preferences.
 
 ### Domain component groups (Phases 10–15)
+
 - Franchise: profile header, status badge, application review panel, agreement timeline, ownership tree.
 - Finance: invoice table, payment ledger, royalty summary, outstanding-balance card, reconciliation view.
 - Documents: card/list, category filter, preview, version history, upload dropzone (validated server-side).
@@ -86,11 +95,13 @@ Legend: ✅ = schema exists (buildable now) · ⛔ = needs schema/service first 
 - Approvals/workflow: queue, step tracker, approve/reject with confirmation + audit.
 
 ### Dashboard platform (Phase 7)
+
 - Widget registry + typed metadata, 12-col grid, edit mode (add/remove/resize/reorder/save/reset),
   per-user persisted layouts, role templates, global filters with propagation, widget-level
   loading/error/stale states. Replace the current static metric cards.
 
 ### AI workspace (Phase 16)
+
 - Server-side AI gateway + tool contracts (schema-validated, tenant-scoped, auditable),
   chat workspace using existing `components/ai-elements/*`, citations, human-approval checkpoints.
   No autonomous sensitive actions.
@@ -115,4 +126,4 @@ Legend: ✅ = schema exists (buildable now) · ⛔ = needs schema/service first 
 - Real data only: no fixtures disguised as persisted records; dev seed data clearly labeled.
 - Money/date formatting must use a locale+currency contract (org has `currency`; a `locale`
   field is still needed — blocked on a Phase 1 decision).
-- Each new page ships with a unit/integration test under `tests/` (Vitest + RTL now configured).
+- Each new page ships with a unit/integration test under `tests/` (Vitest + RTL now configured)

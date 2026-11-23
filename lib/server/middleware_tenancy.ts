@@ -2,24 +2,24 @@
  *
  * Provides helpers to extract the current organization context from session
  * and enforce that all database queries are scoped to that organization.
+ *
+ * Uses the canonical custom JWT session (`lib/server/auth/session.ts`) as the
+ * single source of truth for authentication context.
  */
 
-import { authOptions } from "@/lib/server/auth/config"
-import { getServerSession } from "next-auth/next"
-import { assertOrganizationAccess, type AuthorizationContext } from "@/lib/server/auth/authorization"
+import { getCurrentSession, type SessionPayload } from "@/lib/server/auth/session"
+import { toAuthorizationContext } from "@/lib/server/auth/session"
+import {
+  assertOrganizationAccess,
+  type AuthorizationContext,
+} from "@/lib/server/auth/authorization"
 import { prisma } from "@/lib/prisma"
 
 /** Extract organization context from the current session. */
 export async function getOrganizationContext(): Promise<AuthorizationContext | null> {
-  const session = await getServerSession(authOptions)
-
-  if (!session?.user) return null
-
-  return {
-    userId: session.user.id,
-    organizationId: session.user.organizationId ?? "",
-    membershipRole: session.user.role as import("@/lib/rbac").MembershipRole | undefined,
-  }
+  const payload = await getCurrentSession()
+  if (!payload) return null
+  return toAuthorizationContext(payload)
 }
 
 /** Require organization context. Throws if not authenticated or no org assigned. */
@@ -49,7 +49,24 @@ export async function assertOrgAccess(organizationId: string): Promise<Authoriza
 /** Create an organization-scoped query helper for common models. */
 export function orgScoped<T>(
   ctx: AuthorizationContext,
-  model: "organization" | "user" | "membership" | "franchiseBrand" | "franchisee" | "franchiseLocation" | "invoice" | "financialAccount" | "journalEntry" | "payment" | "customer" | "product" | "sale" | "supportTicket" | "auditLog",
+  model:
+    | "organization"
+    | "user"
+    | "membership"
+    | "franchiseBrand"
+    | "franchisee"
+    | "franchiseLocation"
+    | "invoice"
+    | "financialAccount"
+    | "journalEntry"
+    | "payment"
+    | "customer"
+    | "product"
+    | "sale"
+    | "supportTicket"
+    | "auditLog",
 ) {
-  return { where: { organizationId: ctx.organizationId } } as { where: { organizationId: string } }
+  return { where: { organizationId: ctx.organizationId } } as {
+    where: { organizationId: string }
+  }
 }

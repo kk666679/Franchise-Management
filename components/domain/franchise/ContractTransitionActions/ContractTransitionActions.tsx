@@ -1,7 +1,7 @@
 'use client'
 
 import { useTransition } from 'react'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/button'
 import { PermissionGate } from '@/components/auth/PermissionGate'
 import type { ContractStatus } from '../ContractLifecycleBadge'
 

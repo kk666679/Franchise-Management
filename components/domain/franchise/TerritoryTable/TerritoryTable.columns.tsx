@@ -1,28 +1,30 @@
 'use client'
 
-import type { ColumnDef } from '@tanstack/react-table'
-import { DataTableColumnHeader } from '@/components/data/DataTableColumnHeader'
 import { TerritoryConflictBadge } from '../TerritoryConflictBadge'
 import type { TerritoryView } from '../mappers'
 
-export const territoryColumns: ColumnDef<TerritoryView>[] = [
+export const territoryColumns = [
   {
     accessorKey: 'name',
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Territory" />,
+    header: 'Territory',
+    sortable: true,
   },
   {
     accessorKey: 'region',
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Region" />,
+    header: 'Region',
+    sortable: true,
   },
   {
     accessorKey: 'franchiseName',
     header: 'Assigned to',
-    cell: ({ row }) => row.original.franchiseName ?? <span className="text-muted">Unassigned</span>,
+    sortable: true,
+    cell: (row: TerritoryView) => row.franchiseName ?? <span className="text-muted">Unassigned</span>,
   },
   {
-    id: 'conflict',
+    accessorKey: 'hasConflict',
     header: 'Conflict',
-    cell: ({ row }) =>
-      row.original.hasConflict ? <TerritoryConflictBadge /> : <span className="text-muted">—</span>,
+    sortable: true,
+    cell: (row: TerritoryView) =>
+      row.hasConflict ? <TerritoryConflictBadge /> : <span className="text-muted">—</span>,
   },
 ]

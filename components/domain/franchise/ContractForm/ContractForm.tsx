@@ -2,10 +2,10 @@
 
 import { useTransition } from 'react'
 import { Form, FormField, FormSection, FormActions, SubmitButton } from '@/components/form'
-import { Input } from '@/components/ui/Input'
-import { Textarea } from '@/components/ui/Textarea'
-import { Select } from '@/components/ui/Select'
-import { Button } from '@/components/ui/Button'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
+import { Select, SelectItem } from '@/components/ui/select'
+import { Button } from '@/components/ui/button'
 import { contractFormSchema, type ContractFormValues } from './ContractForm.schema'
 
 export function ContractForm({
@@ -38,7 +38,11 @@ export function ContractForm({
       <FormSection title="Term">
         {franchises && (
           <FormField name="franchiseId" label="Franchise">
-            <Select options={franchises.map((f) => ({ value: f.id, label: f.name }))} />
+            <Select>
+            {franchises.map((f) => (
+              <SelectItem key={f.id} value={f.id}>{f.name}</SelectItem>
+            ))}
+          </Select>
           </FormField>
         )}
         <FormField name="effectiveFrom" label="Effective from">

@@ -1,41 +1,44 @@
 'use client'
 
 import Link from 'next/link'
-import type { ColumnDef } from '@tanstack/react-table'
-import { DataTableColumnHeader } from '@/components/data/DataTableColumnHeader'
 import { FormattedDate } from '@/components/common/FormattedDate'
 import { ContractLifecycleBadge } from '../ContractLifecycleBadge'
+import type { ContractStatus } from '../ContractLifecycleBadge'
 import type { ContractView } from '../mappers'
 
-export const contractColumns: ColumnDef<ContractView>[] = [
+export const contractColumns = [
   {
     accessorKey: 'franchiseName',
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Franchise" />,
-    cell: ({ row }) => (
+    header: 'Franchise',
+    sortable: true,
+    cell: (row: ContractView) => (
       <Link
-        href={`/contracts/${row.original.id}`}
+        href={`/contracts/${row.id}`}
         className="font-medium underline-offset-4 hover:underline"
       >
-        {row.original.franchiseName}
+        {row.franchiseName}
       </Link>
     ),
   },
   {
     accessorKey: 'status',
     header: 'Status',
-    cell: ({ row }) => <ContractLifecycleBadge status={row.original.status} />,
+    sortable: true,
+    cell: (row: ContractView) => <ContractLifecycleBadge status={row.status as ContractStatus} />,
   },
   {
     accessorKey: 'effectiveFromIso',
     header: 'Effective from',
-    cell: ({ row }) => <FormattedDate iso={row.original.effectiveFromIso} />,
+    sortable: true,
+    cell: (row: ContractView) => <FormattedDate iso={row.effectiveFromIso} />,
   },
   {
     accessorKey: 'effectiveToIso',
     header: 'Effective to',
-    cell: ({ row }) =>
-      row.original.effectiveToIso ? (
-        <FormattedDate iso={row.original.effectiveToIso} />
+    sortable: true,
+    cell: (row: ContractView) =>
+      row.effectiveToIso ? (
+        <FormattedDate iso={row.effectiveToIso} />
       ) : (
         <span className="text-muted">Open-ended</span>
       ),
@@ -43,6 +46,7 @@ export const contractColumns: ColumnDef<ContractView>[] = [
   {
     accessorKey: 'royaltyRatePct',
     header: 'Royalty',
-    cell: ({ row }) => <span className="tabular-nums">{row.original.royaltyRatePct}%</span>,
+    sortable: true,
+    cell: (row: ContractView) => <span className="tabular-nums">{row.royaltyRatePct}%</span>,
   },
 ]

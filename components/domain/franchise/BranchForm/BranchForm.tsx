@@ -2,10 +2,10 @@
 
 import { useTransition } from 'react'
 import { Form, FormField, FormSection, FormActions, SubmitButton } from '@/components/form'
-import { Input } from '@/components/ui/Input'
-import { Switch } from '@/components/ui/Switch'
-import { Button } from '@/components/ui/Button'
-import { Select } from '@/components/ui/Select'
+import { Input } from '@/components/ui/input'
+import { Switch } from '@/components/ui/switch'
+import { Button } from '@/components/ui/button'
+import { Select, SelectItem } from '@/components/ui/select'
 import { branchFormSchema, type BranchFormValues } from './BranchForm.schema'
 
 export function BranchForm({
@@ -37,7 +37,11 @@ export function BranchForm({
       <FormSection title="Branch">
         <FormField name="name" label="Branch name"><Input /></FormField>
         <FormField name="franchiseId" label="Franchise">
-          <Select options={franchises.map((f) => ({ value: f.id, label: f.name }))} />
+          <Select>
+            {franchises.map((f) => (
+              <SelectItem key={f.id} value={f.id}>{f.name}</SelectItem>
+            ))}
+          </Select>
         </FormField>
         <FormField name="isActive" label="Active"><Switch /></FormField>
       </FormSection>

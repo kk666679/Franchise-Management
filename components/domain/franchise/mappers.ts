@@ -38,7 +38,7 @@ export type TerritoryView = {
 export type ContractView = {
   id: string
   franchiseName: string
-  status: ContractDTO['status']
+  status: string
   effectiveFromIso: string
   effectiveToIso: string | null
   royaltyRatePct: number
