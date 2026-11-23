@@ -1,10 +1,5 @@
 import { redirect } from "next/navigation"
-import {
-  Building2,
-  CircleDollarSign,
-  Store,
-  Users,
-} from "lucide-react"
+import { Building2, CircleDollarSign, Store, Users } from "lucide-react"
 
 import { DashboardHeader } from "@/components/dashboard/dashboard-header"
 import { DashboardNav } from "@/components/dashboard/dashboard-nav"
@@ -33,7 +28,7 @@ export default async function DashboardPage() {
   return (
     <main className="min-h-svh p-4 sm:p-6 lg:p-8">
       <div className="mx-auto grid w-full max-w-[1600px] gap-6 lg:grid-cols-[220px_minmax(0,1fr)]">
-        <aside className="glass h-fit rounded-2xl p-3 lg:sticky lg:top-6">
+        <aside className="h-fit rounded-2xl p-3 glass lg:sticky lg:top-6">
           <div className="mb-4 flex items-center gap-2 px-3 py-2">
             <div className="flex size-8 items-center justify-center rounded-xl bg-primary/15 text-primary">
               <Building2 className="size-4" />
