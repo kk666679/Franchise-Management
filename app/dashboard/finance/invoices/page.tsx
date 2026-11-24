@@ -1,17 +1,17 @@
-import Link from "next/link"
-
-import { DashboardNav } from "@/components/dashboard/dashboard-nav"
-import { AppShell } from "@/components/layout/app-shell"
-import { PageContainer } from "@/components/layout/page-container"
 import { PageHeader } from "@/components/layout/page-header"
-import { visibleDestinations } from "@/lib/navigation"
-import { PageAccessNotice } from "@/components/auth/page-access-notice"
-import { resolvePermissions } from "@lib/server/auth"
-import {
-  getFinanceInvoices,
-  getFinanceOrganization,
-  requireFinanceRead,
-} from "@lib/server/finance"
+import { EmptyState } from "@/components/feedback/empty-state"
+import { InvoiceTable } from "@/components/domain/finance/InvoiceTable"
+import type { InvoiceView } from "@/components/domain/finance/mappers"
+import { getFinanceInvoices, requireFinanceRead } from "@lib/server/finance"
+
+const STATUS_MAP: Record<string, InvoiceView["status"]> = {
+  DRAFT: "draft",
+  ISSUED: "issued",
+  PAID: "paid",
+  OVERDUE: "overdue",
+  VOID: "void",
+  PARTIALLY_PAID: "issued",
+}
 
 export default async function FinanceInvoicesPage() {
   const context = await requireFinanceRead()
@@ -19,76 +19,32 @@ export default async function FinanceInvoicesPage() {
     return (
       <PageAccessNotice
         title="Invoices"
-        description="This invoice page is open to everyone. Sign in to view organization invoices."
+        description="Sign in to view organization invoices."
       />
     )
   }
 
-  const [organization, invoices] = await Promise.all([
-    getFinanceOrganization(context.organizationId),
-    getFinanceInvoices(context.organizationId),
-  ])
-  if (!organization) return null
+  const invoices = await getFinanceInvoices(context.organizationId)
+  const rows: InvoiceView[] = invoices.map((inv) => ({
+    id: inv.id,
+    number: inv.invoiceNo,
+    franchiseName: inv.franchisee.tradingName ?? inv.franchisee.legalName,
+    status: STATUS_MAP[inv.status] ?? "draft",
+    totalCents: Math.round(Number(inv.total) * 100),
+    currency: "USD",
+    dueDateIso: inv.dueDate.toISOString(),
+    issuedAtIso: inv.issueDate.toISOString(),
+  }))
 
   return (
-    <AppShell
-      brand={<span className="text-sm font-semibold">{organization.name}</span>}
-      sidebar={
-        <DashboardNav
-          items={visibleDestinations(
-            resolvePermissions([], context.membershipRole)
-          )}
-        />
-      }
-    >
-      <PageContainer className="space-y-6">
-        <PageHeader
-          title="Invoices"
-          description={`${invoices.length} recent invoices`}
-        />
-        <div className="overflow-x-auto rounded-2xl border border-border bg-card/60">
-          <table className="w-full min-w-[52rem] text-left text-sm">
-            <thead className="border-b border-border bg-muted/40 text-xs tracking-wide text-muted-foreground uppercase">
-              <tr>
-                <th className="px-4 py-3">Invoice</th>
-                <th className="px-4 py-3">Franchisee</th>
-                <th className="px-4 py-3">Status</th>
-                <th className="px-4 py-3">Issue date</th>
-                <th className="px-4 py-3 text-right">Total</th>
-                <th className="px-4 py-3 text-right">Paid</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border/70">
-              {invoices.map((invoice) => (
-                <tr key={invoice.id}>
-                  <td className="px-4 py-3 font-medium">
-                    <Link
-                      href={`/dashboard/finance/invoices/${invoice.id}`}
-                      className="hover:text-primary"
-                    >
-                      {invoice.invoiceNo}
-                    </Link>
-                  </td>
-                  <td className="px-4 py-3">
-                    {invoice.franchisee.tradingName ??
-                      invoice.franchisee.legalName}
-                  </td>
-                  <td className="px-4 py-3">{invoice.status}</td>
-                  <td className="px-4 py-3">
-                    {invoice.issueDate.toLocaleDateString()}
-                  </td>
-                  <td className="px-4 py-3 text-right">
-                    {invoice.total.toString()} {organization.currency}
-                  </td>
-                  <td className="px-4 py-3 text-right">
-                    {invoice.amountPaid.toString()} {organization.currency}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </PageContainer>
-    </AppShell>
+    <div className="space-y-6">
+      <PageHeader title="Invoices" description={`${invoices.length} recent invoices`} />
+      {rows.length === 0 ? (
+        <EmptyState title="No invoices yet" description="Invoices will appear here when created." />
+      ) : (
+        <InvoiceTable data={rows} />
+      )}
+    </div>
   )
 }
+

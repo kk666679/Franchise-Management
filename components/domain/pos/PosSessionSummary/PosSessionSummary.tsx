@@ -5,7 +5,7 @@ export function PosSessionSummary({ session }: PosSessionSummaryProps) {
   const fmt = (cents: number | null) =>
     cents == null
       ? "—"
-      : new Intl.NumberFormat(undefined, {
+      : new Intl.NumberFormat("en-US", {
           style: "currency",
           currency: session.currency,
         }).format(cents / 100)

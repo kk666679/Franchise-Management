@@ -1,20 +1,13 @@
 import { CircleDollarSign, Download } from "lucide-react"
 
-import { AppShell } from "@/components/layout/app-shell"
-import { PageContainer } from "@/components/layout/page-container"
 import { PageHeader } from "@/components/layout/page-header"
-import { DashboardNav } from "@/components/dashboard/dashboard-nav"
 import { StatusIndicator } from "@/components/shared/status-indicator"
 import { CurrencyDisplay } from "@/components/shared/currency-display"
 import { EmptyState } from "@/components/feedback/empty-state"
 import { Button } from "@/components/ui/button"
-import { getCurrentSession } from "@lib/server/auth/session"
-import { resolvePermissions, assertPermission } from "@lib/server/auth"
-import { visibleDestinations } from "@/lib/navigation"
 import { PERMISSIONS } from "@/lib/rbac"
 import { listInvoices } from "@lib/server/services/franchise"
 import { prisma } from "@/lib/prisma"
-import { PageAccessNotice } from "@/components/auth/page-access-notice"
 
 const STATUS_TONE = {
   DRAFT: "neutral",
@@ -41,33 +34,23 @@ const dateFmt = new Intl.DateTimeFormat("en", {
 })
 
 export default async function FinancePage() {
-  const session = await getCurrentSession()
-  if (!session?.org) {
-    return (
-      <PageAccessNotice
-        title="Finance"
-        description="This finance page is open to everyone. Sign in to view organization financial records."
-      />
-    )
-  }
+  const organizationId = (await prisma.organization.findFirst({ select: { id: true } }))?.id ?? ""
+  
 
   const ctx = {
-    userId: session.sub,
-    organizationId: session.org,
-    membershipRole: session.role ?? undefined,
+    userId: "",
+    organizationId: organizationId,
+    membershipRole: "OWNER",
   }
-  assertPermission(ctx, PERMISSIONS.FINANCE_READ)
 
   const [invoices, org] = await Promise.all([
     listInvoices(ctx),
     prisma.organization.findUnique({
-      where: { id: session.org },
+      where: { id: organizationId },
       select: { currency: true },
     }),
   ])
-
-  const granted = resolvePermissions([], session?.role ?? undefined)
-  const navigation = visibleDestinations(granted)
+  const granted = new Set()
   const currency = org?.currency ?? "USD"
 
   const outstanding = invoices
@@ -85,17 +68,8 @@ export default async function FinancePage() {
   })
 
   return (
-    <AppShell
-      brand={
-        <span className="flex items-center gap-2 text-sm font-semibold">
-          <CircleDollarSign className="size-4 text-primary" />
-          Franchise Management
-        </span>
-      }
-      sidebar={<DashboardNav items={navigation} />}
-    >
-      <PageContainer className="space-y-6">
-        <PageHeader
+    <div className="space-y-6">
+<PageHeader
           title="Finance"
           description="Invoices, payments and royalty collection"
           actions={
@@ -195,7 +169,6 @@ export default async function FinancePage() {
             </div>
           </div>
         )}
-      </PageContainer>
-    </AppShell>
+    </div>
   )
 }

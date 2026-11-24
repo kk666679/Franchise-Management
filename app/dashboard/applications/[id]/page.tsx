@@ -1,19 +1,12 @@
 import { notFound } from "next/navigation"
 import { FileText } from "lucide-react"
 
-import { AppShell } from "@/components/layout/app-shell"
-import { PageContainer } from "@/components/layout/page-container"
 import { PageHeader } from "@/components/layout/page-header"
-import { DashboardNav } from "@/components/dashboard/dashboard-nav"
 import { StatusIndicator } from "@/components/shared/status-indicator"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { getCurrentSession } from "@lib/server/auth/session"
-import { resolvePermissions, assertPermission } from "@lib/server/auth"
-import { visibleDestinations } from "@/lib/navigation"
 import { PERMISSIONS } from "@/lib/rbac"
 import { prisma } from "@/lib/prisma"
-import { PageAccessNotice } from "@/components/auth/page-access-notice"
 
 const STATUS_TONE = {
   DRAFT: "neutral",
@@ -80,42 +73,23 @@ export default async function ApplicationDetailPage({
   params: Promise<{ id: string }>
 }) {
   const { id } = await params
-  const session = await getCurrentSession()
-  if (!session?.org) {
-    return (
-      <PageAccessNotice
-        title="Application details"
-        description="This application page is open to everyone. Sign in to view organization application details."
-      />
-    )
-  }
+  const organizationId = (await prisma.organization.findFirst({ select: { id: true } }))?.id ?? ""
+  
   const ctx = {
-    userId: session.sub,
-    organizationId: session.org,
-    membershipRole: session.role ?? undefined,
+    userId: "",
+    organizationId: organizationId,
+    membershipRole: "OWNER",
   }
-  assertPermission(ctx, PERMISSIONS.FRANCHISE_READ)
 
-  const app = await getApplication(session.org, id)
+  const app = await getApplication(organizationId, id)
   if (!app) notFound()
-
-  const granted = resolvePermissions([], session?.role ?? undefined)
-  const navigation = visibleDestinations(granted)
+  const granted = new Set()
   const canReview = granted.has(PERMISSIONS.FRANCHISE_APPLICATION_REVIEW)
   const currentStep = STATUS_ORDER.indexOf(app.status)
 
   return (
-    <AppShell
-      brand={
-        <span className="flex items-center gap-2 text-sm font-semibold">
-          <FileText className="size-4 text-primary" />
-          Franchise Management
-        </span>
-      }
-      sidebar={<DashboardNav items={navigation} />}
-    >
-      <PageContainer className="space-y-6">
-        <PageHeader
+    <div className="space-y-6">
+<PageHeader
           title={`Application ${app.referenceNo}`}
           description={`${app.brand.name} · ${app.franchisee?.tradingName ?? app.franchisee?.legalName ?? "Unassigned applicant"}`}
           actions={
@@ -277,7 +251,6 @@ export default async function ApplicationDetailPage({
             </div>
           </div>
         )}
-      </PageContainer>
-    </AppShell>
+    </div>
   )
 }

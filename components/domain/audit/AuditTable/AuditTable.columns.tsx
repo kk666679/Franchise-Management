@@ -1,6 +1,6 @@
 "use client"
 
-import { DataTableColumnHeader } from "@/components/data/DataTableColumnHeader"
+import { Badge } from "@/components/ui/badge"
 import type { AuditEventView } from "../mappers"
 
 export const auditColumns = [
@@ -8,8 +8,11 @@ export const auditColumns = [
     accessorKey: "occurredAtIso",
     header: "When",
     sortable: true,
-    cell: (row: AuditEventView) =>
-      row.occurredAtIso.slice(0, 16).replace("T", " "),
+    cell: (row: AuditEventView) => (
+      <span className="text-xs whitespace-nowrap text-muted-foreground tabular-nums">
+        {new Date(row.occurredAtIso).toLocaleString()}
+      </span>
+    ),
   },
   {
     accessorKey: "actorName",
@@ -20,6 +23,7 @@ export const auditColumns = [
     accessorKey: "action",
     header: "Action",
     sortable: true,
+    cell: (row: AuditEventView) => <Badge variant="secondary" className="text-xs">{row.action}</Badge>,
   },
   {
     accessorKey: "entityType",
@@ -27,8 +31,18 @@ export const auditColumns = [
     sortable: true,
   },
   {
+    accessorKey: "entityId",
+    header: "Entity ID",
+    sortable: false,
+    cell: (row: AuditEventView) => (
+      <span className="font-mono text-xs text-muted-foreground">{row.entityId.slice(0, 12)}</span>
+    ),
+  },
+  {
     accessorKey: "summary",
     header: "Summary",
-    sortable: true,
+    sortable: false,
+    cell: (row: AuditEventView) => <span className="text-muted-foreground">{row.summary}</span>,
   },
 ]
+

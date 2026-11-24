@@ -1,38 +1,29 @@
-import { Bell, Plus } from "lucide-react"
+import { Building2 } from "lucide-react"
 
-import { ThemeToggle } from "@/components/theme-toggle"
-import { Button } from "@/components/ui/button"
-
-export function DashboardHeader({
-  organizationName,
-}: {
+type DashboardHeaderProps = {
   organizationName: string
-}) {
+  description?: string
+}
+
+export function DashboardHeader({ organizationName, description }: DashboardHeaderProps) {
   return (
-    <header className="flex flex-wrap items-center justify-between gap-4 border-b border-border/70 pb-5">
-      <div className="min-w-0">
-        <p className="truncate text-sm text-muted-foreground">
-          {organizationName}
+    <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      <div className="space-y-1">
+        <p className="text-xs font-medium uppercase tracking-[0.08em] text-muted-foreground">
+          Overview
         </p>
-        <h1 className="mt-1 text-2xl font-semibold tracking-tight sm:text-3xl">
-          Executive overview
+        <h1 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+          {organizationName}
         </h1>
+        {description ? (
+          <p className="max-w-2xl text-sm text-muted-foreground">{description}</p>
+        ) : null}
       </div>
-      <div className="flex items-center gap-2" aria-label="Dashboard actions">
-        <Button
-          type="button"
-          variant="outline"
-          size="icon"
-          className="rounded-full"
-          aria-label="Notifications"
-        >
-          <Bell className="size-4" aria-hidden="true" />
-        </Button>
-        <ThemeToggle />
-        <Button type="button" className="hidden rounded-full sm:inline-flex">
-          <Plus className="size-4" aria-hidden="true" />
-          New application
-        </Button>
+      <div
+        className="hidden size-11 shrink-0 items-center justify-center rounded-xl border border-border/60 bg-muted/40 text-muted-foreground sm:flex"
+        aria-hidden="true"
+      >
+        <Building2 className="size-5" />
       </div>
     </header>
   )

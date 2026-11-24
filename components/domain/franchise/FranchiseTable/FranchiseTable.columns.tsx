@@ -1,28 +1,31 @@
 "use client"
 
 import Link from "next/link"
-import { DataTableColumnHeader } from "@/components/data/DataTableColumnHeader"
-import { FormattedDate } from "@/components/common/FormattedDate"
 import { FranchiseStatusBadge } from "../FranchiseStatusBadge"
 import type { FranchiseView } from "../mappers"
 
 export const franchiseColumns = [
   {
     accessorKey: "name",
-    header: "Franchise",
+    header: "Franchisee",
     sortable: true,
     cell: (row: FranchiseView) => (
-      <Link
-        href={`/franchises/${row.id}`}
-        className="font-medium underline-offset-4 hover:underline"
-      >
-        {row.name}
-      </Link>
+      <div>
+        <Link
+          href={`/dashboard/franchises/${row.id}`}
+          className="font-medium underline-offset-4 hover:underline"
+        >
+          {row.name}
+        </Link>
+        {row.legalName !== row.name ? (
+          <p className="text-xs text-muted-foreground">{row.legalName}</p>
+        ) : null}
+      </div>
     ),
   },
   {
     accessorKey: "organizationName",
-    header: "Organization",
+    header: "Brand",
     sortable: true,
   },
   {
@@ -30,11 +33,11 @@ export const franchiseColumns = [
     header: "Territory",
     sortable: true,
     cell: (row: FranchiseView) =>
-      row.territoryName ?? <span className="text-muted">—</span>,
+      row.territoryName ?? <span className="text-muted-foreground">—</span>,
   },
   {
     accessorKey: "branchCount",
-    header: "Branches",
+    header: "Locations",
     sortable: true,
     cell: (row: FranchiseView) => (
       <span className="tabular-nums">{row.branchCount}</span>
@@ -50,6 +53,6 @@ export const franchiseColumns = [
     accessorKey: "createdAtIso",
     header: "Created",
     sortable: true,
-    cell: (row: FranchiseView) => <FormattedDate iso={row.createdAtIso} />,
+    cell: (row: FranchiseView) => row.createdAtIso.slice(0, 10),
   },
 ]

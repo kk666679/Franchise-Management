@@ -3,7 +3,7 @@ import type { PosReceiptProps } from "./PosReceipt.types"
 
 export function PosReceipt({ receipt }: PosReceiptProps) {
   const fmt = (cents: number) =>
-    new Intl.NumberFormat(undefined, {
+    new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: receipt.currency,
     }).format(cents / 100)

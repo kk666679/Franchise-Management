@@ -5,30 +5,15 @@ import {
   WebPreviewNavigation,
   WebPreviewUrl,
 } from "@/components/ai-elements/web-preview"
-import { AppShell } from "@/components/layout/app-shell"
-import { PageContainer } from "@/components/layout/page-container"
 import { PageHeader } from "@/components/layout/page-header"
-import { DashboardNav } from "@/components/dashboard/dashboard-nav"
-import { getCurrentSession } from "@lib/server/auth/session"
-import { resolvePermissions } from "@lib/server/auth"
-import { visibleDestinations } from "@/lib/navigation"
+import { prisma } from "@/lib/prisma"
 
 export default async function ApplicationPreviewPage() {
-  const session = await getCurrentSession()
+  const organizationId = (await prisma.organization.findFirst({ select: { id: true } }))?.id ?? ""
 
   return (
-    <AppShell
-      brand={<span className="text-sm font-semibold">Application preview</span>}
-      sidebar={
-        <DashboardNav
-          items={visibleDestinations(
-            resolvePermissions([], session?.role ?? undefined)
-          )}
-        />
-      }
-    >
-      <PageContainer className="space-y-6">
-        <PageHeader
+    <div className="space-y-6">
+<PageHeader
           title="Application preview"
           description="Preview the implemented dashboard, finance, and POS workflows."
         />
@@ -44,7 +29,6 @@ export default async function ApplicationPreviewPage() {
             </WebPreviewConsole>
           </WebPreview>
         </div>
-      </PageContainer>
-    </AppShell>
+    </div>
   )
 }

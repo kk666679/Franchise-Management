@@ -1,4 +1,4 @@
-﻿# Components
+# Components
 
 Reusable UI building blocks for the Franchise Management System.
 

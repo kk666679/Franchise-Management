@@ -1,4 +1,4 @@
-﻿export { FormattedDate } from "./FormattedDate"
+export { FormattedDate } from "./FormattedDate"
 export {
   CurrencyDisplay,
   DateDisplay,

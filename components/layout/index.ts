@@ -1,4 +1,4 @@
-﻿export { AppShell } from "./app-shell"
+export { AppShell } from "./app-shell"
 export type { AppShellProps } from "./app-shell"
 export { AppHeader } from "./app-header"
 export { PageContainer } from "./page-container"

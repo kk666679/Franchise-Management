@@ -1,10 +1,4 @@
-import { DashboardNav } from "@/components/dashboard/dashboard-nav"
-import { AppShell } from "@/components/layout/app-shell"
-import { PageContainer } from "@/components/layout/page-container"
 import { PageHeader } from "@/components/layout/page-header"
-import { visibleDestinations } from "@/lib/navigation"
-import { PageAccessNotice } from "@/components/auth/page-access-notice"
-import { resolvePermissions } from "@lib/server/auth"
 import {
   getFinanceOrganization,
   getFinancePayments,
@@ -29,18 +23,8 @@ export default async function FinancePaymentsPage() {
   if (!organization) return null
 
   return (
-    <AppShell
-      brand={<span className="text-sm font-semibold">{organization.name}</span>}
-      sidebar={
-        <DashboardNav
-          items={visibleDestinations(
-            resolvePermissions([], context.membershipRole)
-          )}
-        />
-      }
-    >
-      <PageContainer className="space-y-6">
-        <PageHeader
+    <div className="space-y-6">
+<PageHeader
           title="Payments"
           description={`${payments.length} recent payment records`}
         />
@@ -75,7 +59,6 @@ export default async function FinancePaymentsPage() {
             </tbody>
           </table>
         </div>
-      </PageContainer>
-    </AppShell>
+    </div>
   )
 }

@@ -1,3 +1,3 @@
-﻿"use client"
+"use client"
 
 export { AreaChart } from "../chart-implementations"

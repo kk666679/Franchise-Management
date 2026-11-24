@@ -1,4 +1,4 @@
-﻿export { OrderVolumeChart } from "./OrderVolumeChart"
+export { OrderVolumeChart } from "./OrderVolumeChart"
 export { InventoryMovementChart } from "./InventoryMovementChart"
 export { BranchPerformanceChart } from "./BranchPerformanceChart"
 export { StaffPerformanceChart } from "./StaffPerformanceChart"

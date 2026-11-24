@@ -1,4 +1,4 @@
-﻿export { AppShell } from "../layout/app-shell"
+export { AppShell } from "../layout/app-shell"
 export { AppHeader } from "../layout/app-header"
 export { PageContainer } from "../layout/page-container"
 export { PageHeader } from "../layout/page-header"

@@ -13,7 +13,7 @@ export const contractColumns = [
     sortable: true,
     cell: (row: ContractView) => (
       <Link
-        href={`/contracts/${row.id}`}
+        href={`/dashboard/agreements/${row.id}`}
         className="font-medium underline-offset-4 hover:underline"
       >
         {row.franchiseName}
@@ -42,7 +42,7 @@ export const contractColumns = [
       row.effectiveToIso ? (
         <FormattedDate iso={row.effectiveToIso} />
       ) : (
-        <span className="text-muted">Open-ended</span>
+        <span className="text-muted-foreground">Open-ended</span>
       ),
   },
   {
@@ -54,3 +54,4 @@ export const contractColumns = [
     ),
   },
 ]
+

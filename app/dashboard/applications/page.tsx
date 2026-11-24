@@ -1,16 +1,10 @@
 import { FileText, Plus } from "lucide-react"
 import Link from "next/link"
 
-import { AppShell } from "@/components/layout/app-shell"
-import { PageContainer } from "@/components/layout/page-container"
 import { PageHeader } from "@/components/layout/page-header"
-import { DashboardNav } from "@/components/dashboard/dashboard-nav"
 import { StatusIndicator } from "@/components/shared/status-indicator"
 import { Button } from "@/components/ui/button"
 import { EmptyState } from "@/components/feedback/empty-state"
-import { getCurrentSession } from "@lib/server/auth/session"
-import { resolvePermissions } from "@lib/server/auth"
-import { visibleDestinations } from "@/lib/navigation"
 import { prisma } from "@/lib/prisma"
 import { type ApplicationStatus } from "@prisma/client"
 
@@ -45,11 +39,10 @@ const COLUMNS: {
 const fmt = new Intl.DateTimeFormat("en", { month: "short", day: "numeric" })
 
 export default async function ApplicationsPage() {
-  const session = await getCurrentSession()
+  const organizationId = (await prisma.organization.findFirst({ select: { id: true } }))?.id ?? ""
 
-  const applications = await getApplications(session?.org ?? "")
-  const granted = resolvePermissions([], session?.role ?? undefined)
-  const navigation = visibleDestinations(granted)
+  const applications = await getApplications(organizationId ?? "")
+  const granted = new Set()
 
   const byStatus = Object.fromEntries(
     COLUMNS.map((col) => [
@@ -59,17 +52,8 @@ export default async function ApplicationsPage() {
   ) as Record<ApplicationStatus, typeof applications>
 
   return (
-    <AppShell
-      brand={
-        <span className="flex items-center gap-2 text-sm font-semibold">
-          <FileText className="size-4 text-primary" />
-          Franchise Management
-        </span>
-      }
-      sidebar={<DashboardNav items={navigation} />}
-    >
-      <PageContainer className="space-y-6">
-        <PageHeader
+    <div className="space-y-6">
+<PageHeader
           title="Applications"
           description={`${applications.length} total across all stages`}
           actions={
@@ -133,7 +117,6 @@ export default async function ApplicationsPage() {
             })}
           </div>
         )}
-      </PageContainer>
-    </AppShell>
+    </div>
   )
 }

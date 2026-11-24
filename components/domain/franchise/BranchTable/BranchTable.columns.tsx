@@ -7,11 +7,11 @@ import type { BranchView } from "../mappers"
 export const branchColumns = [
   {
     accessorKey: "name",
-    header: "Branch",
+    header: "Location",
     sortable: true,
     cell: (row: BranchView) => (
       <Link
-        href={`/branches/${row.id}`}
+        href={`/dashboard/locations/${row.id}`}
         className="font-medium underline-offset-4 hover:underline"
       >
         {row.name}
@@ -31,7 +31,7 @@ export const branchColumns = [
   },
   {
     accessorKey: "isActive",
-    header: "Active",
+    header: "Status",
     sortable: true,
     cell: (row: BranchView) => (
       <Badge variant={row.isActive ? "default" : "outline"}>
@@ -40,3 +40,4 @@ export const branchColumns = [
     ),
   },
 ]
+

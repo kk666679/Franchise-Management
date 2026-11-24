@@ -1,4 +1,4 @@
-﻿import type { ChartDataPoint } from "../types"
+import type { ChartDataPoint } from "../types"
 
 export function SalesTrendChart({
   data,

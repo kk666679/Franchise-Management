@@ -1,12 +1,6 @@
 import { notFound } from "next/navigation"
 
-import { DashboardNav } from "@/components/dashboard/dashboard-nav"
-import { AppShell } from "@/components/layout/app-shell"
-import { PageContainer } from "@/components/layout/page-container"
 import { PageHeader } from "@/components/layout/page-header"
-import { visibleDestinations } from "@/lib/navigation"
-import { PageAccessNotice } from "@/components/auth/page-access-notice"
-import { resolvePermissions } from "@lib/server/auth"
 import {
   getFinanceInvoice,
   getFinanceOrganization,
@@ -35,18 +29,8 @@ export default async function FinanceInvoicePage({ params }: InvoicePageProps) {
   if (!organization || !invoice) notFound()
 
   return (
-    <AppShell
-      brand={<span className="text-sm font-semibold">{organization.name}</span>}
-      sidebar={
-        <DashboardNav
-          items={visibleDestinations(
-            resolvePermissions([], context.membershipRole)
-          )}
-        />
-      }
-    >
-      <PageContainer className="space-y-6">
-        <PageHeader
+    <div className="space-y-6">
+<PageHeader
           title={invoice.invoiceNo}
           description={`Invoice for ${invoice.franchisee.tradingName ?? invoice.franchisee.legalName}`}
         />
@@ -105,7 +89,6 @@ export default async function FinanceInvoicePage({ params }: InvoicePageProps) {
             </dl>
           </section>
         </div>
-      </PageContainer>
-    </AppShell>
+    </div>
   )
 }

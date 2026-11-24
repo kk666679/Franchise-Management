@@ -33,16 +33,21 @@ describe("visibleDestinations", () => {
 })
 
 describe("navigationDestinations contract", () => {
-  it("marks unbuilt routes as planned so they render disabled, not as dead links", () => {
+  it("marks dashboard routes as live when they have implemented pages", () => {
+    const liveHrefs = navigationDestinations
+      .filter((d) => d.status === "live")
+      .map((d) => d.href)
+    expect(liveHrefs).toContain("/dashboard")
+    expect(liveHrefs).toContain("/dashboard/franchises")
+    expect(liveHrefs).toContain("/dashboard/documents")
+    expect(liveHrefs).toContain("/dashboard/audit")
+  })
+
+  it("keeps permission-gated destinations protected in contract", () => {
     const finance = navigationDestinations.find(
       (d) => d.href === "/dashboard/finance"
     )
-    expect(finance?.status).toBe("planned")
-  })
-
-  it("has exactly one live route (the built overview)", () => {
-    const live = navigationDestinations.filter((d) => d.status === "live")
-    expect(live).toHaveLength(1)
-    expect(live[0]?.href).toBe("/dashboard")
+    expect(finance?.permission).toBe(PERMISSIONS.FINANCE_READ)
+    expect(finance?.status).toBe("live")
   })
 })

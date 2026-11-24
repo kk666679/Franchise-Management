@@ -8,7 +8,7 @@ export function PosCart({ items, onQtyChange, onRemove }: PosCartProps) {
   const total = items.reduce((s, i) => s + i.quantity * i.unitPriceCents, 0)
   const currency = items[0]?.currency ?? "USD"
   const fmt = (cents: number) =>
-    new Intl.NumberFormat(undefined, { style: "currency", currency }).format(
+    new Intl.NumberFormat("en-US", { style: "currency", currency }).format(
       cents / 100
     )
   return (

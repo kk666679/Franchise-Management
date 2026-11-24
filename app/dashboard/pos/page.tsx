@@ -1,40 +1,40 @@
-import { ScanBarcode } from "lucide-react"
-
-import { DashboardNav } from "@/components/dashboard/dashboard-nav"
-import { AppShell } from "@/components/layout/app-shell"
-import { PageContainer } from "@/components/layout/page-container"
 import { PageHeader } from "@/components/layout/page-header"
-import { POSTerminal } from "@/components/pos/pos-terminal"
-import { resolvePermissions } from "@lib/server/auth"
-import { getCurrentSession } from "@lib/server/auth/session"
-import { visibleDestinations } from "@/lib/navigation"
+import { PosWorkspace } from "@/components/domain/pos"
+import { prisma } from "@/lib/prisma"
 
 export default async function POSPage() {
-  const session = await getCurrentSession()
+  const organization = await prisma.organization.findFirst({
+    select: { id: true, currency: true },
+  })
+
+  const products = organization
+    ? await prisma.product.findMany({
+        where: { organizationId: organization.id, active: true },
+        orderBy: { name: "asc" },
+        take: 100,
+        select: { id: true, name: true, sku: true, unitPrice: true },
+      })
+    : []
+
+  const currency = organization?.currency ?? "USD"
 
   return (
-    <AppShell
-      brand={
-        <span className="flex items-center gap-2 text-sm font-semibold">
-          <ScanBarcode className="size-4 text-primary" />
-          Point of sale
-        </span>
-      }
-      sidebar={
-        <DashboardNav
-          items={visibleDestinations(
-            resolvePermissions([], session?.role ?? undefined)
-          )}
-        />
-      }
-    >
-      <PageContainer className="space-y-6">
-        <PageHeader
-          title="Point of sale"
-          description="Process sales, split payments, and print receipts."
-        />
-        <POSTerminal />
-      </PageContainer>
-    </AppShell>
+    <div className="space-y-6">
+      <PageHeader
+        title="Point of sale"
+        description="Process sales, manage register sessions, and issue receipts."
+      />
+      <PosWorkspace
+        currency={currency}
+        products={products.map((p) => ({
+          id: p.id,
+          name: p.name,
+          sku: p.sku,
+          priceCents: Math.round(Number(p.unitPrice) * 100),
+          currency,
+          inStock: 99,
+        }))}
+      />
+    </div>
   )
 }

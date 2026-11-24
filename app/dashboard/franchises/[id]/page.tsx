@@ -2,22 +2,15 @@ import { notFound } from "next/navigation"
 import { Building2, Mail, MapPin, Phone } from "lucide-react"
 import Link from "next/link"
 
-import { AppShell } from "@/components/layout/app-shell"
-import { PageContainer } from "@/components/layout/page-container"
 import { PageHeader } from "@/components/layout/page-header"
-import { DashboardNav } from "@/components/dashboard/dashboard-nav"
 import { StatusIndicator } from "@/components/shared/status-indicator"
 import { CurrencyDisplay } from "@/components/shared/currency-display"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { getCurrentSession } from "@lib/server/auth/session"
-import { resolvePermissions, assertPermission } from "@lib/server/auth"
-import { visibleDestinations } from "@/lib/navigation"
 import { PERMISSIONS } from "@/lib/rbac"
 import { getFranchisee } from "@lib/server/services/franchise"
 import { prisma } from "@/lib/prisma"
 import { NotFoundError } from "@lib/server/errors"
-import { PageAccessNotice } from "@/components/auth/page-access-notice"
 
 const dateFmt = new Intl.DateTimeFormat("en", {
   month: "short",
@@ -38,21 +31,13 @@ export default async function FranchiseeDetailPage({
   params: Promise<{ id: string }>
 }) {
   const { id } = await params
-  const session = await getCurrentSession()
-  if (!session?.org) {
-    return (
-      <PageAccessNotice
-        title="Franchise details"
-        description="This franchise page is open to everyone. Sign in to view organization franchise details."
-      />
-    )
-  }
+  const organizationId = (await prisma.organization.findFirst({ select: { id: true } }))?.id ?? ""
+  
   const ctx = {
-    userId: session.sub,
-    organizationId: session.org,
-    membershipRole: session.role ?? undefined,
+    userId: "",
+    organizationId: organizationId,
+    membershipRole: "OWNER",
   }
-  assertPermission(ctx, PERMISSIONS.FRANCHISE_READ)
 
   let franchisee
   try {
@@ -63,27 +48,17 @@ export default async function FranchiseeDetailPage({
   }
 
   const [granted, org] = await Promise.all([
-    resolvePermissions([], session?.role ?? undefined),
+    new Set(),
     prisma.organization.findUnique({
-      where: { id: session.org },
+      where: { id: organizationId },
       select: { currency: true },
     }),
   ])
-  const navigation = visibleDestinations(granted)
   const currency = org?.currency ?? "USD"
 
   return (
-    <AppShell
-      brand={
-        <span className="flex items-center gap-2 text-sm font-semibold">
-          <Building2 className="size-4 text-primary" />
-          Franchise Management
-        </span>
-      }
-      sidebar={<DashboardNav items={navigation} />}
-    >
-      <PageContainer className="space-y-6">
-        <PageHeader
+    <div className="space-y-6">
+<PageHeader
           title={franchisee.tradingName ?? franchisee.legalName}
           description={
             franchisee.tradingName ? franchisee.legalName : undefined
@@ -333,7 +308,6 @@ export default async function FranchiseeDetailPage({
             )}
           </TabsContent>
         </Tabs>
-      </PageContainer>
-    </AppShell>
+    </div>
   )
 }

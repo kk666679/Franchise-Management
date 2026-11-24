@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion"
 import { Moon, Sun } from "lucide-react"
-import { useTheme } from "next-themes"
+import { useTheme } from "@/components/providers/ThemeProvider"
 import * as React from "react"
 
 import { Button } from "@/components/ui/button"

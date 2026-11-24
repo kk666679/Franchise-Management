@@ -1,1 +1,1 @@
-﻿export * from "../widget-metadata"
+export * from "../widget-metadata"

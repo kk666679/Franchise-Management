@@ -1,3 +1,3 @@
-﻿"use client"
+"use client"
 
 export { HorizontalBarChart } from "../chart-implementations"

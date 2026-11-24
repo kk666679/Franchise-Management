@@ -8,6 +8,7 @@ import type { PosProductSearchProps } from "./PosProductSearch.types"
 export function PosProductSearch({
   products,
   onSelect,
+  disabled = false,
 }: PosProductSearchProps) {
   const [q, setQ] = useState("")
   const filtered = useMemo(() => {
@@ -26,6 +27,7 @@ export function PosProductSearch({
         placeholder="Search by name or SKU"
         value={q}
         onChange={(e) => setQ(e.target.value)}
+        disabled={disabled}
       />
       <ul className="max-h-80 divide-y divide-border overflow-auto rounded-md border border-border">
         {filtered.map((p) => (
@@ -37,7 +39,7 @@ export function PosProductSearch({
               <div className="font-medium">{p.name}</div>
               <div className="text-muted-foreground">{p.sku}</div>
             </div>
-            <Button size="sm" variant="outline" onClick={() => onSelect(p)}>
+            <Button size="sm" variant="outline" onClick={() => onSelect(p)} disabled={disabled}>
               Add
             </Button>
           </li>
