@@ -6,6 +6,7 @@ const label: Record<ContractStatus, string> = {
   pending_approval: "Pending approval",
   active: "Active",
   renewal: "Renewal",
+  expired: "Expired",
   terminated: "Terminated",
 }
 
@@ -17,6 +18,7 @@ const tone: Record<
   pending_approval: "secondary",
   active: "default",
   renewal: "secondary",
+  expired: "outline",
   terminated: "destructive",
 }
 

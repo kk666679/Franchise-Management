@@ -10,13 +10,24 @@ export const branchColumns = [
     header: "Location",
     sortable: true,
     cell: (row: BranchView) => (
-      <Link
-        href={`/dashboard/locations/${row.id}`}
-        className="font-medium underline-offset-4 hover:underline"
-      >
-        {row.name}
-      </Link>
+      <div>
+        <Link
+          href={`/dashboard/locations/${row.id}`}
+          className="font-medium underline-offset-4 hover:underline"
+        >
+          {row.name}
+        </Link>
+        {row.code ? (
+          <p className="font-mono text-xs text-muted-foreground">{row.code}</p>
+        ) : null}
+      </div>
     ),
+  },
+  {
+    accessorKey: "brandName",
+    header: "Brand",
+    sortable: true,
+    cell: (row: BranchView) => row.brandName ?? "—",
   },
   {
     accessorKey: "franchiseName",
@@ -25,9 +36,10 @@ export const branchColumns = [
   },
   {
     accessorKey: "city",
-    header: "Location",
+    header: "City / region",
     sortable: true,
-    cell: (row: BranchView) => `${row.city}, ${row.region}`,
+    cell: (row: BranchView) =>
+      [row.city, row.region].filter(Boolean).join(", ") || "—",
   },
   {
     accessorKey: "isActive",

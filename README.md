@@ -12,100 +12,202 @@
   <a href="./LICENSE"><img src="https://img.shields.io/badge/license-MIT-22C55E" alt="MIT license" /></a>
 </p>
 
-Franchise Management is a multi-tenant Next.js application for operating franchise organizations, brands, franchisees, locations, applications, finance, point of sale, and assisted workflows.
+Franchise Management is a multi-tenant franchise operations application built with the Next.js App Router, Prisma, and PostgreSQL. It contains working database-backed slices alongside UI scaffolds and demo content; the status distinctions below describe the current implementation rather than the intended product.
 
-The current application is an actively developed foundation. Authentication, organization-scoped authorization, franchise management, applications, finance, point of sale, an AI workspace, and settings are implemented. The Prisma schema also includes the broader domain model for agreements, documents, support, accounting, sales, and audit history; individual workflows continue to be expanded incrementally.
+> **Development status:** This is not yet a production-complete system. Some dashboard routes use demo identity or static content, and some navigation destinations are placeholders. Do not treat client-side visibility or the current demo shell as authorization.
 
-## Current application surface
+## What exists today
 
-| Route                         | Purpose                                                                         |
-| ----------------------------- | ------------------------------------------------------------------------------- |
-| `/`                           | Public landing page                                                             |
-| `/login`                      | Password sign-in and magic-link entry                                           |
-| `/signup`                     | Account and organization signup                                                 |
-| `/dashboard`                  | Authenticated overview with dashboard metrics and recent activity               |
-| `/dashboard/franchises`       | Franchise brands, franchisees, and locations                                    |
-| `/dashboard/applications`     | Franchise application list and details                                          |
-| `/dashboard/finance`          | Finance overview                                                                |
-| `/dashboard/finance/invoices` | Invoice management                                                              |
-| `/dashboard/finance/payments` | Payment management                                                              |
-| `/dashboard/pos`              | Product search, cart calculation, split payments, sales, and printable receipts |
-| `/dashboard/ai`               | Permission-protected AI assistant workspace                                     |
-| `/dashboard/settings`         | Application settings                                                            |
-| `/dashboard/preview`          | Embedded dashboard and POS preview                                              |
+| Area | Current state |
+| --- | --- |
+| Authentication | Login, signup, password, and magic-link code paths exist. API routes that perform protected operations check the current session. Dashboard identity/organization context is still demo or placeholder in some pages. |
+| Franchise operations | Prisma-backed list/detail pages exist for brands, franchisees, locations, applications, and agreements. Several create/edit actions and form components are not connected to persisted workflows. |
+| Finance | Invoice and payment records are persisted. Finance overview, invoice list/detail, and payment list read persisted data. Royalty, tax, payment-entry, and reconciliation components are not all connected to page flows. |
+| Point of sale | Product lookup, sale creation, and refund services/API routes use Prisma data. The POS workspace has client-local cart/register state; inventory quantities and persistent register-session behavior are not fully integrated. |
+| Documents, support, audit | Document listing, support ticket listing, and audit-log listing use existing Prisma models. Upload/version-management flows and some detail/actions remain incomplete. |
+| AI assistant | A streaming chat route and assistant page exist. A model is optional and configured by environment. The assistant does not currently have a grounded data-retrieval workflow and cannot apply business decisions. |
+| Workflows, notifications, reporting | Dashboard routes and domain UI components exist, but the schema currently has no persistence models for approvals, notifications, saved reports, or scheduled reports. These routes display unavailable/empty states. |
+| Inventory, HR, compliance | Product catalog data exists, but stock-control models are absent. HR and compliance domain components are scaffolds; there are no corresponding dashboard flows or Prisma models yet. |
+| Settings and overview | Settings is a placeholder. The dashboard overview contains hard-coded sample KPIs and applications rather than live aggregates. |
 
-The corresponding API routes currently include AI chat, POS product search, sales, and refunds under `app/api/`.
+No sample operational business data is seeded. `prisma/seed.ts` only upserts an organization when both organization seed environment variables are supplied.
+
+## Application routes
+
+### Public
+
+| Route | Current purpose |
+| --- | --- |
+| `/` | Public landing page |
+| `/login` | Login form |
+| `/signup` | Organization/account signup form |
+| `/auth/magic-link` | Magic-link callback flow |
+
+### Dashboard
+
+| Route | Current data/behavior |
+| --- | --- |
+| `/dashboard` | Static overview metrics and sample applications |
+| `/dashboard/franchises` and `/dashboard/franchises/[id]` | Franchisee list and detail from Prisma |
+| `/dashboard/applications` and `/dashboard/applications/[id]` | Application list and detail |
+| `/dashboard/agreements` and `/dashboard/agreements/[id]` | Agreement list and detail |
+| `/dashboard/brands` and `/dashboard/brands/[id]` | Brand list and detail |
+| `/dashboard/locations` and `/dashboard/locations/[id]` | Location list and detail |
+| `/dashboard/finance` | Invoice totals and invoice table |
+| `/dashboard/finance/invoices` and `/dashboard/finance/invoices/[id]` | Invoice list and detail |
+| `/dashboard/finance/payments` | Payment record list |
+| `/dashboard/pos` | POS workspace using the product catalog |
+| `/dashboard/documents` | Organization document list |
+| `/dashboard/support` and `/dashboard/support/[id]` | Support tickets |
+| `/dashboard/audit` | Recent audit log entries |
+| `/dashboard/ai` | Streaming assistant UI |
+| `/dashboard/notifications` | Placeholder; notification persistence is absent |
+| `/dashboard/workflows` | Placeholder; approval persistence/decision flow is absent |
+| `/dashboard/reporting` | Placeholder; report persistence is absent |
+| `/dashboard/settings` | Placeholder settings page |
+| `/dashboard/preview` | Embedded application preview |
+
+### API routes
+
+| Endpoint | Current purpose |
+| --- | --- |
+| `POST /api/ai/chat` | Permission-checked streaming assistant response; returns unavailable when no model is configured |
+| `/api/auth/magic-link` | Magic-link authentication endpoints |
+| `/api/auth/password-reset` | Password reset endpoints |
+| `GET /api/pos/products` | Session-scoped product search |
+| `POST /api/pos/sales` | Session-scoped POS sale creation |
+| `POST /api/sales` | Sale creation |
+| `POST /api/sales/refunds` | Refund creation |
 
 ## Architecture
 
-```mermaid
-flowchart LR
-    Browser[Browser]
-    App[Next.js App Router]
-    Auth[JWT sessions<br/>RBAC and organization scope]
-    Services[Server services<br/>validation and transactions]
-    API[API routes and<br/>server actions]
-    Prisma[Prisma 7 client]
-    DB[(PostgreSQL)]
-    AI[AI workspace]
-    Email[Resend magic links]
+The application uses server-rendered App Router pages for database access and client components for interactive tables, forms, and AI/POS interfaces. The following diagram distinguishes persisted data paths from static or scaffolded dashboard content.
 
-    Browser --> App
-    App --> Auth
-    App --> API
-    App --> AI
-    Auth --> Services
-    API --> Services
-    AI --> Services
+```mermaid
+flowchart TD
+    Browser[Browser]
+    Next[Next.js App Router]
+    Public[Public pages and auth forms]
+    Dashboard[Dashboard shell and pages]
+    ClientUI[Client domain and AI components]
+    Static[Demo or placeholder page data]
+    Routes[API route handlers]
+    Session[Session and permission helpers]
+    Services[Server services and validation]
+    Prisma[Prisma 7 client and PostgreSQL adapter]
+    DB[(PostgreSQL)]
+    AI[AI SDK model provider]
+    Email[Email provider for magic links]
+
+    Browser --> Next
+    Next --> Public
+    Next --> Dashboard
+    Dashboard --> ClientUI
+    Dashboard --> Static
+    Dashboard -->|for wired routes| Services
+    Browser --> Routes
+    Routes --> Session
+    Routes --> Services
     Services --> Prisma
     Prisma --> DB
-    Services --> Email
+    Routes -->|optional streaming chat| AI
+    Public -->|configured email flow| Email
 ```
 
-## Authenticated request flow
+### Request and data flow
+
+Protected API handlers obtain the current session and pass organization context to server services. Dashboard pages are less uniform: some use these services, some query Prisma directly, and others still use demo/static data. Authorization must be enforced on the server; navigation visibility is only presentation.
 
 ```mermaid
 sequenceDiagram
-    participant U as User
-    participant N as Next.js route
-    participant S as Session and RBAC
-    participant F as Server service
-    participant P as Prisma
-    participant D as PostgreSQL
+    participant User
+    participant UI as Next.js page or client UI
+    participant API as API route / server action
+    participant Auth as Session and permission helpers
+    participant Service as Server service
+    participant Prisma
+    participant DB as PostgreSQL
 
-    U->>N: Request dashboard, finance, or POS action
-    N->>S: Verify JWT and organization permission
-    S-->>N: Authorized session context
-    N->>F: Execute scoped operation
-    F->>P: Validate and run transaction
-    P->>D: Read or persist organization data
-    D-->>P: Result
-    P-->>F: Typed result
-    F-->>N: Response or server-rendered data
-    N-->>U: UI update or API response
+    User->>UI: Open a page or submit an operation
+    alt Protected API flow
+        UI->>API: Send request
+        API->>Auth: Check session and permission
+        Auth-->>API: Session context or rejection
+        API->>Service: Validate and execute scoped operation
+        Service->>Prisma: Read or write records
+        Prisma->>DB: SQL
+        DB-->>Prisma: Persisted result
+        Prisma-->>Service: Result
+        Service-->>API: Typed result
+        API-->>UI: Response
+    else Dashboard route
+        UI->>Service: Server-side data request where wired
+        Note over UI,Service: Other routes currently render static demo data or explicit placeholders
+    end
+```
+
+### Persisted domain model overview
+
+The schema includes organization membership, franchise operations, documents/support/audit, accounting, and sales/POS models. It does not yet include inventory stock, HR, compliance records, notifications, approvals/workflows, or saved/scheduled reports.
+
+```mermaid
+erDiagram
+    Organization ||--o{ Membership : has
+    User ||--o{ Membership : joins
+    Organization ||--o{ FranchiseBrand : owns
+    Organization ||--o{ Franchisee : manages
+    FranchiseBrand ||--o{ Franchisee : represents
+    Organization ||--o{ FranchiseLocation : operates
+    FranchiseBrand ||--o{ FranchiseLocation : identifies
+    Franchisee o|--o{ FranchiseLocation : operates
+    Organization ||--o{ FranchiseApplication : receives
+    Franchisee o|--o{ FranchiseApplication : submits
+    Organization ||--o{ FranchiseAgreement : records
+    Franchisee ||--o{ FranchiseAgreement : signs
+    FranchiseAgreement o|--o{ Invoice : bills
+    Franchisee ||--o{ Invoice : receives
+    Invoice ||--o{ InvoiceLine : contains
+    Invoice ||--o{ Payment : receives
+    Organization ||--o{ Document : stores
+    Organization ||--o{ SupportTicket : tracks
+    Organization ||--o{ AuditLog : records
+    Organization ||--o{ FinancialAccount : configures
+    Organization ||--o{ JournalEntry : posts
+    Organization ||--o{ Product : catalogs
+    Organization ||--o{ Sale : records
+    Product ||--o{ SaleLine : sold_as
+    Sale ||--o{ SaleLine : contains
+    Sale o|--o{ SalePayment : paid_by
+    SalesInvoice o|--o{ SalePayment : receives
+    Organization ||--o{ PosTerminal : operates
+    PosTerminal ||--o{ CashierShift : opens
+    CashierShift o|--o{ Sale : processes
 ```
 
 ## Technology
 
-- Next.js 16 App Router with React 19 and TypeScript 7
-- Node.js `>=22.23.4`
-- PostgreSQL with Prisma 7 and the PostgreSQL adapter
-- Tailwind CSS 4 with shadcn/ui-style Radix components
-- Stateless JWT sessions in secure `httpOnly` cookies
-- bcrypt password hashing, magic-link authentication through Resend, and server-side permission checks
-- Vitest with Testing Library for automated tests
+- Node.js `>=24.21.0` and pnpm `12.23.0`
+- Next.js 16 App Router, React 19, and TypeScript 7
+- PostgreSQL with Prisma 7 and `@prisma/adapter-pg`
+- Tailwind CSS 4 and Radix/shadcn-style UI primitives
+- Vercel AI SDK (`ai`) for optional streamed responses
+- Vitest, Testing Library, and jsdom
 
-## Local setup
+## Local development
 
-Prerequisites: Node.js `>=22.23.4`, PostgreSQL, and pnpm. npm is also supported because the repository includes an npm lockfile.
+### Prerequisites
 
-Install dependencies:
+- Node.js `>=24.21.0`
+- pnpm `12.23.0` (the repository package manager)
+- A PostgreSQL database
+
+### Setup
 
 ```bash
 pnpm install
 ```
 
-Copy the example environment file to `.env.local` and set the database connection and a random `AUTH_SECRET` with at least 16 characters. Do not commit local environment files or credentials.
+Copy `.env.example` to `.env.local` and set at least `DATABASE_URL` and an `AUTH_SECRET` of at least 16 characters for authenticated flows.
 
 On macOS/Linux:
 
@@ -119,63 +221,87 @@ On PowerShell:
 Copy-Item .env.example .env.local
 ```
 
-Initialize and start the application:
+Then validate/generate the Prisma client, apply local development migrations, and start Next.js:
 
 ```bash
 pnpm prisma:validate
 pnpm prisma:generate
 pnpm prisma:migrate
-pnpm db:seed
 pnpm dev
 ```
 
 Open <http://localhost:3000>.
 
-The seed command intentionally inserts no data unless both `SEED_ORGANIZATION_NAME` and `SEED_ORGANIZATION_SLUG` are set. When both are present, it upserts that organization. It does not create default users or sample business records.
+The seed command is optional. It inserts no data unless both `SEED_ORGANIZATION_NAME` and `SEED_ORGANIZATION_SLUG` are set; then it upserts only that organization. It does not generate users, example franchises, or sample transactions.
 
-### Environment configuration
+### Environment variables
 
-Required for normal local development:
+| Variable | Use |
+| --- | --- |
+| `DATABASE_URL` | PostgreSQL runtime connection |
+| `DIRECT_DATABASE_URL`, `PRISMA_DATABASE_URL`, `POSTGRES_URL_NON_POOLING`, `POSTGRES_URL`, `DATABASE_URL_POOLED` | Supported database URL aliases (resolved by Prisma/runtime configuration) |
+| `SHADOW_DATABASE_URL` | Optional Prisma shadow database |
+| `AUTH_SECRET` | Session signing secret; at least 16 characters for authenticated sessions |
+| `APP_URL` | Application URL; defaults to `http://localhost:3000` |
+| `EMAIL_FROM`, `RESEND_API_KEY`, `MAGIC_LINK_TTL_MINUTES` | Magic-link email configuration |
+| `AI_DEFAULT_MODEL` and provider credentials | Optional AI assistant model configuration |
+| `SEED_ORGANIZATION_NAME`, `SEED_ORGANIZATION_SLUG` | Optional real organization bootstrap; set both or neither |
 
-- `DATABASE_URL` — PostgreSQL connection string.
-- `AUTH_SECRET` — at least 16 random characters for authenticated sessions.
-
-The example file also includes `APP_URL`, `EMAIL_FROM`, `RESEND_API_KEY`, and `MAGIC_LINK_TTL_MINUTES` for magic-link authentication, plus optional seed organization values. For the AI workspace, configure `AI_DEFAULT_MODEL` and the credentials required by the selected AI provider. Database URL aliases such as `DIRECT_DATABASE_URL`, `PRISMA_DATABASE_URL`, and `POSTGRES_URL_NON_POOLING` are supported by the Prisma configuration where applicable.
+See `.env.example` for local placeholders. Never commit secrets or real credentials.
 
 ## Useful commands
 
-| Command                      | Purpose                                              |
-| ---------------------------- | ---------------------------------------------------- |
-| `pnpm dev`                   | Start the development server                         |
-| `pnpm build`                 | Create a production build                            |
-| `pnpm start`                 | Serve a production build                             |
-| `pnpm typecheck`             | Run TypeScript without emitting files                |
-| `pnpm lint`                  | Run ESLint                                           |
-| `pnpm lint:fix`              | Apply automatic ESLint fixes                         |
-| `pnpm format`                | Format source and documentation files                |
-| `pnpm format:check`          | Check Prettier formatting                            |
-| `pnpm test`                  | Run the Vitest suite once                            |
-| `pnpm test:watch`            | Run Vitest in watch mode                             |
-| `pnpm prisma:validate`       | Validate the Prisma schema                           |
-| `pnpm prisma:generate`       | Generate the Prisma client                           |
-| `pnpm prisma:migrate`        | Create and apply a development migration             |
+| Command | Purpose |
+| --- | --- |
+| `pnpm dev` | Start the development server |
+| `pnpm build` | Create a production build |
+| `pnpm typecheck` | Run TypeScript without emitting files |
+| `pnpm lint` | Run ESLint |
+| `pnpm lint:fix` | Apply automatic ESLint fixes |
+| `pnpm format` | Format TypeScript, JavaScript, JSON, and Markdown files |
+| `pnpm format:check` | Check formatting |
+| `pnpm test` | Run the Vitest suite once |
+| `pnpm test:watch` | Run Vitest in watch mode |
+| `pnpm prisma:validate` | Validate the Prisma schema |
+| `pnpm prisma:generate` | Generate the Prisma client |
+| `pnpm prisma:migrate` | Create/apply a local development migration |
 | `pnpm prisma:migrate:deploy` | Apply existing migrations in deployment environments |
-| `pnpm prisma:studio`         | Open Prisma Studio                                   |
-| `pnpm db:seed`               | Run the conditional organization seed                |
+| `pnpm prisma:studio` | Open Prisma Studio |
+| `pnpm db:seed` | Run the conditional organization-only seed |
+| `pnpm inventory:audit` | Check component inventory governance |
+| `pnpm check` | Run lint, typecheck, tests, and inventory audit |
 
-## Repository layout
+## Repository map
 
-- `app/` — Next.js routes, layouts, pages, API routes, and server actions
-- `components/` — reusable UI, layout, dashboard, auth, permission, chart, and AI components
-- `lib/` — environment validation, Prisma access, navigation, RBAC, validation, and server services
-- `prisma/` — schema, migrations, Prisma configuration, and seed entry point
-- `tests/` — Vitest and Testing Library tests
-- `public/` — static assets
-- `docs/` — implementation plans and boundary/audit notes
+```text
+app/
+  api/                 API route handlers (AI, auth, POS, sales)
+  auth/                Authentication callbacks
+  dashboard/           Dashboard pages and nested detail routes
+  login/ signup/       Public account flows
+components/
+  ai-elements/         AI interaction primitives
+  domain/              Domain UI grouped by business area
+  ui/                  Reusable UI primitives
+  layout/ dashboard/   App shell and dashboard presentation
+lib/
+  server/              Auth, services, validation, and server-only data access
+  rbac.ts               Permission catalog
+prisma/
+  schema.prisma         Persisted domain schema
+  migrations/           Database migration history
+  seed.ts                Optional organization-only seed
+tests/                  Vitest and Testing Library tests
+docs/                   Component architecture and remediation status
+```
+
+Component boundaries, inventory requirements, and implementation status are documented in [components/README.md](./components/README.md), [docs/component-inventory.md](./docs/component-inventory.md), and [docs/component-remediation-status.md](./docs/component-remediation-status.md).
 
 ## Security and contribution
 
-Read [SECURITY.md](./SECURITY.md) before reporting a vulnerability and [CONTRIBUTING.md](./CONTRIBUTING.md) before opening a change. Authorization is enforced on the server; UI visibility is not a security boundary. Community participation is governed by [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md).
+Read [SECURITY.md](./SECURITY.md) before reporting a vulnerability and [CONTRIBUTING.md](./CONTRIBUTING.md) before opening a change. Server-side authorization is required for protected operations; UI or navigation filtering is not an authorization boundary. Current demo identity/context usage means the dashboard should not be considered production-secure until that integration is completed.
+
+Community participation is governed by [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md).
 
 ## License
 

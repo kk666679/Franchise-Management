@@ -2,8 +2,9 @@ export type InvoiceView = {
   id: string
   number: string
   franchiseName: string
-  status: "draft" | "issued" | "paid" | "overdue" | "void"
+  status: "draft" | "issued" | "partially_paid" | "paid" | "overdue" | "void"
   totalCents: number
+  amountPaidCents: number
   currency: string
   dueDateIso: string
   issuedAtIso: string | null
@@ -36,4 +37,29 @@ export type TaxRateView = {
   rateBps: number
   region: string
   isDefault: boolean
+}
+
+export function toInvoiceStatus(status: string): InvoiceView["status"] {
+  switch (status) {
+    case "DRAFT":
+    case "draft":
+      return "draft"
+    case "ISSUED":
+    case "issued":
+      return "issued"
+    case "PARTIALLY_PAID":
+    case "partially_paid":
+      return "partially_paid"
+    case "PAID":
+    case "paid":
+      return "paid"
+    case "OVERDUE":
+    case "overdue":
+      return "overdue"
+    case "VOID":
+    case "void":
+      return "void"
+    default:
+      throw new Error(`Unsupported invoice status: ${status}`)
+  }
 }

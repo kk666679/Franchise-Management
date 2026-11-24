@@ -1,37 +1,40 @@
 import { PageHeader } from "@/components/layout/page-header"
 import { EmptyState } from "@/components/feedback/empty-state"
 import { InvoiceTable } from "@/components/domain/finance/InvoiceTable"
-import type { InvoiceView } from "@/components/domain/finance/mappers"
-import { getFinanceInvoices, requireFinanceRead } from "@lib/server/finance"
-
-const STATUS_MAP: Record<string, InvoiceView["status"]> = {
-  DRAFT: "draft",
-  ISSUED: "issued",
-  PAID: "paid",
-  OVERDUE: "overdue",
-  VOID: "void",
-  PARTIALLY_PAID: "issued",
-}
+import {
+  toInvoiceStatus,
+  type InvoiceView,
+} from "@/components/domain/finance/mappers"
+import {
+  getFinanceInvoices,
+  getFinanceOrganization,
+  requireFinanceRead,
+} from "@lib/server/finance"
 
 export default async function FinanceInvoicesPage() {
   const context = await requireFinanceRead()
   if (!context.organizationId) {
     return (
-      <PageAccessNotice
-        title="Invoices"
+      <EmptyState
+        title="Sign in required"
         description="Sign in to view organization invoices."
       />
     )
   }
 
-  const invoices = await getFinanceInvoices(context.organizationId)
+  const [invoices, organization] = await Promise.all([
+    getFinanceInvoices(context.organizationId),
+    getFinanceOrganization(context.organizationId),
+  ])
+  const currency = organization?.currency ?? "USD"
   const rows: InvoiceView[] = invoices.map((inv) => ({
     id: inv.id,
     number: inv.invoiceNo,
     franchiseName: inv.franchisee.tradingName ?? inv.franchisee.legalName,
-    status: STATUS_MAP[inv.status] ?? "draft",
+    status: toInvoiceStatus(inv.status),
     totalCents: Math.round(Number(inv.total) * 100),
-    currency: "USD",
+    amountPaidCents: Math.round(Number(inv.amountPaid) * 100),
+    currency,
     dueDateIso: inv.dueDate.toISOString(),
     issuedAtIso: inv.issueDate.toISOString(),
   }))

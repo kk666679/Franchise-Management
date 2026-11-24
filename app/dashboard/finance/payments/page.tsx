@@ -1,4 +1,5 @@
 import { PageHeader } from "@/components/layout/page-header"
+import { EmptyState } from "@/components/feedback/empty-state"
 import {
   getFinanceOrganization,
   getFinancePayments,
@@ -9,9 +10,9 @@ export default async function FinancePaymentsPage() {
   const context = await requireFinanceRead()
   if (!context.organizationId) {
     return (
-      <PageAccessNotice
-        title="Payments"
-        description="This payments page is open to everyone. Sign in to view organization payment records."
+      <EmptyState
+        title="Sign in required"
+        description="Sign in to view organization payment records."
       />
     )
   }
@@ -20,14 +21,27 @@ export default async function FinancePaymentsPage() {
     getFinanceOrganization(context.organizationId),
     getFinancePayments(context.organizationId),
   ])
-  if (!organization) return null
+  if (!organization) {
+    return (
+      <EmptyState
+        title="Organization not found"
+        description="No organization is available for this account."
+      />
+    )
+  }
 
   return (
     <div className="space-y-6">
-<PageHeader
-          title="Payments"
-          description={`${payments.length} recent payment records`}
+      <PageHeader
+        title="Payments"
+        description={`${payments.length} recent payment records`}
+      />
+      {payments.length === 0 ? (
+        <EmptyState
+          title="No payments yet"
+          description="Payment records will appear here when recorded."
         />
+      ) : (
         <div className="overflow-x-auto rounded-2xl border border-border bg-card/60">
           <table className="w-full min-w-[52rem] text-left text-sm">
             <thead className="border-b border-border bg-muted/40 text-xs tracking-wide text-muted-foreground uppercase">
@@ -59,6 +73,7 @@ export default async function FinancePaymentsPage() {
             </tbody>
           </table>
         </div>
+      )}
     </div>
   )
 }

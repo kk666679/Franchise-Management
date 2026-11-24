@@ -3,21 +3,25 @@
 import Link from "next/link"
 import { FormattedDate } from "@/components/common/FormattedDate"
 import { ContractLifecycleBadge } from "../ContractLifecycleBadge"
-import type { ContractStatus } from "../ContractLifecycleBadge"
 import type { ContractView } from "../mappers"
 
 export const contractColumns = [
   {
-    accessorKey: "franchiseName",
-    header: "Franchise",
+    accessorKey: "agreementNo",
+    header: "Agreement",
     sortable: true,
     cell: (row: ContractView) => (
-      <Link
-        href={`/dashboard/agreements/${row.id}`}
-        className="font-medium underline-offset-4 hover:underline"
-      >
-        {row.franchiseName}
-      </Link>
+      <div>
+        <Link
+          href={`/dashboard/agreements/${row.id}`}
+          className="font-medium underline-offset-4 hover:underline"
+        >
+          {row.agreementNo ?? row.franchiseName}
+        </Link>
+        {row.agreementNo ? (
+          <p className="text-xs text-muted-foreground">{row.franchiseName}</p>
+        ) : null}
+      </div>
     ),
   },
   {
@@ -25,7 +29,7 @@ export const contractColumns = [
     header: "Status",
     sortable: true,
     cell: (row: ContractView) => (
-      <ContractLifecycleBadge status={row.status as ContractStatus} />
+      <ContractLifecycleBadge status={row.status} />
     ),
   },
   {
@@ -52,6 +56,22 @@ export const contractColumns = [
     cell: (row: ContractView) => (
       <span className="tabular-nums">{row.royaltyRatePct}%</span>
     ),
+  },
+  {
+    accessorKey: "initialFeeCents",
+    header: "Initial fee",
+    sortable: true,
+    cell: (row: ContractView) =>
+      row.initialFeeCents === undefined ? (
+        <span className="text-muted-foreground">—</span>
+      ) : (
+        <span className="tabular-nums">
+          {new Intl.NumberFormat(undefined, {
+            style: "currency",
+            currency: row.currency ?? "USD",
+          }).format(row.initialFeeCents / 100)}
+        </span>
+      ),
   },
 ]
 

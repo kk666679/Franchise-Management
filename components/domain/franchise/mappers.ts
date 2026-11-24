@@ -4,6 +4,7 @@ import type {
   TerritoryDTO,
   ContractDTO,
 } from "@/lib/server/mappers/franchise.dto"
+import type { ContractStatus } from "./ContractLifecycleBadge/ContractLifecycleBadge.types"
 
 /** View-model — what the UI actually renders. Never includes internal IDs or raw status enums. */
 export type FranchiseView = {
@@ -20,6 +21,8 @@ export type FranchiseView = {
 export type BranchView = {
   id: string
   name: string
+  code?: string
+  brandName?: string
   franchiseName: string
   addressLine: string
   city: string
@@ -37,11 +40,14 @@ export type TerritoryView = {
 
 export type ContractView = {
   id: string
+  agreementNo?: string
   franchiseName: string
-  status: string
+  status: ContractStatus
   effectiveFromIso: string
   effectiveToIso: string | null
   royaltyRatePct: number
+  initialFeeCents?: number
+  currency?: string
 }
 
 export function toFranchiseView(dto: FranchiseDTO): FranchiseView {
@@ -69,6 +75,32 @@ export function toBranchView(dto: BranchDTO): BranchView {
   }
 }
 
+export function toContractStatus(status: string): ContractStatus {
+  switch (status) {
+    case "DRAFT":
+    case "draft":
+      return "draft"
+    case "PENDING_SIGNATURE":
+    case "PENDING_APPROVAL":
+    case "pending_approval":
+      return "pending_approval"
+    case "ACTIVE":
+    case "active":
+      return "active"
+    case "RENEWAL":
+    case "renewal":
+      return "renewal"
+    case "EXPIRED":
+    case "expired":
+      return "expired"
+    case "TERMINATED":
+    case "terminated":
+      return "terminated"
+    default:
+      throw new Error(`Unsupported contract status: ${status}`)
+  }
+}
+
 export function toTerritoryView(dto: TerritoryDTO): TerritoryView {
   return {
     id: dto.id,
@@ -83,7 +115,7 @@ export function toContractView(dto: ContractDTO): ContractView {
   return {
     id: dto.id,
     franchiseName: dto.franchise.name,
-    status: dto.status,
+    status: toContractStatus(dto.status),
     effectiveFromIso: dto.effectiveFrom.toISOString(),
     effectiveToIso: dto.effectiveTo?.toISOString() ?? null,
     royaltyRatePct: dto.royaltyRateBps / 100,

@@ -6,6 +6,7 @@ import type { InvoiceView } from "../mappers"
 const STATUS_CLASS: Record<InvoiceView["status"], string> = {
   draft: "text-muted-foreground",
   issued: "text-blue-600 dark:text-blue-400",
+  partially_paid: "text-amber-600 dark:text-amber-400",
   paid: "text-emerald-600 dark:text-emerald-400",
   overdue: "text-red-600 dark:text-red-400",
   void: "text-muted-foreground",
@@ -47,6 +48,19 @@ export const invoiceColumns = [
           style: "currency",
           currency: row.currency,
         }).format(row.totalCents / 100)}
+      </span>
+    ),
+  },
+  {
+    accessorKey: "amountPaidCents",
+    header: "Paid",
+    sortable: true,
+    cell: (row: InvoiceView) => (
+      <span className="tabular-nums">
+        {new Intl.NumberFormat(undefined, {
+          style: "currency",
+          currency: row.currency,
+        }).format(row.amountPaidCents / 100)}
       </span>
     ),
   },

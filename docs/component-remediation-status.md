@@ -20,3 +20,22 @@ This pass started implementing the remediation plan on 2026-11-23.
 - Implement real server-enforced auth (`RequirePermission`, canonical permission context) and reconcile RBAC permission codes.
 - Domain maturity: add tests/a11y/contracts per domain; wire schema-blocked domains only after Phase 9 schema readiness.
 - Remove temporary exemptions/baselines and bring CI to green.
+
+## Dashboard domain integration audit (2026-11-25)
+
+### Corrections made
+
+- Finance overview and invoice routes now share the domain `InvoiceTable` view model, preserve `PARTIALLY_PAID`, use the organization currency, and show amounts paid. Invoice detail now uses `InvoiceDetail`.
+- Locations now uses the domain `BranchTable`, retaining location code, brand, franchisee, and active status.
+- Agreements now uses `ContractTable`; persisted agreement statuses are explicitly mapped to lifecycle badge statuses, including `EXPIRED`.
+- Removed references to the undefined `PageAccessNotice` component from finance and agreement routes.
+- The notifications, workflows, and reporting pages no longer claim that their domain components are integrated when their rendered branch was unreachable and no corresponding Prisma models exist.
+- No operational seed records were added. `prisma/seed.ts` only seeds an organization when real organization values are explicitly configured.
+
+### Still blocked / not claimed as integrated
+
+- Inventory has a persisted product catalog, but stock levels, stock movements, and purchase orders have no Prisma models or populated source records.
+- HR, compliance, notifications, approvals/workflows, and saved/scheduled reports have no persistence models in the current schema. Their view-model components alone cannot provide functional data flows.
+- AI-assisted approval recommendations are not wired. The selected behavior is recommendation preparation followed by explicit reviewer confirmation; implementing it requires persisted approval/evidence records and a server-side AI path grounded in those records.
+- No source records were supplied for seeding these domains. Keep seed behavior empty rather than create synthetic business data.
+- Existing organization lookup and authorization-context placeholders remain a separate cross-cutting blocker; do not treat empty/mock actor contexts as production authorization.
