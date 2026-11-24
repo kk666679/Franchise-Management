@@ -69,8 +69,12 @@ function MessageParts({ message }: { message: UIMessage }) {
         }
 
         if (part.type.startsWith("tool-")) {
-          const toolName = "toolName" in part ? String((part as { toolName: unknown }).toolName) : part.type
-          const rawState = "state" in part ? String((part as { state: unknown }).state) : ""
+          const toolName =
+            "toolName" in part
+              ? String((part as { toolName: unknown }).toolName)
+              : part.type
+          const rawState =
+            "state" in part ? String((part as { state: unknown }).state) : ""
           const state =
             rawState === "result"
               ? ("output-available" as const)
@@ -78,13 +82,20 @@ function MessageParts({ message }: { message: UIMessage }) {
                 ? ("input-available" as const)
                 : ("input-streaming" as const)
           const args = "args" in part ? (part as { args: unknown }).args : {}
-          const result = "result" in part ? (part as { result: unknown }).result : undefined
+          const result =
+            "result" in part ? (part as { result: unknown }).result : undefined
           return (
             <Tool key={key}>
-              <ToolHeader type="dynamic-tool" state={state} toolName={toolName} />
+              <ToolHeader
+                type="dynamic-tool"
+                state={state}
+                toolName={toolName}
+              />
               <ToolContent>
                 <ToolInput input={args} />
-                {result !== undefined && <ToolOutput output={result} errorText={undefined} />}
+                {result !== undefined && (
+                  <ToolOutput output={result} errorText={undefined} />
+                )}
               </ToolContent>
             </Tool>
           )
@@ -106,7 +117,8 @@ export default function AIPage() {
 
   const sendMessage = useCallback(
     async (text: string) => {
-      if (!text.trim() || status === "submitted" || status === "streaming") return
+      if (!text.trim() || status === "submitted" || status === "streaming")
+        return
 
       const userMsg: UIMessage = {
         id: generateId(),
@@ -153,9 +165,13 @@ export default function AIPage() {
             setMessages((prev) =>
               prev.map((m) =>
                 m.id === assistantId
-                  ? { ...m, content: accumulated, parts: [{ type: "text", text: accumulated }] }
-                  : m,
-              ),
+                  ? {
+                      ...m,
+                      content: accumulated,
+                      parts: [{ type: "text", text: accumulated }],
+                    }
+                  : m
+              )
             )
           }
         }
@@ -166,7 +182,7 @@ export default function AIPage() {
         else setStatus("idle")
       }
     },
-    [messages, status],
+    [messages, status]
   )
 
   const stop = useCallback(() => {
@@ -188,8 +204,8 @@ export default function AIPage() {
                   Franchise Intelligence
                 </Shimmer>
                 <p className="max-w-sm text-sm text-muted-foreground">
-                  Ask anything about your franchise network — royalties, compliance, agreements,
-                  performance.
+                  Ask anything about your franchise network — royalties,
+                  compliance, agreements, performance.
                 </p>
               </div>
               <Suggestions>
@@ -199,7 +215,9 @@ export default function AIPage() {
               </Suggestions>
             </div>
           ) : (
-            messages.map((message) => <MessageParts key={message.id} message={message} />)
+            messages.map((message) => (
+              <MessageParts key={message.id} message={message} />
+            ))
           )}
         </ConversationContent>
         <ConversationScrollButton />
@@ -227,7 +245,15 @@ export default function AIPage() {
               AI responses may be inaccurate. Verify before acting.
             </span>
             <PromptInputSubmit
-              status={status === "submitted" ? "submitted" : status === "streaming" ? "streaming" : status === "error" ? "error" : undefined}
+              status={
+                status === "submitted"
+                  ? "submitted"
+                  : status === "streaming"
+                    ? "streaming"
+                    : status === "error"
+                      ? "error"
+                      : undefined
+              }
               onStop={stop}
             />
           </PromptInputFooter>
@@ -236,4 +262,3 @@ export default function AIPage() {
     </div>
   )
 }
-

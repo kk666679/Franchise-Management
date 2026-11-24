@@ -1,4 +1,4 @@
-import type { FranchiseView } from '../mappers'
+import type { FranchiseView } from "../mappers"
 
 export type FranchiseTableProps = {
   data: FranchiseView[]

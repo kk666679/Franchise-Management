@@ -1,4 +1,3 @@
-
 import {
   WebPreview,
   WebPreviewBody,
@@ -16,7 +15,7 @@ import { visibleDestinations } from "@/lib/navigation"
 
 export default async function ApplicationPreviewPage() {
   const session = await getCurrentSession()
-  
+
   return (
     <AppShell
       brand={<span className="text-sm font-semibold">Application preview</span>}
@@ -49,4 +48,3 @@ export default async function ApplicationPreviewPage() {
     </AppShell>
   )
 }
-

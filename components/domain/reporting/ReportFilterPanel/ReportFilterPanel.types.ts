@@ -1,3 +1,6 @@
-import type { ReportFilterView } from '../mappers'
+import type { ReportFilterView } from "../mappers"
 
-export type ReportFilterPanelProps = { filters: ReportFilterView[]; onChange: (filters: ReportFilterView[]) => void }
+export type ReportFilterPanelProps = {
+  filters: ReportFilterView[]
+  onChange: (filters: ReportFilterView[]) => void
+}

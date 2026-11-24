@@ -47,7 +47,7 @@ const STATUS_LABEL = {
 
 export default async function FranchisesPage() {
   const session = await getCurrentSession()
-  
+
   const franchisees = await getFranchisees(session?.org ?? "")
   const granted = resolvePermissions([], session?.role ?? undefined)
   const navigation = visibleDestinations(granted)
@@ -87,9 +87,11 @@ export default async function FranchisesPage() {
               ["On hold", onHold],
             ] as const
           ).map(([label, count]) => (
-            <div key={label} className="glass rounded-2xl p-4">
+            <div key={label} className="rounded-2xl p-4 glass">
               <p className="text-xs text-muted-foreground">{label}</p>
-              <p className="mt-1 text-2xl font-semibold tabular-nums">{count}</p>
+              <p className="mt-1 text-2xl font-semibold tabular-nums">
+                {count}
+              </p>
             </div>
           ))}
         </div>
@@ -104,19 +106,26 @@ export default async function FranchisesPage() {
           <div className="overflow-hidden rounded-2xl border border-border bg-card/60">
             <div className="overflow-x-auto">
               <table className="w-full min-w-[48rem] text-left text-sm">
-                <thead className="border-b border-border bg-muted/40 text-xs uppercase tracking-wide text-muted-foreground">
+                <thead className="border-b border-border bg-muted/40 text-xs tracking-wide text-muted-foreground uppercase">
                   <tr>
                     <th className="px-4 py-3 font-medium">Franchisee</th>
                     <th className="px-4 py-3 font-medium">Brand</th>
                     <th className="px-4 py-3 font-medium">Status</th>
-                    <th className="px-4 py-3 text-right font-medium">Locations</th>
-                    <th className="px-4 py-3 text-right font-medium">Agreements</th>
+                    <th className="px-4 py-3 text-right font-medium">
+                      Locations
+                    </th>
+                    <th className="px-4 py-3 text-right font-medium">
+                      Agreements
+                    </th>
                     <th className="px-4 py-3 font-medium">Contact</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border/70">
                   {franchisees.map((f) => (
-                    <tr key={f.id} className="transition-colors hover:bg-muted/30">
+                    <tr
+                      key={f.id}
+                      className="transition-colors hover:bg-muted/30"
+                    >
                       <td className="px-4 py-3">
                         <Link
                           href={`/dashboard/franchises/${f.id}`}
@@ -125,7 +134,9 @@ export default async function FranchisesPage() {
                           {f.tradingName ?? f.legalName}
                         </Link>
                         {f.tradingName && (
-                          <p className="text-xs text-muted-foreground">{f.legalName}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {f.legalName}
+                          </p>
                         )}
                       </td>
                       <td className="px-4 py-3 text-muted-foreground">
@@ -155,7 +166,8 @@ export default async function FranchisesPage() {
               </table>
             </div>
             <div className="border-t border-border px-4 py-3 text-xs text-muted-foreground">
-              {franchisees.length} franchisee{franchisees.length !== 1 ? "s" : ""}
+              {franchisees.length} franchisee
+              {franchisees.length !== 1 ? "s" : ""}
             </div>
           </div>
         )}
@@ -163,4 +175,3 @@ export default async function FranchisesPage() {
     </AppShell>
   )
 }
-

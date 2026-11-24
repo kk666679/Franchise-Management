@@ -1,15 +1,15 @@
-'use client'
+"use client"
 
-import Link from 'next/link'
-import { FormattedDate } from '@/components/common/FormattedDate'
-import { ContractLifecycleBadge } from '../ContractLifecycleBadge'
-import type { ContractStatus } from '../ContractLifecycleBadge'
-import type { ContractView } from '../mappers'
+import Link from "next/link"
+import { FormattedDate } from "@/components/common/FormattedDate"
+import { ContractLifecycleBadge } from "../ContractLifecycleBadge"
+import type { ContractStatus } from "../ContractLifecycleBadge"
+import type { ContractView } from "../mappers"
 
 export const contractColumns = [
   {
-    accessorKey: 'franchiseName',
-    header: 'Franchise',
+    accessorKey: "franchiseName",
+    header: "Franchise",
     sortable: true,
     cell: (row: ContractView) => (
       <Link
@@ -21,20 +21,22 @@ export const contractColumns = [
     ),
   },
   {
-    accessorKey: 'status',
-    header: 'Status',
+    accessorKey: "status",
+    header: "Status",
     sortable: true,
-    cell: (row: ContractView) => <ContractLifecycleBadge status={row.status as ContractStatus} />,
+    cell: (row: ContractView) => (
+      <ContractLifecycleBadge status={row.status as ContractStatus} />
+    ),
   },
   {
-    accessorKey: 'effectiveFromIso',
-    header: 'Effective from',
+    accessorKey: "effectiveFromIso",
+    header: "Effective from",
     sortable: true,
     cell: (row: ContractView) => <FormattedDate iso={row.effectiveFromIso} />,
   },
   {
-    accessorKey: 'effectiveToIso',
-    header: 'Effective to',
+    accessorKey: "effectiveToIso",
+    header: "Effective to",
     sortable: true,
     cell: (row: ContractView) =>
       row.effectiveToIso ? (
@@ -44,9 +46,11 @@ export const contractColumns = [
       ),
   },
   {
-    accessorKey: 'royaltyRatePct',
-    header: 'Royalty',
+    accessorKey: "royaltyRatePct",
+    header: "Royalty",
     sortable: true,
-    cell: (row: ContractView) => <span className="tabular-nums">{row.royaltyRatePct}%</span>,
+    cell: (row: ContractView) => (
+      <span className="tabular-nums">{row.royaltyRatePct}%</span>
+    ),
   },
 ]

@@ -6,24 +6,24 @@
 
 ## 1. Repository & Runtime Snapshot
 
-| Area | Observed | Notes |
-|---|---|---|
-| Package manager | `npm` (`package-lock.json` present) | No pnpm/yarn/bun lockfile. |
-| Framework | `next@16.4.6` | App Router; `next.config.ts` minimal. |
-| React | `react@19.3.1`, `react-dom@19.3.1` | React 19.3 line installed. |
-| TypeScript | `typescript@7.0.2` (dev `^7`) | `strict: true`, `noEmit`, `moduleResolution: bundler`, `@/*` alias. |
-| Tailwind | `tailwindcss@4.3.5`, `@tailwindcss/postcss@^4` | Tailwind v4 CSS-first config in `app/globals.css`. |
-| UI primitives | `shadcn@4.23.0`, `radix-ui@1.8.1`, `lucide-react@1.77.0` | `components.json` style `radix-luma`, RSC enabled, aliases to `@/components/*`. |
-| Table | `@tanstack/react-table@9.3.1` | Installed; current reusable table is custom/simple, not TanStack-powered. |
-| Forms | `react-hook-form@7.92.0`, `@hookform/resolvers@7.0.8` | Present. |
-| Validation | `zod@4.6.7` in `node_modules`, **not declared in `package.json`** | Must be added explicitly; do not rely on transitive install. |
-| Charts | `recharts@3.11.0` | Installed; existing chart components are lightweight custom SVG/div charts. |
-| AI SDK | `ai@7.0.179` | Installed; `components/ai-elements/*` already present. |
-| Theming | `next-themes@0.4.6` | Dark-first theme provider exists; `D` hotkey toggles theme. |
-| Animation | `framer-motion@14.14.0` | Used by theme toggle; respect reduced motion. |
-| Testing | **Missing**: Vitest, RTL, Playwright, axe-core | No test scripts/configs; no component tests/stories found. |
-| Storybook | **Missing** | No `.storybook/`, no stories. |
-| Lint/format | ESLint 10 + `eslint-config-next@16.4.6`, Prettier 3 | Scripts: `lint`, `format`, `typecheck`. |
+| Area            | Observed                                                          | Notes                                                                           |
+| --------------- | ----------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| Package manager | `npm` (`package-lock.json` present)                               | No pnpm/yarn/bun lockfile.                                                      |
+| Framework       | `next@16.4.6`                                                     | App Router; `next.config.ts` minimal.                                           |
+| React           | `react@19.3.1`, `react-dom@19.3.1`                                | React 19.3 line installed.                                                      |
+| TypeScript      | `typescript@7.0.2` (dev `^7`)                                     | `strict: true`, `noEmit`, `moduleResolution: bundler`, `@/*` alias.             |
+| Tailwind        | `tailwindcss@4.3.5`, `@tailwindcss/postcss@^4`                    | Tailwind v4 CSS-first config in `app/globals.css`.                              |
+| UI primitives   | `shadcn@4.23.0`, `radix-ui@1.8.1`, `lucide-react@1.77.0`          | `components.json` style `radix-luma`, RSC enabled, aliases to `@/components/*`. |
+| Table           | `@tanstack/react-table@9.3.1`                                     | Installed; current reusable table is custom/simple, not TanStack-powered.       |
+| Forms           | `react-hook-form@7.92.0`, `@hookform/resolvers@7.0.8`             | Present.                                                                        |
+| Validation      | `zod@4.6.7` in `node_modules`, **not declared in `package.json`** | Must be added explicitly; do not rely on transitive install.                    |
+| Charts          | `recharts@3.11.0`                                                 | Installed; existing chart components are lightweight custom SVG/div charts.     |
+| AI SDK          | `ai@7.0.179`                                                      | Installed; `components/ai-elements/*` already present.                          |
+| Theming         | `next-themes@0.4.6`                                               | Dark-first theme provider exists; `D` hotkey toggles theme.                     |
+| Animation       | `framer-motion@14.14.0`                                           | Used by theme toggle; respect reduced motion.                                   |
+| Testing         | **Missing**: Vitest, RTL, Playwright, axe-core                    | No test scripts/configs; no component tests/stories found.                      |
+| Storybook       | **Missing**                                                       | No `.storybook/`, no stories.                                                   |
+| Lint/format     | ESLint 10 + `eslint-config-next@16.4.6`, Prettier 3               | Scripts: `lint`, `format`, `typecheck`.                                         |
 
 ## 2. Existing Structure (Relevant)
 
@@ -59,6 +59,7 @@ prisma/schema.prisma        # MembershipRole enum (5 roles) + business models
 ## 3. Existing Reusable Components / Assets
 
 ### Reuse as baseline
+
 - `components/ui/*` — shadcn/radix-luma primitives; already styled and used. Extend carefully, avoid breaking existing imports.
 - `components/layout/AppShell`, `AppHeader`, `PageContainer`, `PageHeader` — basic shell; needs enterprise nav/search/command/context selectors/permission-aware rendering.
 - `components/data-table/DataTable` — functional simple table; **not** TanStack Table v9, no server-state contract, no URL sync, no column pinning/ordering/resizing/saved views/virtualization/export contract. Needs replacement by a typed generic TanStack system while preserving migration path.
@@ -70,6 +71,7 @@ prisma/schema.prisma        # MembershipRole enum (5 roles) + business models
 - `lib/rbac.ts` — strong permission catalog; source of truth candidate for UI permission contracts, but must remain compatible with persisted `MembershipRole`.
 
 ### Gaps / Risks in existing components
+
 - `AppHeader` search pushes to `/dashboard?search=...` without real search system; notifications button nonfunctional.
 - `DashboardHeader` has "New application" button with no action.
 - `DashboardNav` is hardcoded and not permission-aware.
@@ -82,14 +84,14 @@ prisma/schema.prisma        # MembershipRole enum (5 roles) + business models
 
 ## 4. Missing Dependencies / Tooling
 
-| Need | Status | Action |
-|---|---|---|
-| `zod` explicit dependency | Missing from package.json, present in node_modules | Add explicit dependency compatible with installed v4/resolvers. |
-| Unit tests | Missing | Add Vitest + React Testing Library + jsdom/happy-dom + test setup. |
-| E2E | Missing | Add Playwright config and critical flows. |
-| Accessibility automation | Missing | Add axe-core integration (vitest-axe or playwright axe). |
-| Storybook | Missing | Optional per prompt; add only if time/budget allows without destabilizing. |
-| Visual/state docs | Missing | Add component docs/checklist regardless of Storybook. |
+| Need                      | Status                                             | Action                                                                     |
+| ------------------------- | -------------------------------------------------- | -------------------------------------------------------------------------- |
+| `zod` explicit dependency | Missing from package.json, present in node_modules | Add explicit dependency compatible with installed v4/resolvers.            |
+| Unit tests                | Missing                                            | Add Vitest + React Testing Library + jsdom/happy-dom + test setup.         |
+| E2E                       | Missing                                            | Add Playwright config and critical flows.                                  |
+| Accessibility automation  | Missing                                            | Add axe-core integration (vitest-axe or playwright axe).                   |
+| Storybook                 | Missing                                            | Optional per prompt; add only if time/budget allows without destabilizing. |
+| Visual/state docs         | Missing                                            | Add component docs/checklist regardless of Storybook.                      |
 
 ## 5. Incompatible / High-Risk Areas
 
@@ -157,30 +159,30 @@ components/
 
 ## 8. Implementation Plan (Phased)
 
-| Phase | Goal | Exit Criteria |
-|---|---|---|
-| 0 | Audit, plan, checklist, conventions | Audit doc + checklist created; risks identified. |
-| 1 | Design system & UI primitives | Tokens extended; core primitives/forms/feedback/table shells consistent; typecheck/lint pass. |
-| 2 | App shell/navigation | Responsive shell, sidebar/header/breadcrumb/command/search/context selectors, permission-aware nav presentation. |
-| 3 | Forms & feedback | RHF+Zod field system, form states, uploads, confirm/unsaved changes, accessible errors. |
-| 4 | Data tables & charts | Generic TanStack Table v9, server-state contracts, Recharts wrappers, accessible states. |
-| 5 | Dashboard & widgets | Modular widget registry, layout persistence contract, role templates, filters, edit mode, skeletons. |
-| 6 | Business domains | Domain component groups with typed DTO contracts, no data/auth/business logic leakage. |
-| 7 | AI interfaces | AI workspace, streaming/tool/source/citation/approval UI; no credentials/direct auth in components. |
-| 8 | Permissions & governance | Guards, role/access UI, audit presentation, sensitive confirmations. |
-| 9 | Enterprise capabilities | Workflows, approvals, reports, search, integrations, realtime status. |
-| 10 | Verification/cleanup | Tests, a11y, responsive, perf review, docs, checklist, final report. |
+| Phase | Goal                                | Exit Criteria                                                                                                    |
+| ----- | ----------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| 0     | Audit, plan, checklist, conventions | Audit doc + checklist created; risks identified.                                                                 |
+| 1     | Design system & UI primitives       | Tokens extended; core primitives/forms/feedback/table shells consistent; typecheck/lint pass.                    |
+| 2     | App shell/navigation                | Responsive shell, sidebar/header/breadcrumb/command/search/context selectors, permission-aware nav presentation. |
+| 3     | Forms & feedback                    | RHF+Zod field system, form states, uploads, confirm/unsaved changes, accessible errors.                          |
+| 4     | Data tables & charts                | Generic TanStack Table v9, server-state contracts, Recharts wrappers, accessible states.                         |
+| 5     | Dashboard & widgets                 | Modular widget registry, layout persistence contract, role templates, filters, edit mode, skeletons.             |
+| 6     | Business domains                    | Domain component groups with typed DTO contracts, no data/auth/business logic leakage.                           |
+| 7     | AI interfaces                       | AI workspace, streaming/tool/source/citation/approval UI; no credentials/direct auth in components.              |
+| 8     | Permissions & governance            | Guards, role/access UI, audit presentation, sensitive confirmations.                                             |
+| 9     | Enterprise capabilities             | Workflows, approvals, reports, search, integrations, realtime status.                                            |
+| 10    | Verification/cleanup                | Tests, a11y, responsive, perf review, docs, checklist, final report.                                             |
 
 ## 9. Quality Gate Baseline (Current)
 
-| Check | Status | Evidence |
-|---|---|---|
-| `npm run typecheck` | Not run in this audit pass | To run after each implementation phase. |
-| `npm run lint` | Not run in this audit pass | To run after each implementation phase. |
-| Unit tests | Blocked | No test runner installed/configured. |
-| E2E tests | Blocked | No Playwright installed/configured. |
-| Accessibility automation | Blocked | No axe tooling installed/configured. |
-| Storybook | Blocked | Not configured. |
+| Check                    | Status                     | Evidence                                |
+| ------------------------ | -------------------------- | --------------------------------------- |
+| `npm run typecheck`      | Not run in this audit pass | To run after each implementation phase. |
+| `npm run lint`           | Not run in this audit pass | To run after each implementation phase. |
+| Unit tests               | Blocked                    | No test runner installed/configured.    |
+| E2E tests                | Blocked                    | No Playwright installed/configured.     |
+| Accessibility automation | Blocked                    | No axe tooling installed/configured.    |
+| Storybook                | Blocked                    | Not configured.                         |
 
 ## 10. Immediate Next Actions (Phase 1 start)
 

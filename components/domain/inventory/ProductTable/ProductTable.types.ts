@@ -1,4 +1,4 @@
-import type { ProductView } from '../mappers'
+import type { ProductView } from "../mappers"
 
 export type ProductTableProps = {
   data: ProductView[]

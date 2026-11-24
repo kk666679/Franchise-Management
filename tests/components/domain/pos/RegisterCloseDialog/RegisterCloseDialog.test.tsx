@@ -1,13 +1,17 @@
-import { render, screen } from '@testing-library/react'
-import { axe } from 'jest-axe'
-import { RegisterCloseDialog } from './RegisterCloseDialog'
+import { render, screen } from "@testing-library/react"
+import { axe } from "jest-axe"
+import { RegisterCloseDialog } from "./RegisterCloseDialog"
 
-it('renders trigger', () => {
+it("renders trigger", () => {
   render(<RegisterCloseDialog onCloseRegister={async () => {}} />)
-  expect(screen.getByRole('button', { name: /Close register/i })).toBeInTheDocument()
+  expect(
+    screen.getByRole("button", { name: /Close register/i })
+  ).toBeInTheDocument()
 })
 
-it('has no a11y violations', async () => {
-  const { container } = render(<RegisterCloseDialog onCloseRegister={async () => {}} />)
+it("has no a11y violations", async () => {
+  const { container } = render(
+    <RegisterCloseDialog onCloseRegister={async () => {}} />
+  )
   expect((await axe(container)).violations).toEqual([])
 })

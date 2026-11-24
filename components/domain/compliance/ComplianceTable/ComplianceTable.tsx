@@ -1,11 +1,15 @@
-'use client'
+"use client"
 
-import { DataTable } from '@/components/data/DataTable'
-import { EmptyState } from '@/components/feedback/EmptyState'
-import { complianceColumns } from './ComplianceTable.columns'
-import type { ComplianceTableProps } from './ComplianceTable.types'
+import { DataTable } from "@/components/data/DataTable"
+import { EmptyState } from "@/components/feedback/EmptyState"
+import { complianceColumns } from "./ComplianceTable.columns"
+import type { ComplianceTableProps } from "./ComplianceTable.types"
 
-export function ComplianceTable({ data, isLoading, emptyState }: ComplianceTableProps) {
+export function ComplianceTable({
+  data,
+  isLoading,
+  emptyState,
+}: ComplianceTableProps) {
   return (
     <DataTable
       ariaLabel="Compliance records"

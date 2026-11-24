@@ -1,4 +1,4 @@
-import type { AuditEventView } from '../mappers'
+import type { AuditEventView } from "../mappers"
 
 export type AuditTableProps = {
   data: AuditEventView[]

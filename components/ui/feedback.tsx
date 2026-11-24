@@ -4,7 +4,8 @@ import * as React from "react"
 import { cn } from "cn"
 
 // --- Types ---
-export type FeedbackVariant = "empty" | "loading" | "success" | "error" | "access-denied"
+export type FeedbackVariant =
+  "empty" | "loading" | "success" | "error" | "access-denied"
 export type FeedbackSize = "sm" | "default" | "lg"
 
 // --- Props ---
@@ -40,20 +41,18 @@ export function Feedback({
 }: FeedbackProps) {
   const variants = {
     empty: cn(
-      "empty:grid place-items-center py-8 text-muted-foreground",
-      "dark:text-muted-foreground-secondary",
+      "place-items-center py-8 text-muted-foreground empty:grid",
+      "dark:text-muted-foreground-secondary"
     ),
-    loading: cn(
-      "loading:flex min-h-[200px]_items-center justify-center py-8",
-    ),
+    loading: cn("loading:flex min-h-[200px]_items-center justify-center py-8"),
     success: cn(
-      "success:flex min-h-[200px]_items-start gap-4 p-6 rounded-md bg-success/10 border border-success/20",
+      "success:flex min-h-[200px]_items-start bg-success/10 border-success/20 gap-4 rounded-md border p-6"
     ),
     error: cn(
-      "error:flex min-h-[200px]_items-start gap-4 p-6 rounded-md bg-error/10 border border-error/20",
+      "error:flex min-h-[200px]_items-start bg-error/10 border-error/20 gap-4 rounded-md border p-6"
     ),
     "access-denied": cn(
-      "access-denied:flex min-h-[200px]_items-start gap-4 p-6 rounded-md bg-warning/10 border border-warning/20",
+      "access-denied:flex min-h-[200px]_items-start bg-warning/10 border-warning/20 gap-4 rounded-md border p-6"
     ),
   }
 
@@ -71,7 +70,7 @@ export function Feedback({
         return (
           <div className={variants.loading}>
             <svg
-              className="animate-spin h-8 w-8 text-primary"
+              className="h-8 w-8 animate-spin text-primary"
               viewBox="0 0 24 24"
             >
               <circle
@@ -88,7 +87,10 @@ export function Feedback({
                 d="M4 12a8 8 0 018-8V0C5.37 0 0 5.37 0 12l4 8 4-8z"
               />
             </svg>
-            <p className="ml-3 text-sm text-foreground-strong" style={{ margin: "8px 0 0" }}>
+            <p
+              className="text-foreground-strong ml-3 text-sm"
+              style={{ margin: "8px 0 0" }}
+            >
               Loading...
             </p>
           </div>
@@ -98,7 +100,7 @@ export function Feedback({
         return (
           <div className={variants.success}>
             <svg
-              className="h-6 w-6 text-success flex-shrink-0"
+              className="text-success h-6 w-6 flex-shrink-0"
               viewBox="0 0 24 24"
             >
               <path
@@ -115,7 +117,7 @@ export function Feedback({
                 onClick={onAction}
                 className={cn(
                   "mt-3 inline-flex items-center rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground hover:bg-primary/90",
-                  "dark:text-primary-foreground",
+                  "dark:text-primary-foreground"
                 )}
               >
                 {actionText}
@@ -128,13 +130,10 @@ export function Feedback({
         return (
           <div className={variants.error}>
             <svg
-              className="h-6 w-6 text-error flex-shrink-0"
+              className="text-error h-6 w-6 flex-shrink-0"
               viewBox="0 0 24 24"
             >
-              <path
-                fill="currentColor"
-                d="M18 6L6 18M6 6l12 12"
-              />
+              <path fill="currentColor" d="M18 6L6 18M6 6l12 12" />
             </svg>
             <div>
               {heading && <h3 className="mb-1">{heading}</h3>}
@@ -145,7 +144,7 @@ export function Feedback({
                 onClick={onAction}
                 className={cn(
                   "mt-3 inline-flex items-center rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground hover:bg-primary/90",
-                  "dark:text-primary-foreground",
+                  "dark:text-primary-foreground"
                 )}
               >
                 {actionText}
@@ -158,13 +157,10 @@ export function Feedback({
         return (
           <div className={variants["access-denied"]}>
             <svg
-              className="h-6 w-6 text-warning flex-shrink-0"
+              className="text-warning h-6 w-6 flex-shrink-0"
               viewBox="0 0 24 24"
             >
-              <path
-                fill="currentColor"
-                d="M18 6L6 18M6 6l12 12"
-              />
+              <path fill="currentColor" d="M18 6L6 18M6 6l12 12" />
             </svg>
             <div>
               {heading && <h3 className="mb-1">{heading}</h3>}
@@ -177,10 +173,12 @@ export function Feedback({
   }
 
   return (
-    <div className={cn(
-      "flex min-h-[200px] flex-col items-center justify-center py-8",
-      className,
-    )}>
+    <div
+      className={cn(
+        "flex min-h-[200px] flex-col items-center justify-center py-8",
+        className
+      )}
+    >
       {renderContent()}
     </div>
   )

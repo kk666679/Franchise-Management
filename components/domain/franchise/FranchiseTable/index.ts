@@ -1,2 +1,2 @@
-export { FranchiseTable } from './FranchiseTable'
-export type { FranchiseTableProps } from './FranchiseTable.types'
+export { FranchiseTable } from "./FranchiseTable"
+export type { FranchiseTableProps } from "./FranchiseTable.types"

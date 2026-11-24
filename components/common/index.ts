@@ -1,2 +1,7 @@
 ﻿export { FormattedDate } from "./FormattedDate"
-export { CurrencyDisplay, DateDisplay, SectionHeader, StatusIndicator } from "../shared"
+export {
+  CurrencyDisplay,
+  DateDisplay,
+  SectionHeader,
+  StatusIndicator,
+} from "../shared"

@@ -7,6 +7,7 @@ import importPlugin from "eslint-plugin-import";
 import jsxA11yPlugin from "eslint-plugin-jsx-a11y";
 import globals from "globals";
 import nextParser from "eslint-config-next/parser";
+import { fileURLToPath } from "node:url";
 
 const clientServerBoundaryPlugin = {
   rules: {
@@ -59,6 +60,13 @@ const clientServerBoundaryPlugin = {
   },
 };
 
+const nodeResolver = fileURLToPath(
+  import.meta.resolve("eslint-import-resolver-node")
+);
+const tsResolver = fileURLToPath(
+  import.meta.resolve("eslint-import-resolver-typescript")
+);
+
 const eslintConfig = defineConfig([
   {
     name: "next/core-web-vitals-compat",
@@ -89,10 +97,10 @@ const eslintConfig = defineConfig([
         "@typescript-eslint/parser": [".ts", ".mts", ".cts", ".tsx", ".d.ts"],
       },
       "import/resolver": {
-        [import.meta.resolve("eslint-import-resolver-node").replace("file:///", "")]: {
+        [nodeResolver]: {
           extensions: [".js", ".jsx", ".ts", ".tsx"],
         },
-        [import.meta.resolve("eslint-import-resolver-typescript").replace("file:///", "")]: {
+        [tsResolver]: {
           alwaysTryTypes: true,
         },
       },

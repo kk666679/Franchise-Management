@@ -1,3 +1,3 @@
-import type { ShiftView } from '../mappers'
+import type { ShiftView } from "../mappers"
 
 export type ShiftSchedulerProps = { shifts: ShiftView[] }

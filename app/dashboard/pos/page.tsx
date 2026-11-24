@@ -11,7 +11,7 @@ import { visibleDestinations } from "@/lib/navigation"
 
 export default async function POSPage() {
   const session = await getCurrentSession()
-  
+
   return (
     <AppShell
       brand={
@@ -38,4 +38,3 @@ export default async function POSPage() {
     </AppShell>
   )
 }
-

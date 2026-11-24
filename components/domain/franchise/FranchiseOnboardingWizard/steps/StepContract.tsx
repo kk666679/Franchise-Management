@@ -1,7 +1,7 @@
-'use client'
+"use client"
 
-import { ContractForm } from '../../ContractForm'
-import type { ContractFormValues } from '../../ContractForm/ContractForm.schema'
+import { ContractForm } from "../../ContractForm"
+import type { ContractFormValues } from "../../ContractForm/ContractForm.schema"
 
 export function StepContract({
   value,

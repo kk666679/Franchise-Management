@@ -16,14 +16,14 @@ describe("visibleDestinations", () => {
 
   it("shows a destination once its permission is granted", () => {
     const visible = visibleDestinations(
-      new Set<PermissionCode>([PERMISSIONS.FINANCE_READ]),
+      new Set<PermissionCode>([PERMISSIONS.FINANCE_READ])
     )
     expect(visible.some((d) => d.href === "/dashboard/finance")).toBe(true)
   })
 
   it("never leaks a destination the role cannot access", () => {
     const visible = visibleDestinations(
-      new Set<PermissionCode>([PERMISSIONS.FRANCHISE_READ]),
+      new Set<PermissionCode>([PERMISSIONS.FRANCHISE_READ])
     )
     const hrefs = visible.map((d) => d.href)
     expect(hrefs).toContain("/dashboard/franchises")
@@ -34,7 +34,9 @@ describe("visibleDestinations", () => {
 
 describe("navigationDestinations contract", () => {
   it("marks unbuilt routes as planned so they render disabled, not as dead links", () => {
-    const finance = navigationDestinations.find((d) => d.href === "/dashboard/finance")
+    const finance = navigationDestinations.find(
+      (d) => d.href === "/dashboard/finance"
+    )
     expect(finance?.status).toBe("planned")
   })
 

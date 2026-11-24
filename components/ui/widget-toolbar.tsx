@@ -1,4 +1,3 @@
-
 "use client"
 
 import * as React from "react"
@@ -64,7 +63,7 @@ export function WidgetToolbar({
               "bg-popover px-3 py-2 text-sm font-medium",
               "text-foreground-strong transition-colors",
               "hover:bg-popover-hover",
-              "focus-visible:outline-none focus-visible:ring-2",
+              "focus-visible:ring-2 focus-visible:outline-none",
               "focus-visible:ring-primary focus-visible:ring-offset-2",
               "dark:border-dark dark:text-dark"
             )}
@@ -82,10 +81,10 @@ export function WidgetToolbar({
               type="button"
               onClick={() => handleAction("remove")}
               className={cn(
-                "flex-1 rounded-md border border-error/20",
-                "px-3 py-2 text-sm font-medium text-error",
-                "transition-colors hover:bg-error/10",
-                "focus-visible:outline-none focus-visible:ring-2",
+                "border-error/20 flex-1 rounded-md border",
+                "text-error px-3 py-2 text-sm font-medium",
+                "hover:bg-error/10 transition-colors",
+                "focus-visible:ring-2 focus-visible:outline-none",
                 "focus-visible:ring-error"
               )}
             >
@@ -97,10 +96,10 @@ export function WidgetToolbar({
             type="button"
             onClick={() => handleAction("reset-layout")}
             className={cn(
-              "flex-1 rounded-md border border-warning/20",
-              "px-3 py-2 text-sm font-medium text-warning",
-              "transition-colors hover:bg-warning/10",
-              "focus-visible:outline-none focus-visible:ring-2",
+              "border-warning/20 flex-1 rounded-md border",
+              "text-warning px-3 py-2 text-sm font-medium",
+              "hover:bg-warning/10 transition-colors",
+              "focus-visible:ring-2 focus-visible:outline-none",
               "focus-visible:ring-warning"
             )}
           >
@@ -114,7 +113,7 @@ export function WidgetToolbar({
               "flex-1 rounded-md border border-primary/20",
               "px-3 py-2 text-sm font-medium text-primary",
               "transition-colors hover:bg-primary/10",
-              "focus-visible:outline-none focus-visible:ring-2",
+              "focus-visible:ring-2 focus-visible:outline-none",
               "focus-visible:ring-primary"
             )}
           >

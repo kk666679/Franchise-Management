@@ -16,7 +16,10 @@ type RevenueChartProps = {
 }
 
 const compact = (v: number) =>
-  new Intl.NumberFormat("en", { notation: "compact", maximumFractionDigits: 1 }).format(v)
+  new Intl.NumberFormat("en", {
+    notation: "compact",
+    maximumFractionDigits: 1,
+  }).format(v)
 
 export function RevenueChart({ values, currency }: RevenueChartProps) {
   const total = values.reduce((s, v) => s + v.value, 0)
@@ -28,7 +31,7 @@ export function RevenueChart({ values, currency }: RevenueChartProps) {
 
   return (
     <section
-      className="glass min-w-0 rounded-2xl p-5 sm:p-6"
+      className="min-w-0 rounded-2xl p-5 glass sm:p-6"
       aria-labelledby="revenue-title"
     >
       <div className="flex flex-wrap items-start justify-between gap-3">
@@ -48,11 +51,22 @@ export function RevenueChart({ values, currency }: RevenueChartProps) {
 
       <div className="mt-6 h-44">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={values} margin={{ top: 4, right: 4, left: -24, bottom: 0 }}>
+          <AreaChart
+            data={values}
+            margin={{ top: 4, right: 4, left: -24, bottom: 0 }}
+          >
             <defs>
               <linearGradient id="revenueGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="var(--color-primary)" stopOpacity={0.25} />
-                <stop offset="95%" stopColor="var(--color-primary)" stopOpacity={0} />
+                <stop
+                  offset="5%"
+                  stopColor="var(--color-primary)"
+                  stopOpacity={0.25}
+                />
+                <stop
+                  offset="95%"
+                  stopColor="var(--color-primary)"
+                  stopOpacity={0}
+                />
               </linearGradient>
             </defs>
             <CartesianGrid
@@ -100,7 +114,12 @@ export function RevenueChart({ values, currency }: RevenueChartProps) {
       </div>
       <table className="sr-only">
         <caption>Daily revenue for the last 7 days</caption>
-        <thead><tr><th scope="col">Day</th><th scope="col">Revenue</th></tr></thead>
+        <thead>
+          <tr>
+            <th scope="col">Day</th>
+            <th scope="col">Revenue</th>
+          </tr>
+        </thead>
         <tbody>
           {values.map((value) => (
             <tr key={value.label}>

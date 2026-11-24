@@ -1,7 +1,7 @@
-'use client'
+"use client"
 
-import { TerritoryForm } from '../../TerritoryForm'
-import type { TerritoryFormValues } from '../../TerritoryForm/TerritoryForm.schema'
+import { TerritoryForm } from "../../TerritoryForm"
+import type { TerritoryFormValues } from "../../TerritoryForm/TerritoryForm.schema"
 
 export function StepTerritory({
   value,

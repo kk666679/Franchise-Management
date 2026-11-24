@@ -1,18 +1,18 @@
-'use client'
+"use client"
 
-import { Input } from '@/components/ui/input'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Label } from '@/components/ui/label'
-import type { DaySchedule, WeekSchedule } from './BranchHoursEditor.types'
+import { Input } from "@/components/ui/input"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Label } from "@/components/ui/label"
+import type { DaySchedule, WeekSchedule } from "./BranchHoursEditor.types"
 
 const DAYS: { key: keyof WeekSchedule; label: string }[] = [
-  { key: 'mon', label: 'Monday' },
-  { key: 'tue', label: 'Tuesday' },
-  { key: 'wed', label: 'Wednesday' },
-  { key: 'thu', label: 'Thursday' },
-  { key: 'fri', label: 'Friday' },
-  { key: 'sat', label: 'Saturday' },
-  { key: 'sun', label: 'Sunday' },
+  { key: "mon", label: "Monday" },
+  { key: "tue", label: "Tuesday" },
+  { key: "wed", label: "Wednesday" },
+  { key: "thu", label: "Thursday" },
+  { key: "fri", label: "Friday" },
+  { key: "sat", label: "Saturday" },
+  { key: "sun", label: "Sunday" },
 ]
 
 export function BranchHoursEditor({
@@ -33,7 +33,10 @@ export function BranchHoursEditor({
         const d = value[key]
         const id = `hours-${key}`
         return (
-          <div key={key} className="grid grid-cols-[120px_1fr_1fr_auto] items-center gap-3">
+          <div
+            key={key}
+            className="grid grid-cols-[120px_1fr_1fr_auto] items-center gap-3"
+          >
             <Label htmlFor={id}>{label}</Label>
             <Input
               id={id}

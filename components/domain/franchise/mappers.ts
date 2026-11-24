@@ -3,14 +3,14 @@ import type {
   BranchDTO,
   TerritoryDTO,
   ContractDTO,
-} from '@/lib/server/mappers/franchise.dto'
+} from "@/lib/server/mappers/franchise.dto"
 
 /** View-model — what the UI actually renders. Never includes internal IDs or raw status enums. */
 export type FranchiseView = {
   id: string
   name: string
   legalName: string
-  status: FranchiseDTO['status']
+  status: FranchiseDTO["status"]
   organizationName: string
   territoryName: string | null
   branchCount: number

@@ -26,7 +26,11 @@ export const passwordSchema = baseInputSchema.extend({
 })
 
 /** Number schema with min/max constraints. */
-export const numberSchema = (opts: { min?: number; max?: number; step?: number }) =>
+export const numberSchema = (opts: {
+  min?: number
+  max?: number
+  step?: number
+}) =>
   baseInputSchema.extend({
     value: z
       .number()
@@ -36,9 +40,15 @@ export const numberSchema = (opts: { min?: number; max?: number; step?: number }
       .refine((val) => opts.max == null || val <= opts.max, {
         message: opts.max != null ? `Must be at most ${opts.max}` : undefined,
       })
-      .refine((val) => opts.step == null || Number.isFinite(val) && (val - opts.step) % opts.step === 0, {
-        message: opts.step != null ? `Must be in steps of ${opts.step}` : undefined,
-      }),
+      .refine(
+        (val) =>
+          opts.step == null ||
+          (Number.isFinite(val) && (val - opts.step) % opts.step === 0),
+        {
+          message:
+            opts.step != null ? `Must be in steps of ${opts.step}` : undefined,
+        }
+      ),
   })
 
 /** Currency schema (number + currency code). */
@@ -46,31 +56,30 @@ export const currencySchema = (allowedCurrencies: string[]) =>
   baseInputSchema.extend({
     value: z
       .string()
-      .refine(
-        (val) => {
-          if (!val) return true
-          // Strip currency prefix if user includes it
-          const numeric = val.replace(/[^0-9.-]/g, "")
-          return !isNaN(Number(numeric))
-        },
-        "Enter a valid number",
-      )
+      .refine((val) => {
+        if (!val) return true
+        // Strip currency prefix if user includes it
+        const numeric = val.replace(/[^0-9.-]/g, "")
+        return !isNaN(Number(numeric))
+      }, "Enter a valid number")
       .refine(
         (val) => {
           if (!val) return true
           const currency = val.split(" ")[1]?.toUpperCase()
           return allowedCurrencies.includes(currency ?? "")
         },
-        `Select a valid currency (${allowedCurrencies.join(", ")})`,
+        `Select a valid currency (${allowedCurrencies.join(", ")})`
       ),
   })
 
 /** Date schema (ISO string). */
 export const dateSchema = baseInputSchema.extend({
-  value: z.string().refine(
-    (val) => !val || !isNaN(new Date(val).getTime()),
-    "Enter a valid date",
-  ),
+  value: z
+    .string()
+    .refine(
+      (val) => !val || !isNaN(new Date(val).getTime()),
+      "Enter a valid date"
+    ),
 })
 
 /** Date range schema (start/end). */
@@ -91,12 +100,11 @@ export const selectSchema = (allowedValues: string[]) =>
 
 /** Multi-select (array) schema. */
 export const multiSelectSchema = (allowedValues: string[]) =>
-  z.array(z.string()).refine(
-    (vals) => vals.every((v) => allowedValues.includes(v)),
-    {
+  z
+    .array(z.string())
+    .refine((vals) => vals.every((v) => allowedValues.includes(v)), {
       message: `Select valid values from: ${allowedValues.join(", ")}`,
-    },
-  )
+    })
 
 /** Form error extraction from ZodError. */
 export type ZodValidationError = {
@@ -114,9 +122,10 @@ export function extractZodErrors(error: z.ZodError): ZodValidationError[] {
 
 /** Generic form schema that takes a partial object of field schemas. */
 export function createFormSchema<Fields extends Record<string, z.ZodTypeAny>>(
-  fields: Fields,
+  fields: Fields
 ) {
   return z.object(fields)
 }
 
-export type FormSchemaOf<Fields extends Record<string, z.ZodTypeAny>> = z.ZodObject<Fields>
+export type FormSchemaOf<Fields extends Record<string, z.ZodTypeAny>> =
+  z.ZodObject<Fields>

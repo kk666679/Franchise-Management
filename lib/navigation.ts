@@ -93,9 +93,9 @@ export const navigationDestinations: readonly NavigationDestination[] = [
 ]
 
 export function visibleDestinations(
-  granted: ReadonlySet<PermissionCode>,
+  granted: ReadonlySet<PermissionCode>
 ): readonly NavigationDestination[] {
   return navigationDestinations.filter(
-    (d) => !d.permission || granted.has(d.permission),
+    (d) => !d.permission || granted.has(d.permission)
   )
 }

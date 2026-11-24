@@ -42,19 +42,28 @@ describe("RBAC Catalog", () => {
 
   it("should grant OWNER permissions", () => {
     expect(
-      permissionIsGranted(MEMBERSHIP_ROLE_PERMISSIONS.OWNER, PERMISSIONS.ORG_READ),
+      permissionIsGranted(
+        MEMBERSHIP_ROLE_PERMISSIONS.OWNER,
+        PERMISSIONS.ORG_READ
+      )
     ).toBe(true)
   })
 
   it("should deny missing STAFF permissions", () => {
     expect(
-      permissionIsGranted(MEMBERSHIP_ROLE_PERMISSIONS.STAFF, PERMISSIONS.ORG_WRITE),
+      permissionIsGranted(
+        MEMBERSHIP_ROLE_PERMISSIONS.STAFF,
+        PERMISSIONS.ORG_WRITE
+      )
     ).toBe(false)
   })
 
   it("should check ADMIN permissions", () => {
     expect(
-      permissionIsGranted(MEMBERSHIP_ROLE_PERMISSIONS.ADMIN, PERMISSIONS.ORG_WRITE),
+      permissionIsGranted(
+        MEMBERSHIP_ROLE_PERMISSIONS.ADMIN,
+        PERMISSIONS.ORG_WRITE
+      )
     ).toBe(true)
   })
 

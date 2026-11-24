@@ -10,7 +10,11 @@ type PasswordFieldProps = React.ComponentProps<typeof Input> & {
   label?: string
 }
 
-export function PasswordField({ label = "Password", id = "password", ...props }: PasswordFieldProps) {
+export function PasswordField({
+  label = "Password",
+  id = "password",
+  ...props
+}: PasswordFieldProps) {
   const [visible, setVisible] = React.useState(false)
 
   return (

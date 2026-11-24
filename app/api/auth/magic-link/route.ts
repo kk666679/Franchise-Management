@@ -17,7 +17,10 @@ export async function GET(request: Request) {
   const user = await getUserByMagicLink(token ? `magiclink-${token}` : "")
 
   if (!user) {
-    return NextResponse.json({ error: "Invalid or expired magic link" }, { status: 400 })
+    return NextResponse.json(
+      { error: "Invalid or expired magic link" },
+      { status: 400 }
+    )
   }
 
   // Log the login event

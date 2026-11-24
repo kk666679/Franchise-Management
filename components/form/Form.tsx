@@ -1,6 +1,6 @@
-'use client'
+"use client"
 
-import * as React from 'react'
+import * as React from "react"
 import {
   FormProvider,
   useForm,
@@ -9,9 +9,9 @@ import {
   type Resolver,
   type SubmitHandler,
   type UseFormReturn,
-} from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import type { ZodType } from 'zod'
+} from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import type { ZodType } from "zod"
 
 type BaseProps<T extends FieldValues> = {
   onSubmit: SubmitHandler<T>
@@ -31,21 +31,31 @@ type MethodsFormProps<T extends FieldValues> = BaseProps<T> & {
   defaultValues?: DefaultValues<T>
 }
 
-export function Form<T extends FieldValues>(props: SchemaFormProps<T> | MethodsFormProps<T>) {
+export function Form<T extends FieldValues>(
+  props: SchemaFormProps<T> | MethodsFormProps<T>
+) {
   const { onSubmit, children, className } = props
   const internal = useForm<T>(
-    'methods' in props && props.methods
+    "methods" in props && props.methods
       ? undefined
       : {
-          resolver: zodResolver((props as SchemaFormProps<T>).schema as any) as Resolver<T>,
+          resolver: zodResolver(
+            (props as SchemaFormProps<T>).schema as any
+          ) as Resolver<T>,
           defaultValues: (props as SchemaFormProps<T>).defaultValues,
-        },
+        }
   )
-  const methods = ('methods' in props && props.methods ? props.methods : internal) as UseFormReturn<T>
+  const methods = (
+    "methods" in props && props.methods ? props.methods : internal
+  ) as UseFormReturn<T>
 
   return (
     <FormProvider {...methods}>
-      <form className={className} onSubmit={methods.handleSubmit(onSubmit)} noValidate>
+      <form
+        className={className}
+        onSubmit={methods.handleSubmit(onSubmit)}
+        noValidate
+      >
         {children}
       </form>
     </FormProvider>

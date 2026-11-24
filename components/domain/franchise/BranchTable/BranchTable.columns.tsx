@@ -1,13 +1,13 @@
-'use client'
+"use client"
 
-import Link from 'next/link'
-import { Badge } from '@/components/ui/badge'
-import type { BranchView } from '../mappers'
+import Link from "next/link"
+import { Badge } from "@/components/ui/badge"
+import type { BranchView } from "../mappers"
 
 export const branchColumns = [
   {
-    accessorKey: 'name',
-    header: 'Branch',
+    accessorKey: "name",
+    header: "Branch",
     sortable: true,
     cell: (row: BranchView) => (
       <Link
@@ -19,23 +19,23 @@ export const branchColumns = [
     ),
   },
   {
-    accessorKey: 'franchiseName',
-    header: 'Franchise',
+    accessorKey: "franchiseName",
+    header: "Franchise",
     sortable: true,
   },
   {
-    accessorKey: 'city',
-    header: 'Location',
+    accessorKey: "city",
+    header: "Location",
     sortable: true,
     cell: (row: BranchView) => `${row.city}, ${row.region}`,
   },
   {
-    accessorKey: 'isActive',
-    header: 'Active',
+    accessorKey: "isActive",
+    header: "Active",
     sortable: true,
     cell: (row: BranchView) => (
-      <Badge variant={row.isActive ? 'default' : 'outline'}>
-        {row.isActive ? 'Active' : 'Inactive'}
+      <Badge variant={row.isActive ? "default" : "outline"}>
+        {row.isActive ? "Active" : "Inactive"}
       </Badge>
     ),
   },

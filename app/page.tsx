@@ -1164,9 +1164,9 @@ export default function Page() {
                 </p>
                 <div className="mt-8 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
                   <Button asChild className="rounded-full px-6">
-                  <Link href="/login">
-                    <KeyRound className="size-4" aria-hidden />
-                    Log in
+                    <Link href="/login">
+                      <KeyRound className="size-4" aria-hidden />
+                      Log in
                     </Link>
                   </Button>
                   <Button

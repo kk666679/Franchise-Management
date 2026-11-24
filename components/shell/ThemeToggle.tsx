@@ -23,7 +23,7 @@ export function ThemeToggle() {
     <Button
       variant="outline"
       size="icon"
-      className="glass rounded-full text-foreground/80 hover:bg-accent hover:text-foreground"
+      className="rounded-full text-foreground/80 glass hover:bg-accent hover:text-foreground"
       onClick={() => setTheme(isDark ? "light" : "dark")}
       aria-label={`Switch to ${isDark ? "light" : "dark"} mode`}
       title={`Switch to ${isDark ? "light" : "dark"} mode`}

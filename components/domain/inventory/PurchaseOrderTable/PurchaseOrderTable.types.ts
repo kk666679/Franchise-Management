@@ -1,4 +1,4 @@
-import type { PurchaseOrderView } from '../mappers'
+import type { PurchaseOrderView } from "../mappers"
 
 export type PurchaseOrderTableProps = {
   data: PurchaseOrderView[]

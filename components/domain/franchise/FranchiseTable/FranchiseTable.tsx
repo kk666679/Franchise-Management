@@ -1,11 +1,15 @@
-'use client'
+"use client"
 
-import { DataTable } from '@/components/data/DataTable'
-import { EmptyState } from '@/components/feedback/EmptyState'
-import { franchiseColumns } from './FranchiseTable.columns'
-import type { FranchiseTableProps } from './FranchiseTable.types'
+import { DataTable } from "@/components/data/DataTable"
+import { EmptyState } from "@/components/feedback/EmptyState"
+import { franchiseColumns } from "./FranchiseTable.columns"
+import type { FranchiseTableProps } from "./FranchiseTable.types"
 
-export function FranchiseTable({ data, isLoading, emptyState }: FranchiseTableProps) {
+export function FranchiseTable({
+  data,
+  isLoading,
+  emptyState,
+}: FranchiseTableProps) {
   return (
     <DataTable
       ariaLabel="Franchises"

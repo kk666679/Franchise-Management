@@ -1,1 +1,1 @@
-export { FranchiseDetail } from './FranchiseDetail'
+export { FranchiseDetail } from "./FranchiseDetail"

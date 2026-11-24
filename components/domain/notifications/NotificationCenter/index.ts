@@ -1,2 +1,2 @@
-export { NotificationCenter } from './NotificationCenter'
-export type { NotificationCenterProps } from './NotificationCenter.types'
+export { NotificationCenter } from "./NotificationCenter"
+export type { NotificationCenterProps } from "./NotificationCenter.types"

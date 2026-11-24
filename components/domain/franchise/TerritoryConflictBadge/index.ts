@@ -1,1 +1,1 @@
-export { TerritoryConflictBadge } from './TerritoryConflictBadge'
+export { TerritoryConflictBadge } from "./TerritoryConflictBadge"

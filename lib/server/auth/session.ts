@@ -50,7 +50,9 @@ export function sessionCookieOptions() {
 }
 
 /** Signs a session token for the given payload. */
-export async function createSessionToken(payload: SessionPayload): Promise<string> {
+export async function createSessionToken(
+  payload: SessionPayload
+): Promise<string> {
   const { sub, ...claims } = payload
   return new SignJWT(claims)
     .setProtectedHeader({ alg: ALGORITHM })
@@ -62,7 +64,7 @@ export async function createSessionToken(payload: SessionPayload): Promise<strin
 
 /** Verifies a session token, returning the payload or null when invalid. */
 export async function verifySessionToken(
-  token: string,
+  token: string
 ): Promise<SessionPayload | null> {
   try {
     const { payload } = await jwtVerify(token, getSecretKey(), {

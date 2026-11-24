@@ -1,9 +1,9 @@
-'use client'
+"use client"
 
-import { DataTable } from '@/components/data/DataTable'
-import { EmptyState } from '@/components/feedback/EmptyState'
-import { territoryColumns } from './TerritoryTable.columns'
-import type { TerritoryView } from '../mappers'
+import { DataTable } from "@/components/data/DataTable"
+import { EmptyState } from "@/components/feedback/EmptyState"
+import { territoryColumns } from "./TerritoryTable.columns"
+import type { TerritoryView } from "../mappers"
 
 export function TerritoryTable({ data }: { data: TerritoryView[] }) {
   return (

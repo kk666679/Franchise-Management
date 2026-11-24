@@ -1,2 +1,2 @@
-export { StockMovementLedger } from './StockMovementLedger'
-export type { StockMovementLedgerProps } from './StockMovementLedger.types'
+export { StockMovementLedger } from "./StockMovementLedger"
+export type { StockMovementLedgerProps } from "./StockMovementLedger.types"

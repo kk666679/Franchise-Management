@@ -1,4 +1,4 @@
-import type { StockMovementView } from '../mappers'
+import type { StockMovementView } from "../mappers"
 
 export type StockMovementLedgerProps = {
   data: StockMovementView[]

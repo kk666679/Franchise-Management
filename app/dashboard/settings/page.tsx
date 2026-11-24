@@ -11,7 +11,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { getCurrentSession } from "@lib/server/auth/session"
 import { resolvePermissions, assertPermission } from "@lib/server/auth"
 import { visibleDestinations } from "@/lib/navigation"
-import { PERMISSIONS, MEMBERSHIP_ROLE_PERMISSIONS, MEMBERSHIP_ROLES } from "@/lib/rbac"
+import {
+  PERMISSIONS,
+  MEMBERSHIP_ROLE_PERMISSIONS,
+  MEMBERSHIP_ROLES,
+} from "@/lib/rbac"
 import { prisma } from "@/lib/prisma"
 import { listAuditLogs } from "@lib/server/services/franchise"
 import { PageAccessNotice } from "@/components/auth/page-access-notice"
@@ -51,11 +55,20 @@ export default async function SettingsPage() {
   const [org, members, auditLogs] = await Promise.all([
     prisma.organization.findUnique({
       where: { id: session.org },
-      select: { id: true, name: true, slug: true, timezone: true, currency: true, createdAt: true },
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        timezone: true,
+        currency: true,
+        createdAt: true,
+      },
     }),
     prisma.membership.findMany({
       where: { organizationId: session.org },
-      include: { user: { select: { id: true, name: true, email: true, status: true } } },
+      include: {
+        user: { select: { id: true, name: true, email: true, status: true } },
+      },
       orderBy: { createdAt: "asc" },
     }),
     listAuditLogs(ctx, 30),
@@ -75,10 +88,13 @@ export default async function SettingsPage() {
       sidebar={<DashboardNav items={navigation} />}
     >
       <PageContainer className="space-y-6">
-        <PageHeader title="Settings" description="Organization, members, permissions and audit history" />
+        <PageHeader
+          title="Settings"
+          description="Organization, members, permissions and audit history"
+        />
 
         <Tabs defaultValue="organization">
-          <TabsList className="glass rounded-xl">
+          <TabsList className="rounded-xl glass">
             <TabsTrigger value="organization">Organization</TabsTrigger>
             <TabsTrigger value="members">Members</TabsTrigger>
             <TabsTrigger value="permissions">Permissions</TabsTrigger>
@@ -86,16 +102,19 @@ export default async function SettingsPage() {
           </TabsList>
 
           <TabsContent value="organization" className="mt-6">
-            <div className="glass rounded-2xl p-6 space-y-4">
+            <div className="space-y-4 rounded-2xl p-6 glass">
               <h2 className="font-semibold">Organization details</h2>
-              <dl className="grid gap-3 sm:grid-cols-2 text-sm">
+              <dl className="grid gap-3 text-sm sm:grid-cols-2">
                 {(
                   [
                     ["Name", org?.name],
                     ["Slug", org?.slug],
                     ["Timezone", org?.timezone],
                     ["Currency", org?.currency],
-                    ["Created", org?.createdAt ? dateFmt.format(org.createdAt) : "—"],
+                    [
+                      "Created",
+                      org?.createdAt ? dateFmt.format(org.createdAt) : "—",
+                    ],
                   ] as [string, string | undefined][]
                 ).map(([k, v]) => (
                   <div key={k}>
@@ -110,7 +129,7 @@ export default async function SettingsPage() {
           <TabsContent value="members" className="mt-6">
             <div className="overflow-hidden rounded-2xl border border-border bg-card/60">
               <table className="w-full text-left text-sm">
-                <thead className="border-b border-border bg-muted/40 text-xs uppercase tracking-wide text-muted-foreground">
+                <thead className="border-b border-border bg-muted/40 text-xs tracking-wide text-muted-foreground uppercase">
                   <tr>
                     <th className="px-4 py-3 font-medium">Member</th>
                     <th className="px-4 py-3 font-medium">Role</th>
@@ -122,12 +141,16 @@ export default async function SettingsPage() {
                     <tr key={m.id} className="hover:bg-muted/30">
                       <td className="px-4 py-3">
                         <p className="font-medium">{m.user.name ?? "—"}</p>
-                        <p className="text-xs text-muted-foreground">{m.user.email}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {m.user.email}
+                        </p>
                       </td>
                       <td className="px-4 py-3">
                         <Badge variant="secondary">{m.role}</Badge>
                       </td>
-                      <td className="px-4 py-3 text-xs text-muted-foreground">{m.user.status}</td>
+                      <td className="px-4 py-3 text-xs text-muted-foreground">
+                        {m.user.status}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -142,7 +165,10 @@ export default async function SettingsPage() {
                   <RoleBadge role={ROLE_CODE_MAP[role]} />
                   <span className="text-sm text-muted-foreground">{role}</span>
                 </div>
-                <PermissionMatrix selected={MEMBERSHIP_ROLE_PERMISSIONS[role]} readOnly />
+                <PermissionMatrix
+                  selected={MEMBERSHIP_ROLE_PERMISSIONS[role]}
+                  readOnly
+                />
               </div>
             ))}
           </TabsContent>
@@ -151,7 +177,7 @@ export default async function SettingsPage() {
             <div className="overflow-hidden rounded-2xl border border-border bg-card/60">
               <div className="overflow-x-auto">
                 <table className="w-full min-w-[40rem] text-left text-sm">
-                  <thead className="border-b border-border bg-muted/40 text-xs uppercase tracking-wide text-muted-foreground">
+                  <thead className="border-b border-border bg-muted/40 text-xs tracking-wide text-muted-foreground uppercase">
                     <tr>
                       <th className="px-4 py-3 font-medium">When</th>
                       <th className="px-4 py-3 font-medium">Actor</th>
@@ -162,18 +188,22 @@ export default async function SettingsPage() {
                   <tbody className="divide-y divide-border/70">
                     {auditLogs.map((log) => (
                       <tr key={log.id} className="hover:bg-muted/30">
-                        <td className="px-4 py-3 text-xs text-muted-foreground tabular-nums whitespace-nowrap">
+                        <td className="px-4 py-3 text-xs whitespace-nowrap text-muted-foreground tabular-nums">
                           {dateFmt.format(log.createdAt)}
                         </td>
                         <td className="px-4 py-3 text-xs">
                           {log.actor?.name ?? log.actor?.email ?? "System"}
                         </td>
                         <td className="px-4 py-3">
-                          <Badge variant="secondary" className="text-xs">{log.action}</Badge>
+                          <Badge variant="secondary" className="text-xs">
+                            {log.action}
+                          </Badge>
                         </td>
                         <td className="px-4 py-3 text-xs text-muted-foreground">
                           {log.entity}{" "}
-                          <span className="font-mono">{log.entityId.slice(0, 8)}</span>
+                          <span className="font-mono">
+                            {log.entityId.slice(0, 8)}
+                          </span>
                         </td>
                       </tr>
                     ))}
@@ -187,4 +217,3 @@ export default async function SettingsPage() {
     </AppShell>
   )
 }
-

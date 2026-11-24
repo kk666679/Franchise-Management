@@ -1,3 +1,6 @@
-import type { ApprovalView } from '../mappers'
+import type { ApprovalView } from "../mappers"
 
-export type ApprovalCardProps = { approval: ApprovalView; onDecision?: (id: string, decision: 'approved' | 'rejected') => Promise<void> }
+export type ApprovalCardProps = {
+  approval: ApprovalView
+  onDecision?: (id: string, decision: "approved" | "rejected") => Promise<void>
+}

@@ -1,3 +1,3 @@
-import type { EmployeeView } from '../mappers'
+import type { EmployeeView } from "../mappers"
 
 export type EmployeeProfileProps = { employee: EmployeeView }

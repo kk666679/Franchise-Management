@@ -1,13 +1,22 @@
-'use client'
+"use client"
 
-import { useTransition } from 'react'
-import { Form, FormField, FormSection, FormActions, SubmitButton } from '@/components/form'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import { Select } from '@/components/ui/select'
-import { Button } from '@/components/ui/button'
-import { franchiseFormSchema, type FranchiseFormValues } from './FranchiseForm.schema'
-import type { FranchiseFormProps } from './FranchiseForm.types'
+import { useTransition } from "react"
+import {
+  Form,
+  FormField,
+  FormSection,
+  FormActions,
+  SubmitButton,
+} from "@/components/form"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { Select } from "@/components/ui/select"
+import { Button } from "@/components/ui/button"
+import {
+  franchiseFormSchema,
+  type FranchiseFormValues,
+} from "./FranchiseForm.schema"
+import type { FranchiseFormProps } from "./FranchiseForm.types"
 
 export function FranchiseForm({
   mode,
@@ -29,11 +38,11 @@ export function FranchiseForm({
     <Form<FranchiseFormValues>
       schema={franchiseFormSchema}
       defaultValues={{
-        name: '',
-        legalName: '',
-        organizationId: organizations[0]?.id ?? '',
+        name: "",
+        legalName: "",
+        organizationId: organizations[0]?.id ?? "",
         territoryId: null,
-        notes: '',
+        notes: "",
         ...initial,
       }}
       onSubmit={handleSubmit}
@@ -71,12 +80,17 @@ export function FranchiseForm({
 
       <FormActions>
         {onCancel && (
-          <Button type="button" variant="outline" onClick={onCancel} disabled={isPending}>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onCancel}
+            disabled={isPending}
+          >
             Cancel
           </Button>
         )}
         <SubmitButton pending={isPending}>
-          {mode === 'create' ? 'Create franchise' : 'Save changes'}
+          {mode === "create" ? "Create franchise" : "Save changes"}
         </SubmitButton>
       </FormActions>
     </Form>

@@ -1,2 +1,2 @@
-export { InvoiceTable } from './InvoiceTable'
-export type { InvoiceTableProps } from './InvoiceTable.types'
+export { InvoiceTable } from "./InvoiceTable"
+export type { InvoiceTableProps } from "./InvoiceTable.types"

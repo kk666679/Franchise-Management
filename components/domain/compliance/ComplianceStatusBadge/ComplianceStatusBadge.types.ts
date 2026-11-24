@@ -1,1 +1,3 @@
-export type ComplianceStatusBadgeProps = { status: 'compliant' | 'pending' | 'overdue' | 'waived' }
+export type ComplianceStatusBadgeProps = {
+  status: "compliant" | "pending" | "overdue" | "waived"
+}

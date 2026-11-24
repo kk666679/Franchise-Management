@@ -1,4 +1,4 @@
-import type { TaxRateView } from '../mappers'
+import type { TaxRateView } from "../mappers"
 
 export type TaxRateSelectProps = {
   rates: TaxRateView[]

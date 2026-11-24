@@ -1,6 +1,6 @@
-import type { PosCartItemView } from '../mappers'
+import type { PosCartItemView } from "../mappers"
 
 export type PosTenderProps = {
   items: PosCartItemView[]
-  onTender: (method: 'cash' | 'card') => Promise<void>
+  onTender: (method: "cash" | "card") => Promise<void>
 }

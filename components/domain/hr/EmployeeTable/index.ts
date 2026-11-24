@@ -1,2 +1,2 @@
-export { EmployeeTable } from './EmployeeTable'
-export type { EmployeeTableProps } from './EmployeeTable.types'
+export { EmployeeTable } from "./EmployeeTable"
+export type { EmployeeTableProps } from "./EmployeeTable.types"

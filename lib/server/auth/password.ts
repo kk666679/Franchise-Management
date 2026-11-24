@@ -16,7 +16,11 @@ export function validatePassword(plaintext: string): string | null {
     return `Password must be at least ${MIN_PASSWORD_LENGTH} characters.`
   }
 
-  if (!/[a-z]/.test(plaintext) || !/[A-Z]/.test(plaintext) || !/\d/.test(plaintext)) {
+  if (
+    !/[a-z]/.test(plaintext) ||
+    !/[A-Z]/.test(plaintext) ||
+    !/\d/.test(plaintext)
+  ) {
     return "Password must include uppercase, lowercase, and a number."
   }
 
@@ -39,7 +43,7 @@ export async function hashPassword(plaintext: string): Promise<string> {
 /** Constant-time comparison of a plaintext password against a stored hash. */
 export async function verifyPassword(
   plaintext: string,
-  hashed: string,
+  hashed: string
 ): Promise<boolean> {
   if (!plaintext || !isPasswordHash(hashed)) return false
   return compare(plaintext, hashed)

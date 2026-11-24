@@ -5,7 +5,11 @@ import GoogleProvider from "next-auth/providers/google"
 import CredentialsProvider from "next-auth/providers/credentials"
 
 import { prisma } from "@/lib/prisma"
-import { permissionIsGranted, type MembershipRole, type PermissionCode } from "@/lib/rbac"
+import {
+  permissionIsGranted,
+  type MembershipRole,
+  type PermissionCode,
+} from "@/lib/rbac"
 import { hasPermission } from "@/lib/server/auth/authorization"
 
 type SessionUser = {
@@ -69,7 +73,11 @@ export const authOptions: NextAuthOptions = {
       id: "credentials",
       name: "Credentials",
       credentials: {
-        email: { label: "Email", type: "email", placeholder: "user@example.com" },
+        email: {
+          label: "Email",
+          type: "email",
+          placeholder: "user@example.com",
+        },
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
@@ -114,9 +122,12 @@ export const authOptions: NextAuthOptions = {
     async session({ session, token }: { session: Session; token: JWT }) {
       if (session.user) {
         session.user.id = (token.id ?? token.sub ?? "") as string
-        session.user.name = (token.name ?? session.user.name ?? null) as string | null
-        session.user.email = (token.email ?? session.user.email ?? null) as string | null
-        session.user.role = (token.role ?? "EMPLOYEE") as MembershipRole | "EMPLOYEE"
+        session.user.name = (token.name ?? session.user.name ?? null) as
+          string | null
+        session.user.email = (token.email ?? session.user.email ?? null) as
+          string | null
+        session.user.role = (token.role ?? "EMPLOYEE") as
+          MembershipRole | "EMPLOYEE"
         session.user.organizationId = token.organizationId
       }
       return session

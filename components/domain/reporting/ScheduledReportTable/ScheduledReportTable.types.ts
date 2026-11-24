@@ -1,4 +1,4 @@
-import type { ScheduledReportView } from '../mappers'
+import type { ScheduledReportView } from "../mappers"
 
 export type ScheduledReportTableProps = {
   data: ScheduledReportView[]

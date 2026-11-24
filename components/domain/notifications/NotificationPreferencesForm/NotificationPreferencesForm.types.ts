@@ -1,3 +1,6 @@
-import type { NotificationPreferenceView } from '../mappers'
+import type { NotificationPreferenceView } from "../mappers"
 
-export type NotificationPreferencesFormProps = { initial: NotificationPreferenceView[]; onSave: (prefs: NotificationPreferenceView[]) => Promise<void> }
+export type NotificationPreferencesFormProps = {
+  initial: NotificationPreferenceView[]
+  onSave: (prefs: NotificationPreferenceView[]) => Promise<void>
+}

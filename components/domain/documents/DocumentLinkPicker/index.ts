@@ -1,2 +1,2 @@
-export { DocumentLinkPicker } from './DocumentLinkPicker'
-export type { DocumentLinkPickerProps } from './DocumentLinkPicker.types'
+export { DocumentLinkPicker } from "./DocumentLinkPicker"
+export type { DocumentLinkPickerProps } from "./DocumentLinkPicker.types"

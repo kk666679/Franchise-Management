@@ -1,2 +1,2 @@
-export { InvoiceDetail } from './InvoiceDetail'
-export type { InvoiceDetailProps } from './InvoiceDetail.types'
+export { InvoiceDetail } from "./InvoiceDetail"
+export type { InvoiceDetailProps } from "./InvoiceDetail.types"

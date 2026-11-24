@@ -4,10 +4,10 @@ export type NotificationView = {
   body: string
   read: boolean
   createdAtIso: string
-  kind: 'info' | 'warning' | 'action'
+  kind: "info" | "warning" | "action"
 }
 
 export type NotificationPreferenceView = {
-  channel: 'email' | 'sms' | 'push' | 'in_app'
+  channel: "email" | "sms" | "push" | "in_app"
   enabled: boolean
 }

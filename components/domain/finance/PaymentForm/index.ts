@@ -1,2 +1,2 @@
-export { PaymentForm } from './PaymentForm'
-export type { PaymentFormProps, PaymentFormValues } from './PaymentForm.types'
+export { PaymentForm } from "./PaymentForm"
+export type { PaymentFormProps, PaymentFormValues } from "./PaymentForm.types"

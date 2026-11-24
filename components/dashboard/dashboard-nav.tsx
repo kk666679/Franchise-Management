@@ -22,7 +22,10 @@ export function DashboardNav({ items }: DashboardNavProps) {
             <Link
               key={href}
               href={href}
-              className={cn(itemClass, "text-muted-foreground hover:bg-muted hover:text-foreground")}
+              className={cn(
+                itemClass,
+                "text-muted-foreground hover:bg-muted hover:text-foreground"
+              )}
             >
               <Icon className="size-4" aria-hidden="true" />
               {label}
@@ -34,12 +37,15 @@ export function DashboardNav({ items }: DashboardNavProps) {
           <span
             key={href}
             aria-disabled="true"
-            className={cn(itemClass, "cursor-not-allowed text-muted-foreground/50")}
+            className={cn(
+              itemClass,
+              "cursor-not-allowed text-muted-foreground/50"
+            )}
             title={`${label} is not available yet`}
           >
             <Icon className="size-4" aria-hidden="true" />
             {label}
-            <span className="rounded-full border border-border px-1.5 py-0.5 font-medium uppercase tracking-wide text-muted-foreground/70">
+            <span className="rounded-full border border-border px-1.5 py-0.5 font-medium tracking-wide text-muted-foreground/70 uppercase">
               Soon
             </span>
           </span>

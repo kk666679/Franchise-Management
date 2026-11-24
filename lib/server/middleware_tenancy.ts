@@ -7,7 +7,10 @@
  * single source of truth for authentication context.
  */
 
-import { getCurrentSession, type SessionPayload } from "@/lib/server/auth/session"
+import {
+  getCurrentSession,
+  type SessionPayload,
+} from "@/lib/server/auth/session"
 import { toAuthorizationContext } from "@/lib/server/auth/session"
 import {
   assertOrganizationAccess,
@@ -26,7 +29,9 @@ export async function getOrganizationContext(): Promise<AuthorizationContext | n
 export async function requireOrganization(): Promise<AuthorizationContext> {
   const ctx = await getOrganizationContext()
   if (!ctx || !ctx.organizationId) {
-    throw new Error("No organization context found. Sign in and join an organization first.")
+    throw new Error(
+      "No organization context found. Sign in and join an organization first."
+    )
   }
   return ctx
 }
@@ -40,7 +45,9 @@ export function withOrg(ctx: AuthorizationContext) {
 }
 
 /** Assert that the current org context can access the given organization. */
-export async function assertOrgAccess(organizationId: string): Promise<AuthorizationContext> {
+export async function assertOrgAccess(
+  organizationId: string
+): Promise<AuthorizationContext> {
   const ctx = await requireOrganization()
   assertOrganizationAccess(ctx, organizationId)
   return ctx
@@ -64,7 +71,7 @@ export function orgScoped<T>(
     | "product"
     | "sale"
     | "supportTicket"
-    | "auditLog",
+    | "auditLog"
 ) {
   return { where: { organizationId: ctx.organizationId } } as {
     where: { organizationId: string }

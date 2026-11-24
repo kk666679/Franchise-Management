@@ -1,12 +1,21 @@
-'use client'
+"use client"
 
-import { useTransition } from 'react'
-import { Form, FormField, FormSection, FormActions, SubmitButton } from '@/components/form'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import { Select, SelectItem } from '@/components/ui/select'
-import { Button } from '@/components/ui/button'
-import { contractFormSchema, type ContractFormValues } from './ContractForm.schema'
+import { useTransition } from "react"
+import {
+  Form,
+  FormField,
+  FormSection,
+  FormActions,
+  SubmitButton,
+} from "@/components/form"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { Select, SelectItem } from "@/components/ui/select"
+import { Button } from "@/components/ui/button"
+import {
+  contractFormSchema,
+  type ContractFormValues,
+} from "./ContractForm.schema"
 
 export function ContractForm({
   mode,
@@ -15,7 +24,7 @@ export function ContractForm({
   onSubmit,
   onCancel,
 }: {
-  mode: 'create' | 'edit'
+  mode: "create" | "edit"
   initial?: Partial<ContractFormValues>
   franchises?: { id: string; name: string }[]
   onSubmit: (v: ContractFormValues) => Promise<void>
@@ -26,23 +35,29 @@ export function ContractForm({
     <Form<ContractFormValues>
       schema={contractFormSchema}
       defaultValues={{
-        franchiseId: franchises?.[0]?.id ?? '',
+        franchiseId: franchises?.[0]?.id ?? "",
         effectiveFrom: new Date().toISOString().slice(0, 10),
         effectiveTo: null,
         royaltyRatePct: 5,
-        notes: '',
+        notes: "",
         ...initial,
       }}
-      onSubmit={(v) => startTransition(async () => { await onSubmit(v) })}
+      onSubmit={(v) =>
+        startTransition(async () => {
+          await onSubmit(v)
+        })
+      }
     >
       <FormSection title="Term">
         {franchises && (
           <FormField name="franchiseId" label="Franchise">
             <Select>
-            {franchises.map((f) => (
-              <SelectItem key={f.id} value={f.id}>{f.name}</SelectItem>
-            ))}
-          </Select>
+              {franchises.map((f) => (
+                <SelectItem key={f.id} value={f.id}>
+                  {f.name}
+                </SelectItem>
+              ))}
+            </Select>
           </FormField>
         )}
         <FormField name="effectiveFrom" label="Effective from">
@@ -64,12 +79,17 @@ export function ContractForm({
 
       <FormActions>
         {onCancel && (
-          <Button type="button" variant="outline" onClick={onCancel} disabled={isPending}>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onCancel}
+            disabled={isPending}
+          >
             Cancel
           </Button>
         )}
         <SubmitButton pending={isPending}>
-          {mode === 'create' ? 'Create contract' : 'Save changes'}
+          {mode === "create" ? "Create contract" : "Save changes"}
         </SubmitButton>
       </FormActions>
     </Form>

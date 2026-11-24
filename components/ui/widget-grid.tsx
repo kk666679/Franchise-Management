@@ -24,7 +24,12 @@ const SIZE_SPAN: Record<string, string> = {
   lg: "col-span-12 xl:col-span-8",
 }
 
-export function WidgetGrid({ widgets, editMode = false, onRemove, renderWidget }: WidgetGridProps) {
+export function WidgetGrid({
+  widgets,
+  editMode = false,
+  onRemove,
+  renderWidget,
+}: WidgetGridProps) {
   return (
     <div className="grid grid-cols-12 gap-4">
       {widgets.map((item) => {
@@ -35,7 +40,8 @@ export function WidgetGrid({ widgets, editMode = false, onRemove, renderWidget }
             className={cn(
               "relative min-w-0",
               SIZE_SPAN[def.defaultSize] ?? SIZE_SPAN.md,
-              editMode && "ring-2 ring-primary/30 ring-offset-2 ring-offset-background rounded-2xl",
+              editMode &&
+                "rounded-2xl ring-2 ring-primary/30 ring-offset-2 ring-offset-background"
             )}
           >
             {editMode && (

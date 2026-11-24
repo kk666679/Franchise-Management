@@ -27,7 +27,9 @@ export class AuthorizationError extends Error {
 export class TenantAccessError extends Error {
   readonly code = "TENANT_ACCESS_DENIED"
 
-  constructor(message = "You cannot access resources outside your organization.") {
+  constructor(
+    message = "You cannot access resources outside your organization."
+  ) {
     super(message)
     this.name = "TenantAccessError"
   }
@@ -37,7 +39,7 @@ export class TenantAccessError extends Error {
 export function resolvePermissions(
   roles: readonly RoleCode[] = [],
   membershipRole?: MembershipRole,
-  explicitPermissions: readonly PermissionCode[] = [],
+  explicitPermissions: readonly PermissionCode[] = []
 ): ReadonlySet<PermissionCode> {
   const granted = new Set<PermissionCode>(explicitPermissions)
 
@@ -58,23 +60,23 @@ export function resolvePermissions(
 
 export function hasPermission(
   context: AuthorizationContext,
-  required: PermissionCode,
+  required: PermissionCode
 ): boolean {
   return resolvePermissions(
     context.roles,
     context.membershipRole,
-    context.permissions,
+    context.permissions
   ).has(required)
 }
 
 export function hasAnyPermission(
   context: AuthorizationContext,
-  required: readonly PermissionCode[],
+  required: readonly PermissionCode[]
 ): boolean {
   const granted = resolvePermissions(
     context.roles,
     context.membershipRole,
-    context.permissions,
+    context.permissions
   )
 
   return required.some((permission) => granted.has(permission))
@@ -82,12 +84,12 @@ export function hasAnyPermission(
 
 export function hasAllPermissions(
   context: AuthorizationContext,
-  required: readonly PermissionCode[],
+  required: readonly PermissionCode[]
 ): boolean {
   const granted = resolvePermissions(
     context.roles,
     context.membershipRole,
-    context.permissions,
+    context.permissions
   )
 
   return required.every((permission) => granted.has(permission))
@@ -95,22 +97,20 @@ export function hasAllPermissions(
 
 export function assertPermission(
   context: AuthorizationContext,
-  required: PermissionCode,
+  required: PermissionCode
 ): void {
   if (!hasPermission(context, required)) {
-    throw new AuthorizationError(
-      `Missing permission: ${required}`,
-    )
+    throw new AuthorizationError(`Missing permission: ${required}`)
   }
 }
 
 export function assertAnyPermission(
   context: AuthorizationContext,
-  required: readonly PermissionCode[],
+  required: readonly PermissionCode[]
 ): void {
   if (!hasAnyPermission(context, required)) {
     throw new AuthorizationError(
-      `At least one permission is required: ${required.join(", ")}`,
+      `At least one permission is required: ${required.join(", ")}`
     )
   }
 }
@@ -118,7 +118,7 @@ export function assertAnyPermission(
 /** Checks the tenant before any resource query or mutation is performed. */
 export function assertOrganizationAccess(
   context: AuthorizationContext,
-  organizationId: string,
+  organizationId: string
 ): void {
   if (context.organizationId !== organizationId) {
     throw new TenantAccessError()
@@ -131,7 +131,7 @@ export function assertOrganizationAccess(
  */
 export function assertCanManageOrganization(
   context: AuthorizationContext,
-  organizationId: string,
+  organizationId: string
 ): void {
   assertOrganizationAccess(context, organizationId)
   assertPermission(context, PERMISSIONS.ORG_WRITE)
@@ -139,7 +139,7 @@ export function assertCanManageOrganization(
 
 export function assertCanReadOrganization(
   context: AuthorizationContext,
-  organizationId: string,
+  organizationId: string
 ): void {
   assertOrganizationAccess(context, organizationId)
   assertPermission(context, PERMISSIONS.ORG_READ)

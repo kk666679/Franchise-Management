@@ -9,10 +9,7 @@ import {
   sessionCookieOptions,
 } from "@lib/server/auth/session"
 import { verifyPassword } from "@lib/server/auth/password"
-import {
-  issueMagicLink,
-  sendMagicLinkEmail,
-} from "@lib/server/auth/magic-link"
+import { issueMagicLink, sendMagicLinkEmail } from "@lib/server/auth/magic-link"
 
 export type LoginState = {
   status: "idle" | "error" | "success" | "magic-link-sent"

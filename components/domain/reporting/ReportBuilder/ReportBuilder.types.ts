@@ -1,4 +1,4 @@
-import type { ReportColumnView, ReportFilterView } from '../mappers'
+import type { ReportColumnView, ReportFilterView } from "../mappers"
 
 export type ReportBuilderProps = {
   columns: ReportColumnView[]

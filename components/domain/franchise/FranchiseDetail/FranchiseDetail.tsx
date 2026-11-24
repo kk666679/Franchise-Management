@@ -1,9 +1,9 @@
-import { Card } from '@/components/ui/card'
-import { PageHeader } from '@/components/layout/page-header'
-import { Section } from '@/components/layout/Section'
-import { FormattedDate } from '@/components/common/FormattedDate'
-import { FranchiseStatusBadge } from '../FranchiseStatusBadge'
-import type { FranchiseView } from '../mappers'
+import { Card } from "@/components/ui/card"
+import { PageHeader } from "@/components/layout/page-header"
+import { Section } from "@/components/layout/Section"
+import { FormattedDate } from "@/components/common/FormattedDate"
+import { FranchiseStatusBadge } from "../FranchiseStatusBadge"
+import type { FranchiseView } from "../mappers"
 
 export function FranchiseDetail({ franchise }: { franchise: FranchiseView }) {
   return (
@@ -17,9 +17,12 @@ export function FranchiseDetail({ franchise }: { franchise: FranchiseView }) {
       <Section title="Overview">
         <Card className="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2">
           <Field label="Organization" value={franchise.organizationName} />
-          <Field label="Territory" value={franchise.territoryName ?? '—'} />
+          <Field label="Territory" value={franchise.territoryName ?? "—"} />
           <Field label="Branches" value={String(franchise.branchCount)} />
-          <Field label="Created" value={<FormattedDate iso={franchise.createdAtIso} />} />
+          <Field
+            label="Created"
+            value={<FormattedDate iso={franchise.createdAtIso} />}
+          />
         </Card>
       </Section>
     </div>

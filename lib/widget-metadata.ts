@@ -4,12 +4,7 @@
  */
 
 export type WidgetKind =
-  | "kpi"
-  | "revenue"
-  | "applications"
-  | "compliance"
-  | "approvals"
-  | "activity"
+  "kpi" | "revenue" | "applications" | "compliance" | "approvals" | "activity"
 
 export type WidgetSize = "sm" | "md" | "lg"
 
@@ -67,8 +62,22 @@ export const WIDGET_DEFINITIONS: Record<WidgetKind, WidgetDefinition> = {
 
 /** Default widget layout per role — ordered list of widget kinds. */
 export const ROLE_DEFAULT_LAYOUTS: Record<string, WidgetKind[]> = {
-  OWNER: ["kpi", "revenue", "applications", "approvals", "compliance", "activity"],
-  ADMIN: ["kpi", "revenue", "applications", "approvals", "compliance", "activity"],
+  OWNER: [
+    "kpi",
+    "revenue",
+    "applications",
+    "approvals",
+    "compliance",
+    "activity",
+  ],
+  ADMIN: [
+    "kpi",
+    "revenue",
+    "applications",
+    "approvals",
+    "compliance",
+    "activity",
+  ],
   MANAGER: ["kpi", "applications", "approvals", "compliance", "activity"],
   STAFF: ["kpi", "activity"],
   VIEWER: ["kpi", "revenue", "compliance", "activity"],

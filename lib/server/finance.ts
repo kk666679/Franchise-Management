@@ -6,7 +6,12 @@ import { getCurrentSession } from "@lib/server/auth/session"
 export async function requireFinanceRead(): Promise<AuthorizationContext> {
   const session = await getCurrentSession()
   const orgId = session?.org ?? ""
-  if (!orgId) return { userId: "", organizationId: "", membershipRole: undefined } as AuthorizationContext
+  if (!orgId)
+    return {
+      userId: "",
+      organizationId: "",
+      membershipRole: undefined,
+    } as AuthorizationContext
 
   const context: AuthorizationContext = {
     userId: session?.sub ?? "",

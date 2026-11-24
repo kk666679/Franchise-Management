@@ -1,7 +1,7 @@
-import type { FranchiseFormValues } from './FranchiseForm.schema'
+import type { FranchiseFormValues } from "./FranchiseForm.schema"
 
 export type FranchiseFormProps = {
-  mode: 'create' | 'edit'
+  mode: "create" | "edit"
   initial?: Partial<FranchiseFormValues>
   organizations: { id: string; name: string }[]
   territories: { id: string; name: string }[]

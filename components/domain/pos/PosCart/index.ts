@@ -1,2 +1,2 @@
-export { PosCart } from './PosCart'
-export type { PosCartProps } from './PosCart.types'
+export { PosCart } from "./PosCart"
+export type { PosCartProps } from "./PosCart.types"

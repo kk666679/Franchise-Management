@@ -1,15 +1,15 @@
-'use client'
+"use client"
 
-import Link from 'next/link'
-import { DataTableColumnHeader } from '@/components/data/DataTableColumnHeader'
-import { FormattedDate } from '@/components/common/FormattedDate'
-import { FranchiseStatusBadge } from '../FranchiseStatusBadge'
-import type { FranchiseView } from '../mappers'
+import Link from "next/link"
+import { DataTableColumnHeader } from "@/components/data/DataTableColumnHeader"
+import { FormattedDate } from "@/components/common/FormattedDate"
+import { FranchiseStatusBadge } from "../FranchiseStatusBadge"
+import type { FranchiseView } from "../mappers"
 
 export const franchiseColumns = [
   {
-    accessorKey: 'name',
-    header: 'Franchise',
+    accessorKey: "name",
+    header: "Franchise",
     sortable: true,
     cell: (row: FranchiseView) => (
       <Link
@@ -21,31 +21,34 @@ export const franchiseColumns = [
     ),
   },
   {
-    accessorKey: 'organizationName',
-    header: 'Organization',
+    accessorKey: "organizationName",
+    header: "Organization",
     sortable: true,
   },
   {
-    accessorKey: 'territoryName',
-    header: 'Territory',
+    accessorKey: "territoryName",
+    header: "Territory",
     sortable: true,
-    cell: (row: FranchiseView) => row.territoryName ?? <span className="text-muted">—</span>,
+    cell: (row: FranchiseView) =>
+      row.territoryName ?? <span className="text-muted">—</span>,
   },
   {
-    accessorKey: 'branchCount',
-    header: 'Branches',
+    accessorKey: "branchCount",
+    header: "Branches",
     sortable: true,
-    cell: (row: FranchiseView) => <span className="tabular-nums">{row.branchCount}</span>,
+    cell: (row: FranchiseView) => (
+      <span className="tabular-nums">{row.branchCount}</span>
+    ),
   },
   {
-    accessorKey: 'status',
-    header: 'Status',
+    accessorKey: "status",
+    header: "Status",
     sortable: true,
     cell: (row: FranchiseView) => <FranchiseStatusBadge status={row.status} />,
   },
   {
-    accessorKey: 'createdAtIso',
-    header: 'Created',
+    accessorKey: "createdAtIso",
+    header: "Created",
     sortable: true,
     cell: (row: FranchiseView) => <FormattedDate iso={row.createdAtIso} />,
   },

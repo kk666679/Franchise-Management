@@ -65,7 +65,14 @@ const TIMELINE = [
   { status: "APPROVED", label: "Approved" },
 ] as const
 
-const STATUS_ORDER = ["DRAFT", "SUBMITTED", "UNDER_REVIEW", "APPROVED", "REJECTED", "WITHDRAWN"]
+const STATUS_ORDER = [
+  "DRAFT",
+  "SUBMITTED",
+  "UNDER_REVIEW",
+  "APPROVED",
+  "REJECTED",
+  "WITHDRAWN",
+]
 
 export default async function ApplicationDetailPage({
   params,
@@ -120,8 +127,8 @@ export default async function ApplicationDetailPage({
         />
 
         {/* Status timeline */}
-        <div className="glass rounded-2xl p-6">
-          <h2 className="mb-4 font-semibold text-sm">Progress</h2>
+        <div className="rounded-2xl p-6 glass">
+          <h2 className="mb-4 text-sm font-semibold">Progress</h2>
           <ol className="flex items-center gap-0">
             {TIMELINE.map((step, i) => {
               const stepIndex = STATUS_ORDER.indexOf(step.status)
@@ -136,16 +143,20 @@ export default async function ApplicationDetailPage({
                         done
                           ? "bg-primary text-primary-foreground"
                           : active
-                            ? "ring-2 ring-primary bg-primary/10 text-primary"
+                            ? "bg-primary/10 text-primary ring-2 ring-primary"
                             : "bg-muted text-muted-foreground"
                       }`}
                     >
                       {done ? "✓" : i + 1}
                     </div>
-                    <span className="text-[10px] text-muted-foreground whitespace-nowrap">{step.label}</span>
+                    <span className="text-[10px] whitespace-nowrap text-muted-foreground">
+                      {step.label}
+                    </span>
                   </div>
                   {!isLast && (
-                    <div className={`h-px flex-1 mx-2 ${done ? "bg-primary" : "bg-border"}`} />
+                    <div
+                      className={`mx-2 h-px flex-1 ${done ? "bg-primary" : "bg-border"}`}
+                    />
                   )}
                 </li>
               )
@@ -155,16 +166,27 @@ export default async function ApplicationDetailPage({
 
         <div className="grid gap-6 lg:grid-cols-2">
           {/* Details */}
-          <div className="glass rounded-2xl p-6 space-y-4">
+          <div className="space-y-4 rounded-2xl p-6 glass">
             <h2 className="font-semibold">Details</h2>
             <dl className="space-y-3 text-sm">
               {(
                 [
                   ["Reference", app.referenceNo],
                   ["Brand", app.brand.name],
-                  ["Submitted", app.submittedAt ? dateFmt.format(app.submittedAt) : "Not yet"],
-                  ["Reviewed", app.reviewedAt ? dateFmt.format(app.reviewedAt) : "—"],
-                  ["Submitted by", app.submittedBy?.name ?? app.submittedBy?.email ?? "—"],
+                  [
+                    "Submitted",
+                    app.submittedAt
+                      ? dateFmt.format(app.submittedAt)
+                      : "Not yet",
+                  ],
+                  [
+                    "Reviewed",
+                    app.reviewedAt ? dateFmt.format(app.reviewedAt) : "—",
+                  ],
+                  [
+                    "Submitted by",
+                    app.submittedBy?.name ?? app.submittedBy?.email ?? "—",
+                  ],
                 ] as [string, string][]
               ).map(([k, v]) => (
                 <div key={k}>
@@ -174,15 +196,19 @@ export default async function ApplicationDetailPage({
               ))}
               {app.decisionNotes && (
                 <div>
-                  <dt className="text-xs text-muted-foreground">Decision notes</dt>
-                  <dd className="mt-0.5 text-muted-foreground">{app.decisionNotes}</dd>
+                  <dt className="text-xs text-muted-foreground">
+                    Decision notes
+                  </dt>
+                  <dd className="mt-0.5 text-muted-foreground">
+                    {app.decisionNotes}
+                  </dd>
                 </div>
               )}
             </dl>
           </div>
 
           {/* Applicant */}
-          <div className="glass rounded-2xl p-6 space-y-4">
+          <div className="space-y-4 rounded-2xl p-6 glass">
             <h2 className="font-semibold">Applicant</h2>
             {app.franchisee ? (
               <dl className="space-y-3 text-sm">
@@ -201,23 +227,32 @@ export default async function ApplicationDetailPage({
                 ))}
               </dl>
             ) : (
-              <p className="text-sm text-muted-foreground">No franchisee linked.</p>
+              <p className="text-sm text-muted-foreground">
+                No franchisee linked.
+              </p>
             )}
           </div>
         </div>
 
         {/* Documents */}
         {app.documents.length > 0 && (
-          <div className="glass rounded-2xl p-6 space-y-4">
+          <div className="space-y-4 rounded-2xl p-6 glass">
             <h2 className="font-semibold">Documents</h2>
             <ul className="divide-y divide-border/60">
               {app.documents.map((doc) => (
-                <li key={doc.id} className="flex items-center justify-between gap-4 py-3 text-sm">
+                <li
+                  key={doc.id}
+                  className="flex items-center justify-between gap-4 py-3 text-sm"
+                >
                   <div>
                     <p className="font-medium">{doc.name}</p>
-                    <p className="text-xs text-muted-foreground">{dateFmt.format(doc.createdAt)}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {dateFmt.format(doc.createdAt)}
+                    </p>
                   </div>
-                  <Badge variant="secondary" className="text-xs">{doc.type}</Badge>
+                  <Badge variant="secondary" className="text-xs">
+                    {doc.type}
+                  </Badge>
                 </li>
               ))}
             </ul>
@@ -226,11 +261,11 @@ export default async function ApplicationDetailPage({
 
         {/* Review actions — server-rendered disabled state; real actions require server action */}
         {canReview && app.status === "UNDER_REVIEW" && (
-          <div className="glass rounded-2xl p-6">
+          <div className="rounded-2xl p-6 glass">
             <h2 className="mb-4 font-semibold">Review actions</h2>
             <p className="mb-4 text-sm text-muted-foreground">
-              Approval and rejection require an authorized server action. These controls are
-              placeholders until the approval workflow is wired.
+              Approval and rejection require an authorized server action. These
+              controls are placeholders until the approval workflow is wired.
             </p>
             <div className="flex gap-3">
               <Button variant="default" disabled className="rounded-full">

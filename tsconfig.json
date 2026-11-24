@@ -1,11 +1,7 @@
 {
   "compilerOptions": {
     "target": "ES2024",
-    "lib": [
-      "DOM",
-      "DOM.Iterable",
-      "ES2024"
-    ],
+    "lib": ["DOM", "DOM.Iterable", "ES2024"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -22,16 +18,10 @@
         "name": "next"
       }
     ],
-    "types": [
-      "vitest/globals"
-    ],
+    "types": ["vitest/globals"],
     "paths": {
-      "@/*": [
-        "./*"
-      ],
-      "@lib/*": [
-        "./lib/*"
-      ]
+      "@/*": ["./*"],
+      "@lib/*": ["./lib/*"]
     }
   },
   "include": [

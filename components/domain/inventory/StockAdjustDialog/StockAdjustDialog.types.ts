@@ -1,1 +1,3 @@
-export type StockAdjustDialogProps = { onAdjust: (delta: number) => Promise<void> }
+export type StockAdjustDialogProps = {
+  onAdjust: (delta: number) => Promise<void>
+}

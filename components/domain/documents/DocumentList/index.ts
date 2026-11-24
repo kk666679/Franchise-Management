@@ -1,2 +1,2 @@
-export { DocumentList } from './DocumentList'
-export type { DocumentListProps } from './DocumentList.types'
+export { DocumentList } from "./DocumentList"
+export type { DocumentListProps } from "./DocumentList.types"

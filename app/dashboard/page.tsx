@@ -14,21 +14,27 @@ import { resolvePermissions } from "@lib/server/auth"
 import { getCurrentSession } from "@lib/server/auth/session"
 
 const money = (value: number, currency: string) =>
-  new Intl.NumberFormat("en", { style: "currency", currency, maximumFractionDigits: 0 }).format(value)
+  new Intl.NumberFormat("en", {
+    style: "currency",
+    currency,
+    maximumFractionDigits: 0,
+  }).format(value)
 
 function EmptyDashboard() {
   const navigation = visibleDestinations(resolvePermissions())
 
   return (
     <AppShell
-      brand={<span className="text-sm font-semibold">Franchise Management</span>}
+      brand={
+        <span className="text-sm font-semibold">Franchise Management</span>
+      }
       sidebar={<DashboardNav items={navigation} />}
     >
       <PageContainer className="space-y-6">
         <DashboardHeader organizationName="Franchise Management" />
         <section
           aria-labelledby="dashboard-empty-title"
-          className="glass rounded-2xl border border-dashed border-border p-8 text-center sm:p-12"
+          className="rounded-2xl border border-dashed border-border p-8 text-center glass sm:p-12"
           role="status"
         >
           <h2 id="dashboard-empty-title" className="text-lg font-semibold">
@@ -68,26 +74,64 @@ export default async function DashboardPage() {
           <span className="flex size-8 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-primary">
             <Building2 className="size-4" />
           </span>
-          <span className="truncate text-sm font-semibold">{data.organization.name}</span>
+          <span className="truncate text-sm font-semibold">
+            {data.organization.name}
+          </span>
         </>
       }
       sidebar={<DashboardNav items={navigation} />}
     >
       <PageContainer className="space-y-6">
         <DashboardHeader organizationName={data.organization.name} />
-        <section className="grid min-w-0 gap-4 sm:grid-cols-2 xl:grid-cols-5" aria-label="Key performance indicators">
-          <MetricCard label="Active brands" value={String(data.metrics.brands)} detail="Currently operating" icon={Building2} />
-          <MetricCard label="Active outlets" value={String(data.metrics.activeLocations)} detail="Across all brands" icon={Store} />
-          <MetricCard label="Franchisees" value={String(data.metrics.franchisees)} detail="Active partners" icon={Users} />
-          <MetricCard label="Collected this month" value={money(data.metrics.collectedThisMonth, data.organization.currency)} detail="Successful payments" icon={CircleDollarSign} />
-          <MetricCard label="Outstanding" value={money(data.metrics.outstandingBalance, data.organization.currency)} detail="Open invoice balance" icon={CircleDollarSign} />
+        <section
+          className="grid min-w-0 gap-4 sm:grid-cols-2 xl:grid-cols-5"
+          aria-label="Key performance indicators"
+        >
+          <MetricCard
+            label="Active brands"
+            value={String(data.metrics.brands)}
+            detail="Currently operating"
+            icon={Building2}
+          />
+          <MetricCard
+            label="Active outlets"
+            value={String(data.metrics.activeLocations)}
+            detail="Across all brands"
+            icon={Store}
+          />
+          <MetricCard
+            label="Franchisees"
+            value={String(data.metrics.franchisees)}
+            detail="Active partners"
+            icon={Users}
+          />
+          <MetricCard
+            label="Collected this month"
+            value={money(
+              data.metrics.collectedThisMonth,
+              data.organization.currency
+            )}
+            detail="Successful payments"
+            icon={CircleDollarSign}
+          />
+          <MetricCard
+            label="Outstanding"
+            value={money(
+              data.metrics.outstandingBalance,
+              data.organization.currency
+            )}
+            detail="Open invoice balance"
+            icon={CircleDollarSign}
+          />
         </section>
         <div className="grid min-w-0 gap-6 xl:grid-cols-[minmax(0,1.35fr)_minmax(320px,1fr)]">
-          <RevenueChart values={data.revenue} currency={data.organization.currency} />
+          <RevenueChart
+            values={data.revenue}
+            currency={data.organization.currency}
+          />
           <RecentApplications applications={data.applications} />
         </div>
       </PageContainer>
     </AppShell>
   )
 }
-

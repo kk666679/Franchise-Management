@@ -1,4 +1,4 @@
-import type { DocumentVersionView } from '../mappers'
+import type { DocumentVersionView } from "../mappers"
 
 export type DocumentVersionListProps = {
   data: DocumentVersionView[]

@@ -1,30 +1,32 @@
-'use client'
+"use client"
 
-import { DataTableColumnHeader } from '@/components/data/DataTableColumnHeader'
-import type { DocumentVersionView } from '../mappers'
+import { DataTableColumnHeader } from "@/components/data/DataTableColumnHeader"
+import type { DocumentVersionView } from "../mappers"
 
 export const documentVersionListColumns = [
   {
-    accessorKey: 'version',
-    header: 'Version',
+    accessorKey: "version",
+    header: "Version",
     sortable: true,
-    cell: (row: DocumentVersionView) => <span className="tabular-nums">v{row.version}</span>,
+    cell: (row: DocumentVersionView) => (
+      <span className="tabular-nums">v{row.version}</span>
+    ),
   },
   {
-    accessorKey: 'createdAtIso',
-    header: 'Created',
+    accessorKey: "createdAtIso",
+    header: "Created",
     sortable: true,
-    cell: (row: DocumentVersionView) => row.createdAtIso.slice(0,10),
+    cell: (row: DocumentVersionView) => row.createdAtIso.slice(0, 10),
   },
   {
-    accessorKey: 'createdBy',
-    header: 'By',
+    accessorKey: "createdBy",
+    header: "By",
     sortable: true,
   },
   {
-    accessorKey: 'note',
-    header: 'Note',
+    accessorKey: "note",
+    header: "Note",
     sortable: true,
-    cell: (row: DocumentVersionView) => row.note ?? '—',
+    cell: (row: DocumentVersionView) => row.note ?? "—",
   },
 ]

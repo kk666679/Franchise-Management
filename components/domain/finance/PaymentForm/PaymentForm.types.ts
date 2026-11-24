@@ -1,7 +1,7 @@
 export type PaymentFormValues = {
   invoiceId: string
   amountCents: number
-  method: 'card' | 'bank_transfer' | 'cash' | 'other'
+  method: "card" | "bank_transfer" | "cash" | "other"
 }
 
 export type PaymentFormProps = {

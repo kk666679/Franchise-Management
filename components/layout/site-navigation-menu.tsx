@@ -93,7 +93,10 @@ export function SiteNavigationMenu() {
             {section.links.map(({ href, label, icon: Icon }) => (
               <DropdownMenuItem asChild key={href}>
                 <Link className="flex w-full items-center gap-3" href={href}>
-                  <Icon aria-hidden="true" className="size-4 text-muted-foreground" />
+                  <Icon
+                    aria-hidden="true"
+                    className="size-4 text-muted-foreground"
+                  />
                   <span>{label}</span>
                 </Link>
               </DropdownMenuItem>
@@ -104,13 +107,19 @@ export function SiteNavigationMenu() {
         <DropdownMenuLabel>Account</DropdownMenuLabel>
         <DropdownMenuItem asChild>
           <Link className="flex w-full items-center gap-3" href="/login">
-            <LockKeyhole aria-hidden="true" className="size-4 text-muted-foreground" />
+            <LockKeyhole
+              aria-hidden="true"
+              className="size-4 text-muted-foreground"
+            />
             <span>Log in</span>
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
           <Link className="flex w-full items-center gap-3" href="/signup">
-            <Building2 aria-hidden="true" className="size-4 text-muted-foreground" />
+            <Building2
+              aria-hidden="true"
+              className="size-4 text-muted-foreground"
+            />
             <span>Sign up</span>
           </Link>
         </DropdownMenuItem>

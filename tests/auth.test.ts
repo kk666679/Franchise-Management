@@ -12,7 +12,7 @@ describe("Auth API Routes", () => {
 
     it("GET should return error for invalid token", async () => {
       const request = new Request("http://localhost.com?token=invalid", {
-        headers: { "user-agent": "test" }
+        headers: { "user-agent": "test" },
       })
       const response = await GETMagicLink(request)
       expect(response.status).toBe(400)
@@ -22,7 +22,7 @@ describe("Auth API Routes", () => {
       const request = new Request("http://localhost.com", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: "test@example.com" })
+        body: JSON.stringify({ email: "test@example.com" }),
       })
       const response = await POST(request)
       expect(response.status).toBe(200)
@@ -36,7 +36,7 @@ describe("Auth API Routes", () => {
       const request = new Request("http://localhost.com", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: "test@example.com" })
+        body: JSON.stringify({ email: "test@example.com" }),
       })
       const response = await POSTReset(request)
       expect(response.status).toBe(200)
@@ -48,7 +48,7 @@ describe("Auth API Routes", () => {
       const request = new Request("http://localhost.com", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: "nonexistent@example.com" })
+        body: JSON.stringify({ email: "nonexistent@example.com" }),
       })
       const response = await POSTReset(request)
       expect(response.status).toBe(200)

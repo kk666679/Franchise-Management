@@ -30,7 +30,11 @@ async function getApplications(orgId: string) {
   })
 }
 
-const COLUMNS: { status: ApplicationStatus; label: string; tone: "neutral" | "info" | "warning" | "success" | "danger" }[] = [
+const COLUMNS: {
+  status: ApplicationStatus
+  label: string
+  tone: "neutral" | "info" | "warning" | "success" | "danger"
+}[] = [
   { status: "DRAFT", label: "Draft", tone: "neutral" },
   { status: "SUBMITTED", label: "Submitted", tone: "info" },
   { status: "UNDER_REVIEW", label: "Under review", tone: "warning" },
@@ -42,7 +46,7 @@ const fmt = new Intl.DateTimeFormat("en", { month: "short", day: "numeric" })
 
 export default async function ApplicationsPage() {
   const session = await getCurrentSession()
-  
+
   const applications = await getApplications(session?.org ?? "")
   const granted = resolvePermissions([], session?.role ?? undefined)
   const navigation = visibleDestinations(granted)
@@ -51,7 +55,7 @@ export default async function ApplicationsPage() {
     COLUMNS.map((col) => [
       col.status,
       applications.filter((a) => a.status === col.status),
-    ]),
+    ])
   ) as Record<ApplicationStatus, typeof applications>
 
   return (
@@ -90,7 +94,7 @@ export default async function ApplicationsPage() {
                 <div key={col.status} className="min-w-[220px] space-y-3">
                   <div className="flex items-center justify-between gap-2">
                     <StatusIndicator label={col.label} tone={col.tone} />
-                    <span className="text-xs tabular-nums text-muted-foreground">
+                    <span className="text-xs text-muted-foreground tabular-nums">
                       {items.length}
                     </span>
                   </div>
@@ -105,7 +109,7 @@ export default async function ApplicationsPage() {
                         <Link
                           key={app.id}
                           href={`/dashboard/applications/${app.id}`}
-                          className="glass block min-w-0 rounded-2xl p-4 transition-shadow hover:shadow-lg"
+                          className="block min-w-0 rounded-2xl p-4 glass transition-shadow hover:shadow-lg"
                         >
                           <p className="truncate text-sm font-medium">
                             {app.franchisee?.tradingName ??
@@ -133,4 +137,3 @@ export default async function ApplicationsPage() {
     </AppShell>
   )
 }
-

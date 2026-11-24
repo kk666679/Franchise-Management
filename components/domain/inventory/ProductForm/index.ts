@@ -1,2 +1,2 @@
-export { ProductForm } from './ProductForm'
-export type { ProductFormProps, ProductFormValues } from './ProductForm.types'
+export { ProductForm } from "./ProductForm"
+export type { ProductFormProps, ProductFormValues } from "./ProductForm.types"

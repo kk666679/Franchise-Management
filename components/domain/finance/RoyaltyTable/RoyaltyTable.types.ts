@@ -1,4 +1,4 @@
-import type { RoyaltyView } from '../mappers'
+import type { RoyaltyView } from "../mappers"
 
 export type RoyaltyTableProps = {
   data: RoyaltyView[]

@@ -1,1 +1,3 @@
-export type WorkflowStatusBadgeProps = { status: 'pending' | 'approved' | 'rejected' }
+export type WorkflowStatusBadgeProps = {
+  status: "pending" | "approved" | "rejected"
+}

@@ -19,7 +19,11 @@ import { prisma } from "@/lib/prisma"
 import { NotFoundError } from "@lib/server/errors"
 import { PageAccessNotice } from "@/components/auth/page-access-notice"
 
-const dateFmt = new Intl.DateTimeFormat("en", { month: "short", day: "numeric", year: "numeric" })
+const dateFmt = new Intl.DateTimeFormat("en", {
+  month: "short",
+  day: "numeric",
+  year: "numeric",
+})
 
 const STATUS_TONE = {
   PROSPECT: "info",
@@ -60,7 +64,10 @@ export default async function FranchiseeDetailPage({
 
   const [granted, org] = await Promise.all([
     resolvePermissions([], session?.role ?? undefined),
-    prisma.organization.findUnique({ where: { id: session.org }, select: { currency: true } }),
+    prisma.organization.findUnique({
+      where: { id: session.org },
+      select: { currency: true },
+    }),
   ])
   const navigation = visibleDestinations(granted)
   const currency = org?.currency ?? "USD"
@@ -78,7 +85,9 @@ export default async function FranchiseeDetailPage({
       <PageContainer className="space-y-6">
         <PageHeader
           title={franchisee.tradingName ?? franchisee.legalName}
-          description={franchisee.tradingName ? franchisee.legalName : undefined}
+          description={
+            franchisee.tradingName ? franchisee.legalName : undefined
+          }
           actions={
             <StatusIndicator
               label={franchisee.status.replace("_", " ")}
@@ -97,7 +106,7 @@ export default async function FranchiseeDetailPage({
               ["Invoices", String(franchisee.invoices.length)],
             ] as [string, string][]
           ).map(([label, value]) => (
-            <div key={label} className="glass rounded-2xl p-4">
+            <div key={label} className="rounded-2xl p-4 glass">
               <p className="text-xs text-muted-foreground">{label}</p>
               <p className="mt-1 text-xl font-semibold">{value}</p>
             </div>
@@ -105,7 +114,7 @@ export default async function FranchiseeDetailPage({
         </div>
 
         <Tabs defaultValue="overview">
-          <TabsList className="glass rounded-xl">
+          <TabsList className="rounded-xl glass">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="locations">Locations</TabsTrigger>
             <TabsTrigger value="agreements">Agreements</TabsTrigger>
@@ -113,45 +122,74 @@ export default async function FranchiseeDetailPage({
           </TabsList>
 
           {/* Overview */}
-          <TabsContent value="overview" className="mt-6 grid gap-6 lg:grid-cols-2">
-            <div className="glass rounded-2xl p-6 space-y-4">
+          <TabsContent
+            value="overview"
+            className="mt-6 grid gap-6 lg:grid-cols-2"
+          >
+            <div className="space-y-4 rounded-2xl p-6 glass">
               <h2 className="font-semibold">Contact details</h2>
               <dl className="space-y-3 text-sm">
                 {franchisee.email && (
                   <div className="flex items-center gap-2">
-                    <Mail className="size-4 text-muted-foreground shrink-0" />
-                    <a href={`mailto:${franchisee.email}`} className="hover:text-primary">{franchisee.email}</a>
+                    <Mail className="size-4 shrink-0 text-muted-foreground" />
+                    <a
+                      href={`mailto:${franchisee.email}`}
+                      className="hover:text-primary"
+                    >
+                      {franchisee.email}
+                    </a>
                   </div>
                 )}
                 {franchisee.phone && (
                   <div className="flex items-center gap-2">
-                    <Phone className="size-4 text-muted-foreground shrink-0" />
+                    <Phone className="size-4 shrink-0 text-muted-foreground" />
                     <span>{franchisee.phone}</span>
                   </div>
                 )}
                 {franchisee.registrationNo && (
                   <div>
-                    <dt className="text-xs text-muted-foreground">Registration No.</dt>
-                    <dd className="mt-0.5 font-mono">{franchisee.registrationNo}</dd>
+                    <dt className="text-xs text-muted-foreground">
+                      Registration No.
+                    </dt>
+                    <dd className="mt-0.5 font-mono">
+                      {franchisee.registrationNo}
+                    </dd>
                   </div>
                 )}
               </dl>
             </div>
 
-            <div className="glass rounded-2xl p-6 space-y-4">
+            <div className="space-y-4 rounded-2xl p-6 glass">
               <h2 className="font-semibold">Key contacts</h2>
               {franchisee.contacts.length === 0 ? (
-                <p className="text-sm text-muted-foreground">No contacts recorded.</p>
+                <p className="text-sm text-muted-foreground">
+                  No contacts recorded.
+                </p>
               ) : (
                 <ul className="space-y-3">
                   {franchisee.contacts.map((c) => (
-                    <li key={c.id} className="flex items-start justify-between gap-2 text-sm">
+                    <li
+                      key={c.id}
+                      className="flex items-start justify-between gap-2 text-sm"
+                    >
                       <div>
                         <p className="font-medium">{c.name}</p>
-                        {c.title && <p className="text-xs text-muted-foreground">{c.title}</p>}
-                        {c.email && <p className="text-xs text-muted-foreground">{c.email}</p>}
+                        {c.title && (
+                          <p className="text-xs text-muted-foreground">
+                            {c.title}
+                          </p>
+                        )}
+                        {c.email && (
+                          <p className="text-xs text-muted-foreground">
+                            {c.email}
+                          </p>
+                        )}
                       </div>
-                      {c.isPrimary && <Badge variant="secondary" className="text-xs">Primary</Badge>}
+                      {c.isPrimary && (
+                        <Badge variant="secondary" className="text-xs">
+                          Primary
+                        </Badge>
+                      )}
                     </li>
                   ))}
                 </ul>
@@ -166,7 +204,7 @@ export default async function FranchiseeDetailPage({
             ) : (
               <div className="overflow-hidden rounded-2xl border border-border bg-card/60">
                 <table className="w-full text-left text-sm">
-                  <thead className="border-b border-border bg-muted/40 text-xs uppercase tracking-wide text-muted-foreground">
+                  <thead className="border-b border-border bg-muted/40 text-xs tracking-wide text-muted-foreground uppercase">
                     <tr>
                       <th className="px-4 py-3 font-medium">Name</th>
                       <th className="px-4 py-3 font-medium">Code</th>
@@ -178,11 +216,17 @@ export default async function FranchiseeDetailPage({
                     {franchisee.locations.map((loc) => (
                       <tr key={loc.id} className="hover:bg-muted/30">
                         <td className="px-4 py-3 font-medium">{loc.name}</td>
-                        <td className="px-4 py-3 font-mono text-xs text-muted-foreground">{loc.code}</td>
-                        <td className="px-4 py-3">
-                          <Badge variant="secondary" className="text-xs">{loc.status}</Badge>
+                        <td className="px-4 py-3 font-mono text-xs text-muted-foreground">
+                          {loc.code}
                         </td>
-                        <td className="px-4 py-3 text-muted-foreground">{loc.city}</td>
+                        <td className="px-4 py-3">
+                          <Badge variant="secondary" className="text-xs">
+                            {loc.status}
+                          </Badge>
+                        </td>
+                        <td className="px-4 py-3 text-muted-foreground">
+                          {loc.city}
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -198,27 +242,37 @@ export default async function FranchiseeDetailPage({
             ) : (
               <div className="overflow-hidden rounded-2xl border border-border bg-card/60">
                 <table className="w-full text-left text-sm">
-                  <thead className="border-b border-border bg-muted/40 text-xs uppercase tracking-wide text-muted-foreground">
+                  <thead className="border-b border-border bg-muted/40 text-xs tracking-wide text-muted-foreground uppercase">
                     <tr>
                       <th className="px-4 py-3 font-medium">Agreement</th>
                       <th className="px-4 py-3 font-medium">Status</th>
                       <th className="px-4 py-3 font-medium">Start</th>
                       <th className="px-4 py-3 font-medium">End</th>
-                      <th className="px-4 py-3 text-right font-medium">Royalty %</th>
+                      <th className="px-4 py-3 text-right font-medium">
+                        Royalty %
+                      </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border/70">
                     {franchisee.agreements.map((agr) => (
                       <tr key={agr.id} className="hover:bg-muted/30">
-                        <td className="px-4 py-3 font-mono text-xs">{agr.agreementNo}</td>
-                        <td className="px-4 py-3">
-                          <Badge variant="secondary" className="text-xs">{agr.status}</Badge>
+                        <td className="px-4 py-3 font-mono text-xs">
+                          {agr.agreementNo}
                         </td>
-                        <td className="px-4 py-3 text-muted-foreground">{dateFmt.format(agr.startDate)}</td>
+                        <td className="px-4 py-3">
+                          <Badge variant="secondary" className="text-xs">
+                            {agr.status}
+                          </Badge>
+                        </td>
+                        <td className="px-4 py-3 text-muted-foreground">
+                          {dateFmt.format(agr.startDate)}
+                        </td>
                         <td className="px-4 py-3 text-muted-foreground">
                           {agr.endDate ? dateFmt.format(agr.endDate) : "—"}
                         </td>
-                        <td className="px-4 py-3 text-right tabular-nums">{Number(agr.royaltyRate).toFixed(1)}%</td>
+                        <td className="px-4 py-3 text-right tabular-nums">
+                          {Number(agr.royaltyRate).toFixed(1)}%
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -234,11 +288,13 @@ export default async function FranchiseeDetailPage({
             ) : (
               <div className="overflow-hidden rounded-2xl border border-border bg-card/60">
                 <table className="w-full text-left text-sm">
-                  <thead className="border-b border-border bg-muted/40 text-xs uppercase tracking-wide text-muted-foreground">
+                  <thead className="border-b border-border bg-muted/40 text-xs tracking-wide text-muted-foreground uppercase">
                     <tr>
                       <th className="px-4 py-3 font-medium">Invoice</th>
                       <th className="px-4 py-3 font-medium">Status</th>
-                      <th className="px-4 py-3 text-right font-medium">Total</th>
+                      <th className="px-4 py-3 text-right font-medium">
+                        Total
+                      </th>
                       <th className="px-4 py-3 text-right font-medium">Paid</th>
                       <th className="px-4 py-3 font-medium">Due</th>
                     </tr>
@@ -246,17 +302,29 @@ export default async function FranchiseeDetailPage({
                   <tbody className="divide-y divide-border/70">
                     {franchisee.invoices.map((inv) => (
                       <tr key={inv.id} className="hover:bg-muted/30">
-                        <td className="px-4 py-3 font-mono text-xs">{inv.invoiceNo}</td>
+                        <td className="px-4 py-3 font-mono text-xs">
+                          {inv.invoiceNo}
+                        </td>
                         <td className="px-4 py-3">
-                          <Badge variant="secondary" className="text-xs">{inv.status}</Badge>
+                          <Badge variant="secondary" className="text-xs">
+                            {inv.status}
+                          </Badge>
                         </td>
                         <td className="px-4 py-3 text-right tabular-nums">
-                          <CurrencyDisplay value={Number(inv.total)} currency={currency} />
+                          <CurrencyDisplay
+                            value={Number(inv.total)}
+                            currency={currency}
+                          />
                         </td>
                         <td className="px-4 py-3 text-right tabular-nums">
-                          <CurrencyDisplay value={Number(inv.amountPaid)} currency={currency} />
+                          <CurrencyDisplay
+                            value={Number(inv.amountPaid)}
+                            currency={currency}
+                          />
                         </td>
-                        <td className="px-4 py-3 text-muted-foreground">{dateFmt.format(inv.dueDate)}</td>
+                        <td className="px-4 py-3 text-muted-foreground">
+                          {dateFmt.format(inv.dueDate)}
+                        </td>
                       </tr>
                     ))}
                   </tbody>

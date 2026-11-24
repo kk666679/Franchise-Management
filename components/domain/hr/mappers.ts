@@ -4,7 +4,7 @@ export type EmployeeView = {
   email: string
   role: string
   branchName: string
-  status: 'active' | 'inactive' | 'on_leave'
+  status: "active" | "inactive" | "on_leave"
   hiredAtIso: string
 }
 
@@ -22,7 +22,7 @@ export type AttendanceView = {
   employeeName: string
   clockInIso: string
   clockOutIso: string | null
-  status: 'on_time' | 'late' | 'missing'
+  status: "on_time" | "late" | "missing"
 }
 
 export type HrTaskView = {
@@ -30,5 +30,5 @@ export type HrTaskView = {
   title: string
   assigneeName: string
   dueDateIso: string | null
-  status: 'todo' | 'in_progress' | 'done'
+  status: "todo" | "in_progress" | "done"
 }

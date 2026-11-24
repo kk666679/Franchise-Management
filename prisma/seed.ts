@@ -23,14 +23,14 @@ async function main() {
 
   if (!name && !slug) {
     console.log(
-      "Seed skipped: no real organization details configured. No sample data was inserted.",
+      "Seed skipped: no real organization details configured. No sample data was inserted."
     )
     return
   }
 
   if (!name || !slug) {
     throw new Error(
-      "Set both SEED_ORGANIZATION_NAME and SEED_ORGANIZATION_SLUG to seed an organization.",
+      "Set both SEED_ORGANIZATION_NAME and SEED_ORGANIZATION_SLUG to seed an organization."
     )
   }
 

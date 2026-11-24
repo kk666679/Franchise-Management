@@ -1,5 +1,5 @@
-import { FormattedDate } from '@/components/common/FormattedDate'
-import type { ContractStatus } from '../ContractLifecycleBadge'
+import { FormattedDate } from "@/components/common/FormattedDate"
+import type { ContractStatus } from "../ContractLifecycleBadge"
 
 export type TimelineEvent = {
   id: string
@@ -14,15 +14,18 @@ export function ContractTimeline({ events }: { events: TimelineEvent[] }) {
     return <p className="text-muted">No events recorded yet.</p>
   }
   return (
-    <ol className="relative space-y-6 border-l pl-6" aria-label="Contract history">
+    <ol
+      className="relative space-y-6 border-l pl-6"
+      aria-label="Contract history"
+    >
       {events.map((e) => (
         <li key={e.id} className="relative">
           <span
-            className="absolute -left-[31px] top-1 h-3 w-3 rounded-full bg-primary"
+            className="absolute top-1 -left-[31px] h-3 w-3 rounded-full bg-primary"
             aria-hidden="true"
           />
           <p className="text-sm font-medium">
-            {e.status.replace('_', ' ')} · <FormattedDate iso={e.atIso} />
+            {e.status.replace("_", " ")} · <FormattedDate iso={e.atIso} />
           </p>
           <p className="text-sm text-muted">by {e.actor}</p>
           {e.note && <p className="mt-1 text-sm">{e.note}</p>}

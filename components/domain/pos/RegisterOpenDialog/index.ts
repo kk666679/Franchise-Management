@@ -1,2 +1,2 @@
-export { RegisterOpenDialog } from './RegisterOpenDialog'
-export type { RegisterOpenDialogProps } from './RegisterOpenDialog.types'
+export { RegisterOpenDialog } from "./RegisterOpenDialog"
+export type { RegisterOpenDialogProps } from "./RegisterOpenDialog.types"

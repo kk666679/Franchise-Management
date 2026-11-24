@@ -20,7 +20,9 @@ export async function POST(request: Request) {
   }
 
   // Generate reset token
-  const resetToken = Buffer.from(email + Math.random().toString()).toString("base64")
+  const resetToken = Buffer.from(email + Math.random().toString()).toString(
+    "base64"
+  )
 
   // In a real implementation, we'd:
   // 1. Store the token with expiration in a password reset tokens table

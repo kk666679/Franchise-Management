@@ -1,10 +1,19 @@
-'use client'
+"use client"
 
-import { useTransition } from 'react'
-import { Form, FormField, FormSection, FormActions, SubmitButton } from '@/components/form'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { territoryFormSchema, type TerritoryFormValues } from './TerritoryForm.schema'
+import { useTransition } from "react"
+import {
+  Form,
+  FormField,
+  FormSection,
+  FormActions,
+  SubmitButton,
+} from "@/components/form"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import {
+  territoryFormSchema,
+  type TerritoryFormValues,
+} from "./TerritoryForm.schema"
 
 export function TerritoryForm({
   mode,
@@ -12,7 +21,7 @@ export function TerritoryForm({
   onSubmit,
   onCancel,
 }: {
-  mode: 'create' | 'edit'
+  mode: "create" | "edit"
   initial?: Partial<TerritoryFormValues>
   onSubmit: (v: TerritoryFormValues) => Promise<void>
   onCancel?: () => void
@@ -21,21 +30,34 @@ export function TerritoryForm({
   return (
     <Form<TerritoryFormValues>
       schema={territoryFormSchema}
-      defaultValues={{ name: '', region: '', ...initial }}
-      onSubmit={(v) => startTransition(async () => { await onSubmit(v) })}
+      defaultValues={{ name: "", region: "", ...initial }}
+      onSubmit={(v) =>
+        startTransition(async () => {
+          await onSubmit(v)
+        })
+      }
     >
       <FormSection title="Territory">
-        <FormField name="name" label="Name"><Input /></FormField>
-        <FormField name="region" label="Region"><Input /></FormField>
+        <FormField name="name" label="Name">
+          <Input />
+        </FormField>
+        <FormField name="region" label="Region">
+          <Input />
+        </FormField>
       </FormSection>
       <FormActions>
         {onCancel && (
-          <Button type="button" variant="outline" onClick={onCancel} disabled={isPending}>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onCancel}
+            disabled={isPending}
+          >
             Cancel
           </Button>
         )}
         <SubmitButton pending={isPending}>
-          {mode === 'create' ? 'Create territory' : 'Save changes'}
+          {mode === "create" ? "Create territory" : "Save changes"}
         </SubmitButton>
       </FormActions>
     </Form>

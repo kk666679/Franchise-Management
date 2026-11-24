@@ -1,9 +1,9 @@
-'use client'
+"use client"
 
-import { DataTable } from '@/components/data/DataTable'
-import { EmptyState } from '@/components/feedback/EmptyState'
-import { branchColumns } from './BranchTable.columns'
-import type { BranchTableProps } from './BranchTable.types'
+import { DataTable } from "@/components/data/DataTable"
+import { EmptyState } from "@/components/feedback/EmptyState"
+import { branchColumns } from "./BranchTable.columns"
+import type { BranchTableProps } from "./BranchTable.types"
 
 export function BranchTable({ data, emptyState }: BranchTableProps) {
   return (

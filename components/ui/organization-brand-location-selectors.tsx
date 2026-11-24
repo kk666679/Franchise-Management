@@ -33,26 +33,19 @@ export function OrganizationSelector({
   }
 
   return (
-    <div className={cn(
-      "relative",
-      className,
-    )}>
+    <div className={cn("relative", className)}>
       <select
         onChange={handleChange}
         className={cn(
-          "flex h-10 w-full rounded-md border border-border bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-colors",
-          "dark:border-dark",
+          "flex h-10 w-full rounded-md border border-border bg-background px-3 py-2 text-sm ring-offset-background transition-colors placeholder:text-muted-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+          "dark:border-dark"
         )}
       >
         <option value="" disabled>
           {selectedId ? "Select organization" : "Organization"}
         </option>
         {organizations.map((org) => (
-          <option
-            key={org.id}
-            value={org.id}
-            selected={selectedId === org.id}
-          >
+          <option key={org.id} value={org.id} selected={selectedId === org.id}>
             {org.name}
           </option>
         ))}
@@ -95,15 +88,19 @@ export function BrandSelector({
       <select
         onChange={handleChange}
         className={cn(
-          "flex h-10 w-full rounded-md border border-border bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-colors",
-          "dark:border-dark",
+          "flex h-10 w-full rounded-md border border-border bg-background px-3 py-2 text-sm ring-offset-background transition-colors placeholder:text-muted-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+          "dark:border-dark"
         )}
       >
         <option value="" disabled>
           {selectedId ? "Select brand" : "Brand"}
         </option>
         {brands.map((brand) => (
-          <option key={brand.id} value={brand.id} selected={selectedId === brand.id}>
+          <option
+            key={brand.id}
+            value={brand.id}
+            selected={selectedId === brand.id}
+          >
             {brand.name}
           </option>
         ))}
@@ -146,15 +143,19 @@ export function LocationSelector({
       <select
         onChange={handleChange}
         className={cn(
-          "flex h-10 w-full rounded-md border border-border bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-colors",
-          "dark:border-dark",
+          "flex h-10 w-full rounded-md border border-border bg-background px-3 py-2 text-sm ring-offset-background transition-colors placeholder:text-muted-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+          "dark:border-dark"
         )}
       >
         <option value="" disabled>
           {selectedId ? "Select location" : "Location"}
         </option>
         {locations.map((location) => (
-          <option key={location.id} value={location.id} selected={selectedId === location.id}>
+          <option
+            key={location.id}
+            value={location.id}
+            selected={selectedId === location.id}
+          >
             {location.name}
           </option>
         ))}

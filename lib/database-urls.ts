@@ -1,6 +1,6 @@
 /** Resolve the connection variables used by Prisma Postgres and Vercel Postgres. */
 export function resolveDatabaseUrls(
-  source: Record<string, string | undefined>,
+  source: Record<string, string | undefined>
 ) {
   const runtimeUrl =
     source.DATABASE_URL ??

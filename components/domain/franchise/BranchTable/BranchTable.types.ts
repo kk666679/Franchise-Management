@@ -1,4 +1,4 @@
-import type { BranchView } from '../mappers'
+import type { BranchView } from "../mappers"
 
 export type BranchTableProps = {
   data: BranchView[]

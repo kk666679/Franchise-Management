@@ -1,9 +1,9 @@
-'use client'
+"use client"
 
-import { DataTable } from '@/components/data/DataTable'
-import { EmptyState } from '@/components/feedback/EmptyState'
-import { contractColumns } from './ContractTable.columns'
-import type { ContractView } from '../mappers'
+import { DataTable } from "@/components/data/DataTable"
+import { EmptyState } from "@/components/feedback/EmptyState"
+import { contractColumns } from "./ContractTable.columns"
+import type { ContractView } from "../mappers"
 
 export function ContractTable({ data }: { data: ContractView[] }) {
   return (

@@ -1,1 +1,1 @@
-export { TerritoryTable } from './TerritoryTable'
+export { TerritoryTable } from "./TerritoryTable"

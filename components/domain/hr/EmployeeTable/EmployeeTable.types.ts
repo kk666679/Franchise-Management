@@ -1,4 +1,4 @@
-import type { EmployeeView } from '../mappers'
+import type { EmployeeView } from "../mappers"
 
 export type EmployeeTableProps = {
   data: EmployeeView[]

@@ -1,11 +1,11 @@
-import { z } from 'zod'
+import { z } from "zod"
 
 export const branchFormSchema = z.object({
   name: z.string().trim().min(1).max(120),
   franchiseId: z.string().uuid(),
   address: z.object({
     line1: z.string().trim().min(1).max(200),
-    line2: z.string().max(200).optional().default(''),
+    line2: z.string().max(200).optional().default(""),
     city: z.string().trim().min(1).max(100),
     region: z.string().trim().min(1).max(100),
     postalCode: z.string().trim().min(1).max(20),

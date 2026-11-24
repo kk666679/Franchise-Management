@@ -99,7 +99,12 @@ export default async function FinancePage() {
           title="Finance"
           description="Invoices, payments and royalty collection"
           actions={
-            <Button variant="outline" size="sm" className="rounded-full" disabled>
+            <Button
+              variant="outline"
+              size="sm"
+              className="rounded-full"
+              disabled
+            >
               <Download className="size-4" />
               Export
             </Button>
@@ -112,12 +117,17 @@ export default async function FinancePage() {
               ["Total invoices", String(invoices.length)],
               ["Outstanding", currencyFmt.format(outstanding)],
               ["Collected", currencyFmt.format(collected)],
-              ["Overdue", String(invoices.filter((i) => i.status === "OVERDUE").length)],
+              [
+                "Overdue",
+                String(invoices.filter((i) => i.status === "OVERDUE").length),
+              ],
             ] as [string, string][]
           ).map(([label, value]) => (
-            <div key={label} className="glass rounded-2xl p-4">
+            <div key={label} className="rounded-2xl p-4 glass">
               <p className="text-xs text-muted-foreground">{label}</p>
-              <p className="mt-1 text-2xl font-semibold tabular-nums">{value}</p>
+              <p className="mt-1 text-2xl font-semibold tabular-nums">
+                {value}
+              </p>
             </div>
           ))}
         </div>
@@ -132,7 +142,7 @@ export default async function FinancePage() {
           <div className="overflow-hidden rounded-2xl border border-border bg-card/60">
             <div className="overflow-x-auto">
               <table className="w-full min-w-[52rem] text-left text-sm">
-                <thead className="border-b border-border bg-muted/40 text-xs uppercase tracking-wide text-muted-foreground">
+                <thead className="border-b border-border bg-muted/40 text-xs tracking-wide text-muted-foreground uppercase">
                   <tr>
                     <th className="px-4 py-3 font-medium">Invoice</th>
                     <th className="px-4 py-3 font-medium">Franchisee</th>
@@ -144,8 +154,13 @@ export default async function FinancePage() {
                 </thead>
                 <tbody className="divide-y divide-border/70">
                   {invoices.map((inv) => (
-                    <tr key={inv.id} className="transition-colors hover:bg-muted/30">
-                      <td className="px-4 py-3 font-medium tabular-nums">{inv.invoiceNo}</td>
+                    <tr
+                      key={inv.id}
+                      className="transition-colors hover:bg-muted/30"
+                    >
+                      <td className="px-4 py-3 font-medium tabular-nums">
+                        {inv.invoiceNo}
+                      </td>
                       <td className="px-4 py-3 text-muted-foreground">
                         {inv.franchisee.tradingName ?? inv.franchisee.legalName}
                       </td>
@@ -156,10 +171,16 @@ export default async function FinancePage() {
                         />
                       </td>
                       <td className="px-4 py-3 text-right tabular-nums">
-                        <CurrencyDisplay value={Number(inv.total)} currency={currency} />
+                        <CurrencyDisplay
+                          value={Number(inv.total)}
+                          currency={currency}
+                        />
                       </td>
                       <td className="px-4 py-3 text-right tabular-nums">
-                        <CurrencyDisplay value={Number(inv.amountPaid)} currency={currency} />
+                        <CurrencyDisplay
+                          value={Number(inv.amountPaid)}
+                          currency={currency}
+                        />
                       </td>
                       <td className="px-4 py-3 text-muted-foreground">
                         {dateFmt.format(inv.dueDate)}
@@ -178,4 +199,3 @@ export default async function FinancePage() {
     </AppShell>
   )
 }
-

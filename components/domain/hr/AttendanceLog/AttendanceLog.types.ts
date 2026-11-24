@@ -1,4 +1,4 @@
-import type { AttendanceView } from '../mappers'
+import type { AttendanceView } from "../mappers"
 
 export type AttendanceLogProps = {
   data: AttendanceView[]

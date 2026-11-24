@@ -1,3 +1,6 @@
-import type { NotificationView } from '../mappers'
+import type { NotificationView } from "../mappers"
 
-export type NotificationCenterProps = { notifications: NotificationView[]; onMarkRead?: (id: string) => void }
+export type NotificationCenterProps = {
+  notifications: NotificationView[]
+  onMarkRead?: (id: string) => void
+}

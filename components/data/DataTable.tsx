@@ -1,10 +1,10 @@
-'use client'
+"use client"
 
-import * as React from 'react'
-import { DataTableColumnHeader } from '@/components/data/DataTableColumnHeader'
-import { EmptyState } from '@/components/feedback/EmptyState'
-import { LoadingSpinner } from '@/components/feedback/loading-spinner'
-import { cn } from '@/lib/utils'
+import * as React from "react"
+import { DataTableColumnHeader } from "@/components/data/DataTableColumnHeader"
+import { EmptyState } from "@/components/feedback/EmptyState"
+import { LoadingSpinner } from "@/components/feedback/loading-spinner"
+import { cn } from "@/lib/utils"
 
 export type DataColumn<TData> = {
   accessorKey: string
@@ -29,15 +29,18 @@ export type DataTableProps<TData> = {
 export function DataTable<TData>({
   columns,
   data,
-  ariaLabel = 'Data table',
+  ariaLabel = "Data table",
   isLoading,
   loading,
   emptyState,
-  emptyTitle = 'No records found',
+  emptyTitle = "No records found",
   emptyDescription,
   className,
 }: DataTableProps<TData>) {
-  const [sort, setSort] = React.useState<{ id: string; direction: 'asc' | 'desc' } | null>(null)
+  const [sort, setSort] = React.useState<{
+    id: string
+    direction: "asc" | "desc"
+  } | null>(null)
 
   const sorted = React.useMemo(() => {
     if (!sort) return [...data]
@@ -46,8 +49,12 @@ export function DataTable<TData>({
     return [...data].sort((left, right) => {
       const a = left[column.accessorKey as keyof TData]
       const b = right[column.accessorKey as keyof TData]
-      const comparison = String(a ?? '').localeCompare(String(b ?? ''), undefined, { numeric: true })
-      return sort.direction === 'asc' ? comparison : -comparison
+      const comparison = String(a ?? "").localeCompare(
+        String(b ?? ""),
+        undefined,
+        { numeric: true }
+      )
+      return sort.direction === "asc" ? comparison : -comparison
     })
   }, [columns, data, sort])
 
@@ -61,14 +68,28 @@ export function DataTable<TData>({
   }
 
   if (data.length === 0) {
-    return <>{emptyState ?? <EmptyState title={emptyTitle} description={emptyDescription} />}</>
+    return (
+      <>
+        {emptyState ?? (
+          <EmptyState title={emptyTitle} description={emptyDescription} />
+        )}
+      </>
+    )
   }
 
   return (
-    <div className={cn('overflow-hidden rounded-2xl border border-border bg-card/60', className)}>
+    <div
+      className={cn(
+        "overflow-hidden rounded-2xl border border-border bg-card/60",
+        className
+      )}
+    >
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[32rem] text-left text-sm" aria-label={ariaLabel}>
-          <thead className="border-b border-border bg-muted/40 text-xs uppercase tracking-wide text-muted-foreground">
+        <table
+          className="w-full min-w-[32rem] text-left text-sm"
+          aria-label={ariaLabel}
+        >
+          <thead className="border-b border-border bg-muted/40 text-xs tracking-wide text-muted-foreground uppercase">
             <tr>
               {columns.map((column) => (
                 <th key={column.accessorKey} className="px-4 py-3 font-medium">
@@ -84,10 +105,19 @@ export function DataTable<TData>({
           </thead>
           <tbody className="divide-y divide-border/70">
             {sorted.map((row) => (
-              <tr key={String((row as unknown as { id?: string }).id)} className="transition-colors hover:bg-muted/30">
+              <tr
+                key={String((row as unknown as { id?: string }).id)}
+                className="transition-colors hover:bg-muted/30"
+              >
                 {columns.map((column) => (
                   <td key={column.accessorKey} className="px-4 py-3">
-                    {column.cell ? column.cell(row as TData) : String((row as unknown as Record<string, unknown>)[column.accessorKey] ?? '—')}
+                    {column.cell
+                      ? column.cell(row as TData)
+                      : String(
+                          (row as unknown as Record<string, unknown>)[
+                            column.accessorKey
+                          ] ?? "—"
+                        )}
                   </td>
                 ))}
               </tr>

@@ -1,11 +1,15 @@
-'use client'
+"use client"
 
-import { DataTable } from '@/components/data/DataTable'
-import { EmptyState } from '@/components/feedback/EmptyState'
-import { employeeColumns } from './EmployeeTable.columns'
-import type { EmployeeTableProps } from './EmployeeTable.types'
+import { DataTable } from "@/components/data/DataTable"
+import { EmptyState } from "@/components/feedback/EmptyState"
+import { employeeColumns } from "./EmployeeTable.columns"
+import type { EmployeeTableProps } from "./EmployeeTable.types"
 
-export function EmployeeTable({ data, isLoading, emptyState }: EmployeeTableProps) {
+export function EmployeeTable({
+  data,
+  isLoading,
+  emptyState,
+}: EmployeeTableProps) {
   return (
     <DataTable
       ariaLabel="Employees"

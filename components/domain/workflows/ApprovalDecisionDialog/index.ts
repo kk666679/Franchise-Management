@@ -1,2 +1,2 @@
-export { ApprovalDecisionDialog } from './ApprovalDecisionDialog'
-export type { ApprovalDecisionDialogProps } from './ApprovalDecisionDialog.types'
+export { ApprovalDecisionDialog } from "./ApprovalDecisionDialog"
+export type { ApprovalDecisionDialogProps } from "./ApprovalDecisionDialog.types"

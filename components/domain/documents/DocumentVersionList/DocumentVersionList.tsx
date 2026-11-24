@@ -1,11 +1,15 @@
-'use client'
+"use client"
 
-import { DataTable } from '@/components/data/DataTable'
-import { EmptyState } from '@/components/feedback/EmptyState'
-import { documentVersionListColumns } from './DocumentVersionList.columns'
-import type { DocumentVersionListProps } from './DocumentVersionList.types'
+import { DataTable } from "@/components/data/DataTable"
+import { EmptyState } from "@/components/feedback/EmptyState"
+import { documentVersionListColumns } from "./DocumentVersionList.columns"
+import type { DocumentVersionListProps } from "./DocumentVersionList.types"
 
-export function DocumentVersionList({ data, isLoading, emptyState }: DocumentVersionListProps) {
+export function DocumentVersionList({
+  data,
+  isLoading,
+  emptyState,
+}: DocumentVersionListProps) {
   return (
     <DataTable
       ariaLabel="Document versions"

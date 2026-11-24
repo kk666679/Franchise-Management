@@ -1,7 +1,7 @@
-'use client'
+"use client"
 
-import { FranchiseForm } from '../../FranchiseForm'
-import type { FranchiseFormValues } from '../../FranchiseForm/FranchiseForm.schema'
+import { FranchiseForm } from "../../FranchiseForm"
+import type { FranchiseFormValues } from "../../FranchiseForm/FranchiseForm.schema"
 
 export function StepFranchise({
   organizations,

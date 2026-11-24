@@ -1,5 +1,10 @@
 import { describe, it, expect } from "vitest"
-import { formatCurrency, formatDate, formatNumber, formatPercentage } from "@/components/charts/chart-utils"
+import {
+  formatCurrency,
+  formatDate,
+  formatNumber,
+  formatPercentage,
+} from "@/components/charts/chart-utils"
 
 describe("chart-utils", () => {
   it("formats currency", () => {

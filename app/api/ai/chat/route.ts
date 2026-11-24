@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
   if (!model) {
     return new Response(
       "AI provider not configured. Set AI_DEFAULT_MODEL and OPENAI_API_KEY in your environment.",
-      { status: 503 },
+      { status: 503 }
     )
   }
 

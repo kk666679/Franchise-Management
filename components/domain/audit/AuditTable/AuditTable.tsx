@@ -1,9 +1,9 @@
-'use client'
+"use client"
 
-import { DataTable } from '@/components/data/DataTable'
-import { EmptyState } from '@/components/feedback/EmptyState'
-import { auditColumns } from './AuditTable.columns'
-import type { AuditTableProps } from './AuditTable.types'
+import { DataTable } from "@/components/data/DataTable"
+import { EmptyState } from "@/components/feedback/EmptyState"
+import { auditColumns } from "./AuditTable.columns"
+import type { AuditTableProps } from "./AuditTable.types"
 
 export function AuditTable({ data, isLoading, emptyState }: AuditTableProps) {
   return (

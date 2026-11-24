@@ -1,2 +1,2 @@
-export { DocumentUploader } from './DocumentUploader'
-export type { DocumentUploaderProps } from './DocumentUploader.types'
+export { DocumentUploader } from "./DocumentUploader"
+export type { DocumentUploaderProps } from "./DocumentUploader.types"

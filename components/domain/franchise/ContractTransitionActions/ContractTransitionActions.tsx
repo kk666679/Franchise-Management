@@ -1,12 +1,12 @@
-'use client'
+"use client"
 
-import { useTransition } from 'react'
-import { Button } from '@/components/ui/button'
-import { PermissionGate } from '@/components/auth/PermissionGate'
-import type { ContractStatus } from '../ContractLifecycleBadge'
+import { useTransition } from "react"
+import { Button } from "@/components/ui/button"
+import { PermissionGate } from "@/components/auth/PermissionGate"
+import type { ContractStatus } from "../ContractLifecycleBadge"
 
 type Transition = {
-  action: 'submit' | 'approve' | 'activate' | 'renew' | 'terminate'
+  action: "submit" | "approve" | "activate" | "renew" | "terminate"
   label: string
   from: ContractStatus[]
   to: ContractStatus
@@ -14,10 +14,34 @@ type Transition = {
 }
 
 const TRANSITIONS: Transition[] = [
-  { action: 'submit', label: 'Submit for approval', from: ['draft'], to: 'pending_approval', permission: 'contract.submit' },
-  { action: 'approve', label: 'Approve', from: ['pending_approval'], to: 'active', permission: 'contract.activate' },
-  { action: 'renew', label: 'Renew', from: ['active'], to: 'renewal', permission: 'contract.activate' },
-  { action: 'terminate', label: 'Terminate', from: ['active', 'renewal'], to: 'terminated', permission: 'contract.terminate' },
+  {
+    action: "submit",
+    label: "Submit for approval",
+    from: ["draft"],
+    to: "pending_approval",
+    permission: "contract.submit",
+  },
+  {
+    action: "approve",
+    label: "Approve",
+    from: ["pending_approval"],
+    to: "active",
+    permission: "contract.activate",
+  },
+  {
+    action: "renew",
+    label: "Renew",
+    from: ["active"],
+    to: "renewal",
+    permission: "contract.activate",
+  },
+  {
+    action: "terminate",
+    label: "Terminate",
+    from: ["active", "renewal"],
+    to: "terminated",
+    permission: "contract.terminate",
+  },
 ]
 
 export function ContractTransitionActions({
@@ -27,7 +51,7 @@ export function ContractTransitionActions({
 }: {
   contractId: string
   status: ContractStatus
-  onTransition: (action: Transition['action']) => Promise<void>
+  onTransition: (action: Transition["action"]) => Promise<void>
 }) {
   const [isPending, startTransition] = useTransition()
   const available = TRANSITIONS.filter((t) => t.from.includes(status))
@@ -39,9 +63,13 @@ export function ContractTransitionActions({
         <PermissionGate key={t.action} permission={t.permission}>
           <Button
             type="button"
-            variant={t.action === 'terminate' ? 'destructive' : 'default'}
+            variant={t.action === "terminate" ? "destructive" : "default"}
             disabled={isPending}
-            onClick={() => startTransition(async () => { await onTransition(t.action) })}
+            onClick={() =>
+              startTransition(async () => {
+                await onTransition(t.action)
+              })
+            }
             aria-label={`${t.label} (${contractId})`}
           >
             {t.label}

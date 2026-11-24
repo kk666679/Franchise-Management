@@ -1,2 +1,2 @@
-export { ApprovalCard } from './ApprovalCard'
-export type { ApprovalCardProps } from './ApprovalCard.types'
+export { ApprovalCard } from "./ApprovalCard"
+export type { ApprovalCardProps } from "./ApprovalCard.types"

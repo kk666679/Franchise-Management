@@ -1,4 +1,4 @@
-import type { ComplianceView } from '../mappers'
+import type { ComplianceView } from "../mappers"
 
 export type ComplianceTableProps = {
   data: ComplianceView[]

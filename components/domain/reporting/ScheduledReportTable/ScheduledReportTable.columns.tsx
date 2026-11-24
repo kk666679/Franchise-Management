@@ -1,35 +1,36 @@
-'use client'
+"use client"
 
-import { DataTableColumnHeader } from '@/components/data/DataTableColumnHeader'
-import type { ScheduledReportView } from '../mappers'
+import { DataTableColumnHeader } from "@/components/data/DataTableColumnHeader"
+import type { ScheduledReportView } from "../mappers"
 
 export const scheduledReportColumns = [
   {
-    accessorKey: 'name',
-    header: 'Name',
+    accessorKey: "name",
+    header: "Name",
     sortable: true,
   },
   {
-    accessorKey: 'cadence',
-    header: 'Cadence',
+    accessorKey: "cadence",
+    header: "Cadence",
     sortable: true,
   },
   {
-    accessorKey: 'recipients',
-    header: 'Recipients',
+    accessorKey: "recipients",
+    header: "Recipients",
     sortable: true,
-    cell: (row: ScheduledReportView) => row.recipients.join(', ') || '—',
+    cell: (row: ScheduledReportView) => row.recipients.join(", ") || "—",
   },
   {
-    accessorKey: 'lastRunIso',
-    header: 'Last run',
+    accessorKey: "lastRunIso",
+    header: "Last run",
     sortable: true,
-    cell: (row: ScheduledReportView) => row.lastRunIso ? row.lastRunIso.slice(0,10) : '—',
+    cell: (row: ScheduledReportView) =>
+      row.lastRunIso ? row.lastRunIso.slice(0, 10) : "—",
   },
   {
-    accessorKey: 'enabled',
-    header: 'Enabled',
+    accessorKey: "enabled",
+    header: "Enabled",
     sortable: true,
-    cell: (row: ScheduledReportView) => row.enabled ? 'Yes' : 'No',
+    cell: (row: ScheduledReportView) => (row.enabled ? "Yes" : "No"),
   },
 ]
