@@ -1,44 +1,43 @@
-'use client'
+import Link from "next/link"
+import { FormattedDate } from "@/components/common/FormattedDate"
+import { OrganizationStatusBadge } from "../OrganizationStatusBadge"
+import type { OrganizationView } from "../mappers"
+import type { DataColumn } from "@/components/data/DataTable"
+import type { OrganizationStatus } from "../OrganizationStatusBadge/OrganizationStatusBadge.types"
 
-import Link from 'next/link'
-import type { ColumnDef } from '@tanstack/react-table'
-import { DataTableColumnHeader } from '@/components/data/DataTableColumnHeader'
-import { FormattedDate } from '@/components/common/FormattedDate'
-import { OrganizationStatusBadge } from '../OrganizationStatusBadge'
-import type { OrganizationView } from '../mappers'
-
-export const organizationColumns: ColumnDef<OrganizationView>[] = [
+export const organizationColumns: DataColumn<OrganizationView>[] = [
   {
-    accessorKey: 'name',
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Organization" />,
-    cell: ({ row }) => (
-      <Link href={`/organizations/${row.original.id}`} className="font-medium hover:underline">
-        {row.original.name}
+    accessorKey: "name",
+    header: "Organization",
+    cell: (row) => (
+      <Link href={`/organizations/${row.id}`} className="font-medium hover:underline">
+        {row.name}
       </Link>
     ),
   },
   {
-    accessorKey: 'legalName',
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Legal name" />,
+    accessorKey: "legalName",
+    header: "Legal name",
+    cell: (row) => row.legalName,
   },
   {
-    accessorKey: 'franchiseCount',
-    header: 'Franchises',
-    cell: ({ row }) => <span className="tabular-nums">{row.original.franchiseCount}</span>,
+    accessorKey: "franchiseCount",
+    header: "Franchises",
+    cell: (row) => <span className="tabular-nums">{row.franchiseCount}</span>,
   },
   {
-    accessorKey: 'branchCount',
-    header: 'Branches',
-    cell: ({ row }) => <span className="tabular-nums">{row.original.branchCount}</span>,
+    accessorKey: "branchCount",
+    header: "Branches",
+    cell: (row) => <span className="tabular-nums">{row.branchCount}</span>,
   },
   {
-    accessorKey: 'status',
-    header: 'Status',
-    cell: ({ row }) => <OrganizationStatusBadge status={row.original.status} />,
+    accessorKey: "status",
+    header: "Status",
+    cell: (row) => <OrganizationStatusBadge status={row.status as OrganizationStatus} />,
   },
   {
-    accessorKey: 'createdAtIso',
-    header: 'Created',
-    cell: ({ row }) => <FormattedDate iso={row.original.createdAtIso} />,
+    accessorKey: "createdAtIso",
+    header: "Created",
+    cell: (row) => <FormattedDate iso={row.createdAtIso} />,
   },
 ]

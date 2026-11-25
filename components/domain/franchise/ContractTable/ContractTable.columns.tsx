@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { FormattedDate } from "@/components/common/FormattedDate"
 import { ContractLifecycleBadge } from "../ContractLifecycleBadge"
+import { toContractStatus } from "../mappers"
 import type { ContractView } from "../mappers"
 
 export const contractColumns = [
@@ -29,7 +30,7 @@ export const contractColumns = [
     header: "Status",
     sortable: true,
     cell: (row: ContractView) => (
-      <ContractLifecycleBadge status={row.status} />
+      <ContractLifecycleBadge status={toContractStatus(row.status)} />
     ),
   },
   {

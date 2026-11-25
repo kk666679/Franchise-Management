@@ -18,7 +18,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     const ctx = await requirePosContext();
     const { id } = await params;
     const body = await req.json().catch(() => ({}));
-    const opening = body.openingFloat ?? ((typeof body.openingFloatCents === "number") ? body.openingFloatCents / 100 : 0);
+    const opening = body.openingFloat ?? (typeof body.openingFloatCents === "number" ? body.openingFloatCents / 100 : 0);
     const shift = await openPosShift(ctx, { terminalId: id, openingFloat: opening });
     return jsonOk({ data: mapPosShiftView(shift) }, 201);
   } catch (e) {

@@ -20,7 +20,7 @@ export default async function LocationDirectoryPage() {
     franchiseName:
       location.franchisee?.tradingName ??
       location.franchisee?.legalName ??
-      "—",
+      "â€”",
     addressLine: location.addressLine1,
     city: location.city,
     region: location.state ?? "",

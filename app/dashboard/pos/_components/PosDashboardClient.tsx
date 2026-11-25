@@ -112,7 +112,16 @@ export function PosDashboardClient({ initialLocations, initialRegisters, initial
     if (!pendingTender || submitting || !selectedRegisterId || !session) return
     const { method, totalCents } = pendingTender; setError(null); setSubmitting(true)
     const receiptNo = `RCP-${selectedRegister?.code ?? "REG"}-${receiptSeq}`; const idempotencyKey = crypto.randomUUID()
-    setOutbox((prev) => [{ id: crypto.randomUUID(), clientOpId: idempotencyKey, status: "pending", retryCount: 0, createdAtIso: new Date().toISOString() }, ...prev].slice(0, 20))
+    setOutbox((prev) => {
+  const newEntry: PosOutboxEntryView = {
+    id: crypto.randomUUID(),
+    clientOpId: idempotencyKey,
+    status: "pending",
+    retryCount: 0,
+    createdAtIso: new Date().toISOString(),
+  };
+  return [newEntry, ...prev].slice(0, 20);
+})
     try {
       const res = await fetch("/api/pos/sales", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ receiptNo, idempotencyKey, terminalId: selectedRegisterId, shiftId: session.id, lines: cart.map((i) => ({ productId: i.productId, quantity: i.quantity })), payments: [{ method: method === "cash" ? "CASH" : "CARD", amount: (totalCents / 100).toFixed(2) }] }) })
       const json = await res.json().catch(() => null); if (!res.ok) throw new Error(json?.error || `Sale failed (${res.status})`)

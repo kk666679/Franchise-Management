@@ -17,6 +17,7 @@ export type FranchiseDTO = {
   brand: { name: string } | null
   territory?: { name: string } | null
   locations: { id: string }[]
+  organizationName?: string | null
   createdAt: Date
 }
 
@@ -50,4 +51,13 @@ export type ContractDTO = {
   royaltyRate: number
   initialFeeCents: number
   currency: string
+}
+
+export type OrganizationDTO = {
+  id: string
+  name: string
+  legalName: string
+  status: string
+  _count: { franchises: number; branches: number }
+  createdAt: Date
 }

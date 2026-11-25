@@ -4,7 +4,7 @@ import { Section } from '@/components/layout/Section'
 import { FormattedDate } from '@/components/common/FormattedDate'
 import { ContractLifecycleBadge } from '../ContractLifecycleBadge'
 import { ContractTimeline, type TimelineEvent } from '../ContractTimeline'
-import type { ContractView } from '../mappers'
+import { toContractStatus, type ContractView } from '../mappers'
 
 export function ContractDetail({
   contract,
@@ -18,16 +18,18 @@ export function ContractDetail({
       <PageHeader
         title={contract.franchiseName}
         description="Contract"
-        actions={<ContractLifecycleBadge status={contract.status} />}
+        actions={<ContractLifecycleBadge status={toContractStatus(contract.status)} />}
       />
       <Section title="Term">
-        <Card className="grid grid-cols-1 gap-4 p-4 sm:grid-cols-3">
-          <Field label="Effective from" value={<FormattedDate iso={contract.effectiveFromIso} />} />
-          <Field
-            label="Effective to"
-            value={contract.effectiveToIso ? <FormattedDate iso={contract.effectiveToIso} /> : 'Open-ended'}
-          />
-          <Field label="Royalty" value={`${contract.royaltyRatePct}%`} />
+        <Card className="p-4">
+          <dl className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <Field label="Effective from" value={<FormattedDate iso={contract.effectiveFromIso} />} />
+            <Field
+              label="Effective to"
+              value={contract.effectiveToIso ? <FormattedDate iso={contract.effectiveToIso} /> : 'Open-ended'}
+            />
+            <Field label="Royalty" value={`${contract.royaltyRatePct}%`} />
+          </dl>
         </Card>
       </Section>
       <Section title="History">

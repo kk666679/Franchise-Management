@@ -1,16 +1,18 @@
-import type {
+﻿import type {
   FranchiseDTO,
   OrganizationDTO,
   BranchDTO,
   TerritoryDTO,
   ContractDTO,
 } from '@/lib/server/mappers/franchise.dto'
+import type { ContractStatus } from './ContractLifecycleBadge'
 
 export type FranchiseView = {
   id: string
   name: string
   legalName: string
   status: FranchiseDTO['status']
+  brandName: string | null
   organizationName: string
   territoryName: string | null
   branchCount: number
@@ -30,6 +32,8 @@ export type OrganizationView = {
 export type BranchView = {
   id: string
   name: string
+  code: string
+  brandName: string | null
   franchiseName: string
   addressLine: string
   city: string
@@ -47,22 +51,41 @@ export type TerritoryView = {
 
 export type ContractView = {
   id: string
+  agreementNo: string
   franchiseName: string
-  status: ContractDTO['status']
+  status: string
   effectiveFromIso: string
   effectiveToIso: string | null
   royaltyRatePct: number
+  initialFeeCents: number
+  currency: string
+}
+
+export function toContractStatus(status: string): ContractStatus {
+  const map: Record<string, ContractStatus> = {
+    DRAFT: "draft",
+    PENDING_SIGNATURE: "pending_approval",
+    ACTIVE: "active",
+    EXPIRED: "expired",
+    TERMINATED: "terminated",
+  }
+  const mapped = map[String(status).toUpperCase() as keyof typeof map]
+  if (mapped === undefined) {
+    throw new Error(`Unsupported contract status: ${status}`)
+  }
+  return mapped
 }
 
 export function toFranchiseView(dto: FranchiseDTO): FranchiseView {
   return {
     id: dto.id,
-    name: dto.name,
+    name: dto.tradingName ?? dto.legalName,
     legalName: dto.legalName,
     status: dto.status,
-    organizationName: dto.organization.name,
+    brandName: dto.brand?.name ?? null,
+    organizationName: dto.organizationName ?? "",
     territoryName: dto.territory?.name ?? null,
-    branchCount: dto._count.branches,
+    branchCount: dto.locations.length,
     createdAtIso: dto.createdAt.toISOString(),
   }
 }
@@ -83,11 +106,13 @@ export function toBranchView(dto: BranchDTO): BranchView {
   return {
     id: dto.id,
     name: dto.name,
-    franchiseName: dto.franchise.name,
-    addressLine: dto.address.line1,
-    city: dto.address.city,
-    region: dto.address.region,
-    isActive: dto.isActive,
+    code: dto.code,
+    brandName: dto.brandName,
+    franchiseName: dto.franchiseName,
+    addressLine: dto.addressLine,
+    city: dto.city,
+    region: dto.region ?? "",
+    isActive: dto.status === "ACTIVE",
   }
 }
 
@@ -104,10 +129,14 @@ export function toTerritoryView(dto: TerritoryDTO): TerritoryView {
 export function toContractView(dto: ContractDTO): ContractView {
   return {
     id: dto.id,
-    franchiseName: dto.franchise.name,
+    agreementNo: dto.agreementNo,
+    franchiseName: dto.franchiseName,
     status: dto.status,
-    effectiveFromIso: dto.effectiveFrom.toISOString(),
-    effectiveToIso: dto.effectiveTo?.toISOString() ?? null,
-    royaltyRatePct: dto.royaltyRateBps / 100,
+    effectiveFromIso: dto.startDate.toISOString(),
+    effectiveToIso: dto.endDate?.toISOString() ?? null,
+    royaltyRatePct: dto.royaltyRate,
+    initialFeeCents: dto.initialFeeCents,
+    currency: dto.currency,
   }
 }
+

@@ -4,9 +4,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup, Polygon, useMap, useMapEvents } from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
 import L from "leaflet";
-import { DEFAULT_CENTER, DEFAULT_ZOOM, TILE_LAYERS, type TileLayerKey } from "../_lib/map-config";
-import { createColoredIcon } from "../_lib/leaflet-icons";
-import { LOCATION_TYPE_COLORS, LOCATION_TYPE_LABELS, type FranchiseLocationType } from "../_lib/constants";
+import { DEFAULT_CENTER, DEFAULT_ZOOM, TILE_LAYERS, type TileLayerKey } from "../../_lib/map-config";
+import { createColoredIcon } from "../../_lib/leaflet-icons";
+import { LOCATION_TYPE_COLORS, LOCATION_TYPE_LABELS, type FranchiseLocationType } from "../../_lib/constants";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
