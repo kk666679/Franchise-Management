@@ -1,0 +1,1 @@
+export { FranchiseSummaryCard } from './FranchiseSummaryCard'

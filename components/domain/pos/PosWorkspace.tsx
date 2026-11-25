@@ -103,7 +103,7 @@ export function PosWorkspace({ products, currency = "USD" }: PosWorkspaceProps) 
     if (cart.length === 0 || !active || submitting) return
     const totalCents = cart.reduce((s, i) => s + i.quantity * i.unitPriceCents, 0)
     setPendingTender({ method, totalCents })
-    setTenderApproval({ id: crypto.randomUUID() })
+    setTenderApproval({ id: crypto.randomUUID(), approved: false })
     setTenderState("approval-requested")
   }
 

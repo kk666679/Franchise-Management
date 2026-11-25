@@ -119,6 +119,56 @@ enum AuditAction {
   EXPORT
 }
 
+enum GeoEntitySource {
+  MANUAL
+  IMPORT_GEOJSON
+  IMPORT_KML
+  IMPORT_GPX
+  IMPORT_WKT
+  IMPORT_CSV
+  IMPORT_OSM
+  API
+  SYSTEM
+}
+
+enum GeoTerritoryType {
+  EXCLUSIVE
+  NON_EXCLUSIVE
+  RESTRICTED_DEVELOPMENT
+  PROTECTED
+  EXPANSION_OPPORTUNITY
+}
+
+enum GeoTerritoryStatus {
+  DRAFT
+  ACTIVE
+  PENDING
+  EXPIRED
+  ARCHIVED
+}
+
+enum GeoImportStatus {
+  PENDING
+  VALIDATING
+  VALIDATED
+  IMPORTED
+  FAILED
+}
+
+enum GeoLocationType {
+  HEADQUARTERS
+  REGIONAL_OFFICE
+  MASTER_FRANCHISE_OFFICE
+  FRANCHISE_OUTLET
+  COMPANY_OWNED_OUTLET
+  SUB_FRANCHISE_OUTLET
+  DISTRIBUTION_CENTRE
+  WAREHOUSE
+  SERVICE_CENTRE
+  PLANNED_LOCATION
+  CLOSED_LOCATION
+}
+
 enum FinancialAccountType {
   ASSET
   LIABILITY
@@ -266,6 +316,14 @@ model Organization {
   cashierShifts      CashierShift[]
   salesReturns       SalesReturn[]
   refunds            Refund[]
+  geoTerritories     GeoTerritory[]
+  geoTerritoryAssignments GeoTerritoryAssignment[]
+  geoFeatureRecords  GeoFeatureRecord[]
+  geoImportJobs      GeoImportJob[]
+  geoValidationErrors GeoValidationError[]
+  geoAnalysisResults GeoAnalysisResult[]
+  geoAuditLogs       GeoAuditLog[]
+  geoDataSources     GeoDataSource[]
 
   @@index([slug])
 }
@@ -343,6 +401,7 @@ model FranchiseBrand {
   locations    FranchiseLocation[]
   feeSchedules FeeSchedule[]
   documents    Document[]
+  geoTerritories GeoTerritory[]
 
   @@unique([organizationId, slug])
   @@index([organizationId, status])
@@ -372,6 +431,7 @@ model Franchisee {
   invoices     Invoice[]
   tickets      SupportTicket[]
   documents    Document[]
+  geoTerritoryAssignments GeoTerritoryAssignment[]
 
   @@unique([organizationId, registrationNo])
   @@index([organizationId, status])
@@ -412,19 +472,43 @@ model FranchiseLocation {
   longitude      Decimal?       @db.Decimal(9, 6)
   openedAt       DateTime?
   closedAt       DateTime?
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
+  // Geo intelligence fields
+  locationType          GeoLocationType @default(FRANCHISE_OUTLET)
+  ownershipType         String?
+  businessStatus        String?
+  district              String?
+  geoPoint              Unsupported("geometry(Point,4326)")?
+  contactInfo           Json?
+  operatingHours        Json?
+  assignedTerritoryId   String?
+  assignedFranchiseeId  String?
+  storeSize             Decimal?        @db.Decimal(10, 2)
+  parkingAvailability   Boolean?
+  propertyType          String?
+  rentalInformation     Json?
+  supportingDocuments   Json?
+  photos                Json?
+  geoSource             GeoEntitySource @default(MANUAL)
+  geoVersion            Int             @default(1)
+  geoMetadata           Json?
+  createdById           String?
+  updatedById           String?
+  createdAt             DateTime        @default(now())
+  updatedAt             DateTime        @updatedAt
 
-  organization Organization         @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  brand        FranchiseBrand       @relation(fields: [brandId], references: [id], onDelete: Restrict)
-  franchisee   Franchisee?          @relation(fields: [franchiseeId], references: [id], onDelete: SetNull)
-  agreements   FranchiseAgreement[]
-  documents    Document[]
-  tickets      SupportTicket[]
+  organization      Organization         @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  brand             FranchiseBrand       @relation(fields: [brandId], references: [id], onDelete: Restrict)
+  franchisee        Franchisee?          @relation(fields: [franchiseeId], references: [id], onDelete: SetNull)
+  assignedTerritory GeoTerritory?        @relation("LocationAssignedTerritory", fields: [assignedTerritoryId], references: [id], onDelete: SetNull)
+  agreements        FranchiseAgreement[]
+  documents         Document[]
+  tickets           SupportTicket[]
 
   @@unique([organizationId, code])
   @@index([brandId, status])
   @@index([franchiseeId])
+  @@index([assignedTerritoryId])
+  @@index([locationType])
 }
 
 model FranchiseApplication {
@@ -1172,4 +1256,212 @@ model AuditLog {
   @@index([organizationId, createdAt])
   @@index([entity, entityId])
   @@index([actorId])
+}
+
+
+enum TerritoryType {
+  EXCLUSIVE
+  NON_EXCLUSIVE
+  RESTRICTED_DEVELOPMENT
+  PROTECTED
+  EXPANSION_OPPORTUNITY
+}
+
+enum TerritoryStatus {
+  DRAFT
+  ACTIVE
+  PENDING
+  EXPIRED
+  ARCHIVED
+}
+
+
+
+model GeoTerritory {
+  id                        String             @id @default(cuid())
+  organizationId            String
+  name                      String
+  territoryCode             String
+  parentTerritoryId         String?
+  country                   String?
+  state                     String?
+  district                  String?
+  territoryOwner            String?
+  assignedMasterFranchiseId String?
+  assignedRegionalManagerId String?
+  territoryType             GeoTerritoryType   @default(NON_EXCLUSIVE)
+  exclusivityStatus         String             @default("NON_EXCLUSIVE")
+  effectiveDate             DateTime?
+  expiryDate                DateTime?
+  status                    GeoTerritoryStatus @default(DRAFT)
+  geometry                  Unsupported("geometry(MultiPolygon,4326)")
+  areaSqKm                  Decimal?           @db.Decimal(14, 4)
+  perimeterKm               Decimal?           @db.Decimal(14, 4)
+  centroidLat               Decimal?           @db.Decimal(9, 6)
+  centroidLng               Decimal?           @db.Decimal(9, 6)
+  populationEstimate        Int?
+  existingOutletCount       Int                @default(0)
+  plannedOutletCount        Int                @default(0)
+  brandId                   String?
+  source                    GeoEntitySource    @default(MANUAL)
+  version                   Int                @default(1)
+  metadata                  Json?
+  allowedOverlapSqM         Decimal?           @db.Decimal(14, 2)
+  approvedOverlapIds        Json?
+  createdById               String?
+  updatedById               String?
+  createdAt                 DateTime           @default(now())
+  updatedAt                 DateTime           @updatedAt
+
+  organization Organization              @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  brand        FranchiseBrand?           @relation(fields: [brandId], references: [id], onDelete: SetNull)
+  parent       GeoTerritory?             @relation("TerritoryHierarchy", fields: [parentTerritoryId], references: [id], onDelete: SetNull)
+  children     GeoTerritory[]            @relation("TerritoryHierarchy")
+  assignments  GeoTerritoryAssignment[]
+  locations    FranchiseLocation[]       @relation("LocationAssignedTerritory")
+
+  @@unique([organizationId, territoryCode])
+  @@index([organizationId, status])
+  @@index([brandId])
+  @@index([parentTerritoryId])
+}
+
+model GeoTerritoryAssignment {
+  id             String   @id @default(cuid())
+  organizationId String
+  territoryId    String
+  franchiseeId   String?
+  userId         String?
+  role           String?
+  assignedAt     DateTime @default(now())
+  unassignedAt   DateTime?
+  createdById    String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  territory    GeoTerritory @relation(fields: [territoryId], references: [id], onDelete: Cascade)
+  franchisee   Franchisee?  @relation(fields: [franchiseeId], references: [id], onDelete: SetNull)
+
+  @@index([organizationId, territoryId])
+  @@index([franchiseeId])
+}
+
+model GeoFeatureRecord {
+  id             String          @id @default(cuid())
+  organizationId String
+  entityType     String
+  entityId       String?
+  geometry       Unsupported("geometry(Geometry,4326)")
+  properties     Json?
+  source         GeoEntitySource @default(MANUAL)
+  metadata       Json?
+  version        Int             @default(1)
+  createdById    String?
+  updatedById    String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId, entityType])
+  @@index([entityId])
+}
+
+model GeoImportJob {
+  id             String          @id @default(cuid())
+  organizationId String
+  fileName       String
+  format         String
+  status         GeoImportStatus @default(PENDING)
+  totalFeatures  Int             @default(0)
+  validFeatures  Int             @default(0)
+  invalidFeatures Int            @default(0)
+  importedCount  Int             @default(0)
+  duplicateCount Int             @default(0)
+  errors         Json?
+  warnings       Json?
+  report         Json?
+  source         String?
+  createdById    String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  completedAt    DateTime?
+
+  organization Organization         @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  validationErrors GeoValidationError[]
+
+  @@index([organizationId, createdAt])
+  @@index([status])
+}
+
+model GeoValidationError {
+  id             String   @id @default(cuid())
+  organizationId String
+  importJobId    String?
+  entityType     String?
+  entityId       String?
+  code           String
+  message        String
+  path           String?
+  severity       String   @default("error")
+  raw            Json?
+  createdAt      DateTime @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  importJob    GeoImportJob? @relation(fields: [importJobId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId, createdAt])
+  @@index([importJobId])
+}
+
+model GeoAnalysisResult {
+  id             String   @id @default(cuid())
+  organizationId String
+  analysisType   String
+  input          Json?
+  result         Json
+  summary        Json?
+  createdById    String?
+  createdAt      DateTime @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId, analysisType, createdAt])
+}
+
+model GeoAuditLog {
+  id             String   @id @default(cuid())
+  organizationId String
+  entityType     String
+  entityId       String
+  action         String
+  actorId        String?
+  actorName      String?
+  before         Json?
+  after          Json?
+  metadata       Json?
+  createdAt      DateTime @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId, createdAt])
+  @@index([entityType, entityId])
+}
+
+model GeoDataSource {
+  id             String   @id @default(cuid())
+  organizationId String
+  name           String
+  sourceType     String
+  config         Json?
+  attribution    String?
+  lastFetchedAt  DateTime?
+  createdById    String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId, sourceType])
 }

@@ -1,0 +1,1 @@
+export * from "@/app/dashboard/location/_server/territories";

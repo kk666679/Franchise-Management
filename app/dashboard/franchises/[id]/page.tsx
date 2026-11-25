@@ -1,29 +1,27 @@
 import { notFound } from "next/navigation"
-import { Building2, Mail, MapPin, Phone } from "lucide-react"
-import Link from "next/link"
+import { Mail, Phone } from "lucide-react"
 
-import { PageHeader } from "@/components/layout/page-header"
-import { StatusIndicator } from "@/components/shared/status-indicator"
+import {
+  BranchTable,
+  ContractTable,
+  FranchiseDetail,
+  toBranchView,
+  toContractView,
+  toFranchiseView,
+} from "@/components/domain/franchise"
 import { CurrencyDisplay } from "@/components/shared/currency-display"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { PERMISSIONS } from "@/lib/rbac"
 import { getFranchisee } from "@lib/server/services/franchise"
 import { prisma } from "@/lib/prisma"
 import { NotFoundError } from "@lib/server/errors"
+import { FranchiseAISuggestions } from "../_components/franchise-ai-suggestions"
 
 const dateFmt = new Intl.DateTimeFormat("en", {
   month: "short",
   day: "numeric",
   year: "numeric",
 })
-
-const STATUS_TONE = {
-  PROSPECT: "info",
-  ACTIVE: "success",
-  ON_HOLD: "warning",
-  EXITED: "danger",
-} as const
 
 export default async function FranchiseeDetailPage({
   params,
@@ -36,7 +34,7 @@ export default async function FranchiseeDetailPage({
   const ctx = {
     userId: "",
     organizationId: organizationId,
-    membershipRole: "OWNER",
+    membershipRole: "OWNER" as const,
   }
 
   let franchisee
@@ -47,29 +45,52 @@ export default async function FranchiseeDetailPage({
     throw e
   }
 
-  const [granted, org] = await Promise.all([
-    new Set(),
-    prisma.organization.findUnique({
-      where: { id: organizationId },
-      select: { currency: true },
-    }),
-  ])
+  const org = await prisma.organization.findUnique({
+    where: { id: organizationId },
+    select: { currency: true },
+  })
   const currency = org?.currency ?? "USD"
+  const franchiseView = toFranchiseView({
+    id: franchisee.id,
+    tradingName: franchisee.tradingName,
+    legalName: franchisee.legalName,
+    status: franchisee.status,
+    brand: franchisee.brand,
+    territory: null,
+    locations: franchisee.locations.map(({ id }) => ({ id })),
+    createdAt: franchisee.createdAt,
+  })
+  const branchViews = franchisee.locations.map((location) =>
+    toBranchView({
+      id: location.id,
+      name: location.name,
+      code: location.code,
+      brandName: franchisee.brand?.name ?? null,
+      franchiseName: franchisee.tradingName ?? franchisee.legalName,
+      addressLine: location.addressLine1,
+      city: location.city,
+      region: location.state,
+      status: location.status,
+    })
+  )
+  const contractViews = franchisee.agreements.map((agreement) =>
+    toContractView({
+      id: agreement.id,
+      agreementNo: agreement.agreementNo,
+      franchiseName: franchiseView.name,
+      status: agreement.status,
+      startDate: agreement.startDate,
+      endDate: agreement.endDate,
+      royaltyRate: Number(agreement.royaltyRate),
+      initialFeeCents: Math.round(Number(agreement.initialFee) * 100),
+      currency,
+    })
+  )
 
   return (
     <div className="space-y-6">
-<PageHeader
-          title={franchisee.tradingName ?? franchisee.legalName}
-          description={
-            franchisee.tradingName ? franchisee.legalName : undefined
-          }
-          actions={
-            <StatusIndicator
-              label={franchisee.status.replace("_", " ")}
-              tone={STATUS_TONE[franchisee.status]}
-            />
-          }
-        />
+      <FranchiseDetail franchise={franchiseView} />
+      <FranchiseAISuggestions context="franchisee" />
 
         {/* Summary strip */}
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -174,86 +195,12 @@ export default async function FranchiseeDetailPage({
 
           {/* Locations */}
           <TabsContent value="locations" className="mt-6">
-            {franchisee.locations.length === 0 ? (
-              <p className="text-sm text-muted-foreground">No locations.</p>
-            ) : (
-              <div className="overflow-hidden rounded-2xl border border-border bg-card/60">
-                <table className="w-full text-left text-sm">
-                  <thead className="border-b border-border bg-muted/40 text-xs tracking-wide text-muted-foreground uppercase">
-                    <tr>
-                      <th className="px-4 py-3 font-medium">Name</th>
-                      <th className="px-4 py-3 font-medium">Code</th>
-                      <th className="px-4 py-3 font-medium">Status</th>
-                      <th className="px-4 py-3 font-medium">City</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-border/70">
-                    {franchisee.locations.map((loc) => (
-                      <tr key={loc.id} className="hover:bg-muted/30">
-                        <td className="px-4 py-3 font-medium">{loc.name}</td>
-                        <td className="px-4 py-3 font-mono text-xs text-muted-foreground">
-                          {loc.code}
-                        </td>
-                        <td className="px-4 py-3">
-                          <Badge variant="secondary" className="text-xs">
-                            {loc.status}
-                          </Badge>
-                        </td>
-                        <td className="px-4 py-3 text-muted-foreground">
-                          {loc.city}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
+            <BranchTable data={branchViews} />
           </TabsContent>
 
           {/* Agreements */}
           <TabsContent value="agreements" className="mt-6">
-            {franchisee.agreements.length === 0 ? (
-              <p className="text-sm text-muted-foreground">No agreements.</p>
-            ) : (
-              <div className="overflow-hidden rounded-2xl border border-border bg-card/60">
-                <table className="w-full text-left text-sm">
-                  <thead className="border-b border-border bg-muted/40 text-xs tracking-wide text-muted-foreground uppercase">
-                    <tr>
-                      <th className="px-4 py-3 font-medium">Agreement</th>
-                      <th className="px-4 py-3 font-medium">Status</th>
-                      <th className="px-4 py-3 font-medium">Start</th>
-                      <th className="px-4 py-3 font-medium">End</th>
-                      <th className="px-4 py-3 text-right font-medium">
-                        Royalty %
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-border/70">
-                    {franchisee.agreements.map((agr) => (
-                      <tr key={agr.id} className="hover:bg-muted/30">
-                        <td className="px-4 py-3 font-mono text-xs">
-                          {agr.agreementNo}
-                        </td>
-                        <td className="px-4 py-3">
-                          <Badge variant="secondary" className="text-xs">
-                            {agr.status}
-                          </Badge>
-                        </td>
-                        <td className="px-4 py-3 text-muted-foreground">
-                          {dateFmt.format(agr.startDate)}
-                        </td>
-                        <td className="px-4 py-3 text-muted-foreground">
-                          {agr.endDate ? dateFmt.format(agr.endDate) : "—"}
-                        </td>
-                        <td className="px-4 py-3 text-right tabular-nums">
-                          {Number(agr.royaltyRate).toFixed(1)}%
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
+            <ContractTable data={contractViews} />
           </TabsContent>
 
           {/* Invoices */}

@@ -23,12 +23,12 @@ export async function GET(request: Request) {
     query
   )
 
-  return NextResponse.json(
-    products.map((product) => ({
-      ...product,
-      unitPrice: product.unitPrice.toString(),
-      costPrice: product.costPrice.toString(),
-      taxRate: product.taxRate.toString(),
-    }))
-  )
+    return NextResponse.json(
+        products.map((product) => ({
+          ...product,
+          unitPrice: product.unitPrice.toString(),
+          costPrice: product.costPrice.toString(),
+          taxRate: product.taxRate.toString(),
+        }))
+    )
 }

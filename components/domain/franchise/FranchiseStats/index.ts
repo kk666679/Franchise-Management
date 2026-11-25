@@ -1,0 +1,1 @@
+export { FranchiseStats } from './FranchiseStats'

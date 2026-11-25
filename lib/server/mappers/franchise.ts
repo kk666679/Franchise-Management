@@ -34,12 +34,12 @@ export async function toFranchiseDTO(
 
   return {
     id: record.id,
-    name: record.legalName,
+    tradingName: record.tradingName,
     legalName: record.legalName,
     status: record.status,
-    organization: { name: record.brand?.name ?? "" },
+    brand: record.brand ? { name: record.brand.name } : null,
     territory: record.brand ? { name: record.brand.name } : null,
-    _count: { branches: record.locations.length },
+    locations: record.locations,
     createdAt: record.createdAt,
   }
 }
@@ -61,6 +61,8 @@ export async function toBranchDTO(
       city: true,
       state: true,
       status: true,
+      code: true,
+      brand: { select: { name: true } },
       franchisee: { select: { legalName: true } },
     },
   })
@@ -71,13 +73,13 @@ export async function toBranchDTO(
   return {
     id: record.id,
     name: record.name,
-    franchise: { name: record.franchisee?.legalName ?? "" },
-    address: {
-      line1: record.addressLine1,
-      city: record.city,
-      region: record.state ?? "",
-    },
-    isActive: record.status === "ACTIVE",
+    code: record.code,
+    brandName: record.brand?.name ?? null,
+    franchiseName: record.franchisee?.legalName ?? "",
+    addressLine: record.addressLine1,
+    city: record.city,
+    region: record.state,
+    status: record.status,
   }
 }
 
@@ -128,7 +130,9 @@ export async function toContractDTO(
       startDate: true,
       endDate: true,
       royaltyRate: true,
+      initialFee: true,
       franchisee: { select: { legalName: true } },
+      organization: { select: { currency: true } },
     },
   })
 
@@ -137,12 +141,15 @@ export async function toContractDTO(
 
   return {
     id: record.id,
-    franchise: { name: record.franchisee.legalName },
+    agreementNo: record.agreementNo,
+    franchiseName: record.franchisee.legalName,
     status: record.status,
-    effectiveFrom: record.startDate,
-    effectiveTo: record.endDate,
-    royaltyRateBps: Number(record.royaltyRate) * 100,
-  } as ContractDTO
+    startDate: record.startDate,
+    endDate: record.endDate,
+    royaltyRate: Number(record.royaltyRate),
+    initialFeeCents: Math.round(Number(record.initialFee) * 100),
+    currency: record.organization.currency,
+  }
 }
 
 /**
@@ -167,12 +174,12 @@ export async function listFranchiseDTOs(
 
   return records.map((r) => ({
     id: r.id,
-    name: r.legalName,
+    tradingName: r.tradingName,
     legalName: r.legalName,
     status: r.status,
-    organization: { name: r.brand?.name ?? "" },
+    brand: r.brand ? { name: r.brand.name } : null,
     territory: r.brand ? { name: r.brand.name } : null,
-    _count: { branches: r.locations.length },
+    locations: r.locations,
     createdAt: r.createdAt,
   }))
 }

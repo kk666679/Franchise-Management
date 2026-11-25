@@ -1,22 +1,35 @@
 // Scoped barrel — do not re-export across domains.
-export { FranchiseStatusBadge } from "./FranchiseStatusBadge"
-export { FranchiseTable } from "./FranchiseTable"
-export { FranchiseForm } from "./FranchiseForm"
-export { FranchiseDetail } from "./FranchiseDetail"
-export { FranchiseOnboardingWizard } from "./FranchiseOnboardingWizard"
+export { FranchiseStatusBadge } from './FranchiseStatusBadge'
+export { FranchiseTable } from './FranchiseTable'
+export { FranchiseForm } from './FranchiseForm'
+export { FranchiseDetail } from './FranchiseDetail'
+export { FranchiseOnboardingWizard } from './FranchiseOnboardingWizard'
+export { FranchiseStats } from './FranchiseStats'
+export { FranchiseSummaryCard } from './FranchiseSummaryCard'
 
-export { BranchTable } from "./BranchTable"
-export { BranchForm } from "./BranchForm"
-export { BranchHoursEditor } from "./BranchHoursEditor"
+export { OrganizationStatusBadge } from './OrganizationStatusBadge'
+export { OrganizationTable } from './OrganizationTable'
+export { OrganizationForm } from './OrganizationForm'
+export { OrganizationDetail } from './OrganizationDetail'
 
-export { TerritoryTable } from "./TerritoryTable"
-export { TerritoryForm } from "./TerritoryForm"
-export { TerritoryConflictBadge } from "./TerritoryConflictBadge"
+export { BranchTable } from './BranchTable'
+export { BranchForm } from './BranchForm'
+export { BranchHoursEditor } from './BranchHoursEditor'
+export { BranchStatusBadge } from './BranchStatusBadge'
+export { BranchDetail } from './BranchDetail'
 
-export { ContractTable } from "./ContractTable"
-export { ContractForm } from "./ContractForm"
-export { ContractLifecycleBadge } from "./ContractLifecycleBadge"
-export { ContractTimeline } from "./ContractTimeline"
-export { ContractTransitionActions } from "./ContractTransitionActions"
+export { TerritoryTable } from './TerritoryTable'
+export { TerritoryForm } from './TerritoryForm'
+export { TerritoryConflictBadge } from './TerritoryConflictBadge'
+export { TerritoryDetail } from './TerritoryDetail'
+export { TerritoryBoundsEditor } from './TerritoryBoundsEditor'
 
-export * from "./mappers"
+export { ContractTable } from './ContractTable'
+export { ContractForm } from './ContractForm'
+export { ContractLifecycleBadge } from './ContractLifecycleBadge'
+export { ContractTimeline } from './ContractTimeline'
+export { ContractTransitionActions } from './ContractTransitionActions'
+export { ContractDetail } from './ContractDetail'
+export { ContractRenewalWizard } from './ContractRenewalWizard'
+
+export * from './mappers'

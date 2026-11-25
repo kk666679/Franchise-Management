@@ -1,0 +1,1 @@
+export { BranchDetail } from './BranchDetail'

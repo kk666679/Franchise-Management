@@ -28,7 +28,10 @@ export async function getFranchisee(ctx: AuthorizationContext, id: string) {
     include: {
       brand: { select: { id: true, name: true } },
       contacts: { orderBy: { isPrimary: "desc" } },
-      locations: { orderBy: { createdAt: "desc" } },
+      locations: {
+        orderBy: { createdAt: "desc" },
+        include: { brand: { select: { name: true } } },
+      },
       agreements: {
         orderBy: { createdAt: "desc" },
         select: {
@@ -37,6 +40,7 @@ export async function getFranchisee(ctx: AuthorizationContext, id: string) {
           status: true,
           startDate: true,
           endDate: true,
+          initialFee: true,
           royaltyRate: true,
         },
       },

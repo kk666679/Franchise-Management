@@ -16,7 +16,7 @@ export function FranchiseDetail({ franchise }: { franchise: FranchiseView }) {
 
       <Section title="Overview">
         <Card className="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2">
-          <Field label="Organization" value={franchise.organizationName} />
+          <Field label="Brand" value={franchise.brandName ?? "—"} />
           <Field label="Territory" value={franchise.territoryName ?? "—"} />
           <Field label="Branches" value={String(franchise.branchCount)} />
           <Field

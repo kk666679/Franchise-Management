@@ -3,9 +3,13 @@ import { Building2, Plus } from "lucide-react"
 import { PageHeader } from "@/components/layout/page-header"
 import { Button } from "@/components/ui/button"
 import { EmptyState } from "@/components/feedback/empty-state"
-import { FranchiseTable } from "@/components/domain/franchise/FranchiseTable"
-import type { FranchiseView } from "@/components/domain/franchise/mappers"
+import {
+  FranchiseTable,
+  toFranchiseView,
+} from "@/components/domain/franchise"
+import type { FranchiseDTO } from "@/lib/server/mappers/franchise.dto"
 import { prisma } from "@/lib/prisma"
+import { FranchiseAISuggestions } from "./_components/franchise-ai-suggestions"
 
 async function getFranchisees(orgId: string) {
   return prisma.franchisee.findMany({
@@ -20,7 +24,6 @@ async function getFranchisees(orgId: string) {
       createdAt: true,
       brand: { select: { name: true } },
       locations: { select: { id: true }, where: { status: "ACTIVE" } },
-      _count: { select: { agreements: true } },
     },
   })
 }
@@ -33,16 +36,12 @@ export default async function FranchisesPage() {
   const prospects = franchisees.filter((f) => f.status === "PROSPECT").length
   const onHold = franchisees.filter((f) => f.status === "ON_HOLD").length
 
-  const rows: FranchiseView[] = franchisees.map((f) => ({
-    id: f.id,
-    name: f.tradingName ?? f.legalName,
-    legalName: f.legalName,
-    status: f.status as FranchiseView["status"],
-    organizationName: f.brand?.name ?? "—",
-    territoryName: null,
-    branchCount: f.locations.length,
-    createdAtIso: f.createdAt.toISOString(),
-  }))
+  const rows = franchisees.map((franchisee) =>
+    toFranchiseView({
+      ...franchisee,
+      territory: null,
+    } satisfies FranchiseDTO)
+  )
 
   return (
     <div className="space-y-6">
@@ -72,6 +71,8 @@ export default async function FranchisesPage() {
           </div>
         ))}
       </div>
+
+      <FranchiseAISuggestions context="portfolio" />
 
       {franchisees.length === 0 ? (
         <EmptyState

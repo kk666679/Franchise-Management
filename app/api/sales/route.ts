@@ -27,14 +27,14 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         ...sale,
-        lines: sale.lines.map((line) => ({
-          ...line,
-          quantity: line.quantity.toString(),
-          unitPrice: line.unitPrice.toString(),
-          discount: line.discount.toString(),
-          tax: line.tax.toString(),
-          total: line.total.toString(),
-        })),
+      lines: sale.lines.map((line) => ({
+        ...line,
+        quantity: line.quantity.toString(),
+        unitPrice: line.unitPrice.toString(),
+        discount: line.discount?.toString() ?? "0",
+        tax: line.tax.toString(),
+        total: line.total.toString(),
+      })),
         payments: sale.payments.map((payment) => ({
           ...payment,
           amount: payment.amount.toString(),

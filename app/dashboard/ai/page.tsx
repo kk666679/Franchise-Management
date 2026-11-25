@@ -3,7 +3,8 @@
 import type { UIMessage } from "ai"
 import { generateId } from "ai"
 import { CopyIcon, SparklesIcon } from "lucide-react"
-import { useCallback, useRef, useState } from "react"
+import { Suspense, useCallback, useEffect, useRef, useState } from "react"
+import { useSearchParams } from "next/navigation"
 
 import {
   Conversation,
@@ -107,13 +108,19 @@ function MessageParts({ message }: { message: UIMessage }) {
   )
 }
 
-export default function AIPage() {
+function AIChat() {
   const [messages, setMessages] = useState<UIMessage[]>([])
   const [input, setInput] = useState("")
   const [status, setStatus] = useState<ChatStatus>("idle")
   const abortRef = useRef<AbortController | null>(null)
+  const searchParams = useSearchParams()
+  const suggestedPrompt = searchParams.get("prompt")
 
   const isEmpty = messages.length === 0
+
+  useEffect(() => {
+    if (suggestedPrompt) setInput(suggestedPrompt)
+  }, [suggestedPrompt])
 
   const sendMessage = useCallback(
     async (text: string) => {
@@ -174,6 +181,7 @@ export default function AIPage() {
               )
             )
           }
+
         }
 
         setStatus("idle")
@@ -260,5 +268,13 @@ export default function AIPage() {
         </PromptInput>
       </div>
     </div>
+  )
+}
+
+export default function AIPage() {
+  return (
+    <Suspense fallback={<div className="min-h-40" aria-busy="true" />}>
+      <AIChat />
+    </Suspense>
   )
 }

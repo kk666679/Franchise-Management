@@ -11,21 +11,25 @@ import type { FranchiseeStatus } from "@prisma/client"
 
 export type FranchiseDTO = {
   id: string
-  name: string
+  tradingName: string | null
   legalName: string
   status: FranchiseeStatus
-  organization: { name: string }
+  brand: { name: string } | null
   territory?: { name: string } | null
-  _count: { branches: number }
+  locations: { id: string }[]
   createdAt: Date
 }
 
 export type BranchDTO = {
   id: string
   name: string
-  franchise: { name: string }
-  address: { line1: string; city: string; region: string }
-  isActive: boolean
+  code: string
+  brandName: string | null
+  franchiseName: string
+  addressLine: string
+  city: string
+  region: string | null
+  status: string
 }
 
 export type TerritoryDTO = {
@@ -38,9 +42,12 @@ export type TerritoryDTO = {
 
 export type ContractDTO = {
   id: string
-  franchise: { name: string }
+  agreementNo: string
+  franchiseName: string
   status: string
-  effectiveFrom: Date
-  effectiveTo: Date | null
-  royaltyRateBps: number
+  startDate: Date
+  endDate: Date | null
+  royaltyRate: number
+  initialFeeCents: number
+  currency: string
 }

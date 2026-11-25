@@ -1,0 +1,1 @@
+export { TerritoryDetail } from './TerritoryDetail'

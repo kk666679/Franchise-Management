@@ -24,7 +24,7 @@ export const franchiseColumns = [
     ),
   },
   {
-    accessorKey: "organizationName",
+    accessorKey: "brandName",
     header: "Brand",
     sortable: true,
   },
