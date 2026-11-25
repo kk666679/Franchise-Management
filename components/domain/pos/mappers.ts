@@ -1,27 +1,30 @@
-export type PosProductView = {
-  id: string
-  name: string
-  sku: string
-  priceCents: number
-  currency: string
-  inStock: number
-}
+export type {
+  MoneyMinor,
+  PosTenderType,
+  PosOrderType,
+  PosSaleStatus,
+  PosSyncStatus,
+  EdgeSignalKind,
+  EdgeSignalSeverity,
+  PosProductView,
+  PosCartModifierView,
+  PosCartItemView,
+  PosSessionView,
+  PosTenderLineView,
+  PosHeldOrderView,
+  PosDiscountView,
+  PosCustomerView,
+  PosReceiptLineView,
+  PosReceiptView,
+  PosOutboxEntryView,
+  PosEdgeSignalView,
+  PosTableView,
+  PosRegisterView,
+  PosCashMovementView,
+  PosEndOfDayReportView,
+  AgentProposal,
+} from "./types"
 
-export type PosCartItemView = {
-  id: string
-  productId: string
-  name: string
-  quantity: number
-  unitPriceCents: number
-  currency: string
-}
-
-export type PosSessionView = {
-  id: string
-  registerId: string
-  openedAtIso: string
-  closedAtIso: string | null
-  openingFloatCents: number
-  closingTotalCents: number | null
-  currency: string
-}
+export type PosCartItem = import("./types").PosCartItemView
+export type PosProduct = import("./types").PosProductView
+export type PosSession = import("./types").PosSessionView

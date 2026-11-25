@@ -1,7 +1,7 @@
-﻿import { NextResponse } from "next/server";
-import { requireGeoContext } from "@lib/server/geo/auth";
+import { NextResponse } from "next/server";
+import { requireGeoContext } from "@/app/dashboard/location/_server/auth";
 import { jsonError, jsonOk } from "@lib/server/api-response";
-import { listGeoLocations } from "@lib/server/geo/locations";
+import { listGeoLocations } from "@/app/dashboard/location/_server/locations";
 
 export async function POST(req: Request) {
   try {

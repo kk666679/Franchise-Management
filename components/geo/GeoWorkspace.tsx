@@ -1,1 +1,0 @@
-export { GeoWorkspace } from "@/app/dashboard/location/_components/GeoWorkspace";

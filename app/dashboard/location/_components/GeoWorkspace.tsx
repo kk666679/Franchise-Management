@@ -96,7 +96,7 @@ export function GeoWorkspace({ initialLocations, initialTerritories }: Props) {
                 <div className="flex items-start justify-between gap-2">
                   <div>
                     <div className="font-medium leading-tight">{l.name}</div>
-                    <div className="text-xs text-muted-foreground">{l.code} · {l.city ?? "—"}</div>
+                    <div className="text-xs text-muted-foreground">{l.code} Â· {l.city ?? "â€”"}</div>
                   </div>
                   <Badge variant="outline" className="text-[10px]">{l.businessStatus ?? l.status}</Badge>
                 </div>

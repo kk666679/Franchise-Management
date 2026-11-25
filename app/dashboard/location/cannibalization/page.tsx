@@ -1,6 +1,6 @@
 import { PageHeader } from "@/components/layout/page-header";
-import { requireGeoContext } from "@lib/server/geo/auth";
-import { runCannibalizationAnalysis } from "@lib/server/geo/analysis";
+import { requireGeoContext } from "@/app/dashboard/location/_server/auth";
+import { runCannibalizationAnalysis } from "@/app/dashboard/location/_server/analysis";
 import { CannibalizationDashboard } from "./_components/CannibalizationDashboard";
 
 export default async function LocationCannibalizationPage() {

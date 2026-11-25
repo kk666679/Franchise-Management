@@ -1,6 +1,6 @@
-﻿import { requireGeoContext } from "@lib/server/geo/auth";
+import { requireGeoContext } from "@/app/dashboard/location/_server/auth";
 import { jsonError, jsonOk } from "@lib/server/api-response";
-import { convertToGeoJSON, detectFormat } from "@/lib/geo/conversion";
+import { convertToGeoJSON, detectFormat } from "@/app/dashboard/location/_lib/conversion";
 
 export async function POST(req: Request) {
   try {

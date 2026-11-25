@@ -1,6 +1,6 @@
 import { PageHeader } from "@/components/layout/page-header";
-import { requireGeoContext } from "@lib/server/geo/auth";
-import { listGeoTerritories } from "@lib/server/geo/territories";
+import { requireGeoContext } from "@/app/dashboard/location/_server/auth";
+import { listGeoTerritories } from "@/app/dashboard/location/_server/territories";
 import { TerritoryManager } from "./_components/TerritoryManager";
 
 export default async function LocationTerritoriesPage() {

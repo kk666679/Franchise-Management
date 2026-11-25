@@ -52,7 +52,7 @@ No sample operational business data is seeded. `prisma/seed.ts` only upserts an 
 | `/dashboard/applications` and `/dashboard/applications/[id]` | Application list and detail |
 | `/dashboard/agreements` and `/dashboard/agreements/[id]` | Agreement list and detail |
 | `/dashboard/brands` and `/dashboard/brands/[id]` | Brand list and detail |
-| `/dashboard/locations` and `/dashboard/locations/[id]` | Location list and detail |
+| `/dashboard/location/directory` and `/dashboard/location/directory/[id]` | Location directory list and detail |
 | `/dashboard/finance` | Invoice totals and invoice table |
 | `/dashboard/finance/invoices` and `/dashboard/finance/invoices/[id]` | Invoice list and detail |
 | `/dashboard/finance/payments` | Payment record list |

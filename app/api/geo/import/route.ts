@@ -1,10 +1,10 @@
-﻿import { requireGeoContext } from "@lib/server/geo/auth";
+import { requireGeoContext } from "@/app/dashboard/location/_server/auth";
 import { jsonError, jsonOk } from "@lib/server/api-response";
-import { previewImport, detectFormat } from "@/lib/geo/conversion";
-import { createGeoLocation } from "@lib/server/geo/locations";
-import { createGeoTerritory } from "@lib/server/geo/territories";
+import { previewImport, detectFormat } from "@/app/dashboard/location/_lib/conversion";
+import { createGeoLocation } from "@/app/dashboard/location/_server/locations";
+import { createGeoTerritory } from "@/app/dashboard/location/_server/territories";
 import { prisma } from "@/lib/prisma";
-import { writeGeoAuditLog } from "@lib/server/geo/audit";
+import { writeGeoAuditLog } from "@/app/dashboard/location/_server/audit";
 
 export async function POST(req: Request) {
   try {

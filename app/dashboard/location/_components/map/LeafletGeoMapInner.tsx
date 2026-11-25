@@ -152,8 +152,8 @@ export function LeafletGeoMapInner({
                 <div className="space-y-1 text-sm">
                   <div className="font-semibold">{t.name}</div>
                   <div className="text-muted-foreground">{t.territoryCode}</div>
-                  <div>{t.territoryType} · {t.status}</div>
-                  {t.areaSqKm != null && <div>{t.areaSqKm.toFixed(2)} km²</div>}
+                  <div>{t.territoryType} Â· {t.status}</div>
+                  {t.areaSqKm != null && <div>{t.areaSqKm.toFixed(2)} kmÂ²</div>}
                 </div>
               </Popup>
             </Polygon>

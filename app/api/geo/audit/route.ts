@@ -1,6 +1,6 @@
-﻿import { requireGeoContext } from "@lib/server/geo/auth";
+import { requireGeoContext } from "@/app/dashboard/location/_server/auth";
 import { jsonError, jsonOk } from "@lib/server/api-response";
-import { listGeoAuditLogs } from "@lib/server/geo/audit";
+import { listGeoAuditLogs } from "@/app/dashboard/location/_server/audit";
 
 export async function GET(req: Request) {
   try {

@@ -64,7 +64,7 @@ export function GeoImportWorkspace() {
             <div className="rounded-xl border border-border p-3 text-sm">
               <div>Format: <span className="font-medium">{preview.format}</span></div>
               <div>Features: <span className="font-medium">{preview.featureCount}</span></div>
-              <div>Geometry types: {preview.geometryTypes?.join(", ") || "—"}</div>
+              <div>Geometry types: {preview.geometryTypes?.join(", ") || "â€”"}</div>
               <div>Valid: {String(preview.valid)}</div>
               {preview.issues?.length > 0 && <pre className="mt-2 max-h-48 overflow-auto rounded bg-muted p-2 text-xs">{JSON.stringify(preview.issues.slice(0, 20), null, 2)}</pre>}
             </div>

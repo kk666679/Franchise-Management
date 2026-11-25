@@ -64,7 +64,7 @@ export default function DashboardOverviewPage() {
           <CardContent className="space-y-3">
             {[
               { title: "Review pending applications", detail: "2 applications waiting for initial review", href: "/dashboard/applications" },
-              { title: "Check location compliance", detail: "Quarterly documents due for 4 locations", href: "/dashboard/locations" },
+              { title: "Check location compliance", detail: "Quarterly documents due for 4 locations", href: "/dashboard/location/directory" },
               { title: "Finance reconciliation", detail: "Outstanding invoices ready for follow-up", href: "/dashboard/finance" },
             ].map((item) => (
               <a key={item.title} href={item.href} className="group flex items-start justify-between gap-3 rounded-lg border border-border/60 p-3 transition-colors hover:bg-muted/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">

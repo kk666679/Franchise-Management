@@ -1,4 +1,4 @@
-import type { PosProductView } from "../mappers"
+import type { PosProductView } from "../types"
 
 export type PosProductSearchProps = {
   products: PosProductView[]

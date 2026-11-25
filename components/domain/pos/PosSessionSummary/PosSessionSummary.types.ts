@@ -1,4 +1,4 @@
-import type { PosSessionView } from "../mappers"
+import type { PosSessionView } from "../types"
 
 export type PosSessionSummaryProps = {
   session: PosSessionView

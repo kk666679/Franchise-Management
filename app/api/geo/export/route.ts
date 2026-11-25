@@ -1,8 +1,8 @@
-﻿import { requireGeoContext } from "@lib/server/geo/auth";
+import { requireGeoContext } from "@/app/dashboard/location/_server/auth";
 import { jsonError, jsonOk } from "@lib/server/api-response";
-import { exportFeatureCollection } from "@/lib/geo/conversion";
-import { listGeoLocations } from "@lib/server/geo/locations";
-import { listGeoTerritories } from "@lib/server/geo/territories";
+import { exportFeatureCollection } from "@/app/dashboard/location/_lib/conversion";
+import { listGeoLocations } from "@/app/dashboard/location/_server/locations";
+import { listGeoTerritories } from "@/app/dashboard/location/_server/territories";
 import type { FeatureCollection } from "geojson";
 
 export async function GET(req: Request) {

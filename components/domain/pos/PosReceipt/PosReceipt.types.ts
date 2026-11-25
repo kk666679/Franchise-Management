@@ -1,13 +1,4 @@
-export type PosReceiptLine = {
-  id: string
-  name: string
-  quantity: number
-  totalCents: number
-}
-export type PosReceiptView = {
-  receiptNumber: string
-  currency: string
-  totalCents: number
-  lines: PosReceiptLine[]
-}
+import type { PosReceiptLineView, PosReceiptView } from "../types"
+
+export type { PosReceiptLineView, PosReceiptView }
 export type PosReceiptProps = { receipt: PosReceiptView }

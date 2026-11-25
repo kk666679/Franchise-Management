@@ -70,7 +70,7 @@ export function TerritoryManager({ initialTerritories }: { initialTerritories: T
     if (!res.ok) return alert(j.error ?? "Overlap check failed");
     const overlaps = j.data ?? [];
     if (!overlaps.length) return alert("No overlapping territories detected.");
-    alert(overlaps.slice(0, 10).map((o: any) => `${o.territoryAName} ? ${o.territoryBName}: ${(o.overlapAreaSqM / 1_000_000).toFixed(4)} km²${o.exclusiveConflict ? " (EXCLUSIVE CONFLICT)" : ""}`).join("\n"));
+    alert(overlaps.slice(0, 10).map((o: any) => `${o.territoryAName} ? ${o.territoryBName}: ${(o.overlapAreaSqM / 1_000_000).toFixed(4)} kmÂ²${o.exclusiveConflict ? " (EXCLUSIVE CONFLICT)" : ""}`).join("\n"));
   }
 
   return (
@@ -119,7 +119,7 @@ export function TerritoryManager({ initialTerritories }: { initialTerritories: T
                 <Button type="submit" size="sm">Save</Button>
                 <Button type="button" size="sm" variant="destructive" onClick={deleteSelected}>Delete</Button>
               </div>
-              <div className="text-xs text-muted-foreground">Area: {selected.areaSqKm?.toFixed?.(2) ?? "—"} km² · Perimeter: {selected.perimeterKm?.toFixed?.(2) ?? "—"} km</div>
+              <div className="text-xs text-muted-foreground">Area: {selected.areaSqKm?.toFixed?.(2) ?? "â€”"} kmÂ² Â· Perimeter: {selected.perimeterKm?.toFixed?.(2) ?? "â€”"} km</div>
             </form>
           )}
         </CardContent>

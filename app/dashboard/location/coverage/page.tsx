@@ -1,6 +1,6 @@
 import { PageHeader } from "@/components/layout/page-header";
-import { requireGeoContext } from "@lib/server/geo/auth";
-import { runCoverageAnalysis } from "@lib/server/geo/analysis";
+import { requireGeoContext } from "@/app/dashboard/location/_server/auth";
+import { runCoverageAnalysis } from "@/app/dashboard/location/_server/analysis";
 import { CoverageDashboard } from "./_components/CoverageDashboard";
 
 export default async function LocationCoveragePage() {

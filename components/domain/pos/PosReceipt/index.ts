@@ -1,6 +1,2 @@
 export { PosReceipt } from "./PosReceipt"
-export type {
-  PosReceiptProps,
-  PosReceiptView,
-  PosReceiptLine,
-} from "./PosReceipt.types"
+export type { PosReceiptProps, PosReceiptView, PosReceiptLineView } from "./PosReceipt.types"

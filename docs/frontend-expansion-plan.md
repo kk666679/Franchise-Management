@@ -37,7 +37,7 @@ Legend: ✅ = schema exists (buildable now) · ⛔ = needs schema/service first 
 
 - `/dashboard/organization` — org profile — `org:read`
 - `/dashboard/brands` + `/dashboard/brands/[id]` — `brand:read`
-- `/dashboard/locations` + `/dashboard/locations/[id]` — branch profile, manager, hours, status — `branch:read`
+- `/dashboard/location/directory` + `/dashboard/location/directory/[id]` — branch profile, manager, hours, status — `branch:read`
 - ⛔ `/dashboard/regions`, `/dashboard/areas` — need Region/Area models
 
 ### Finance (Phase 11) — ✅ ready

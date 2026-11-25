@@ -1,6 +1,6 @@
-﻿import { requireGeoContext } from "@lib/server/geo/auth";
+import { requireGeoContext } from "@/app/dashboard/location/_server/auth";
 import { jsonError, jsonOk } from "@lib/server/api-response";
-import { getGeoLocation, updateGeoLocation, deleteGeoLocation } from "@lib/server/geo/locations";
+import { getGeoLocation, updateGeoLocation, deleteGeoLocation } from "@/app/dashboard/location/_server/locations";
 
 export async function GET(_: Request, { params }: { params: Promise<{ id: string }> }) {
   try {

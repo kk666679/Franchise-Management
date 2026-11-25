@@ -1,6 +1,6 @@
-﻿import { requireGeoContext } from "@lib/server/geo/auth";
+import { requireGeoContext } from "@/app/dashboard/location/_server/auth";
 import { jsonError, jsonOk } from "@lib/server/api-response";
-import { runSiteSelection } from "@lib/server/geo/analysis";
+import { runSiteSelection } from "@/app/dashboard/location/_server/analysis";
 
 export async function POST(req: Request) {
   try {

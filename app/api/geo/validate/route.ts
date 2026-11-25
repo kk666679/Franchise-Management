@@ -1,7 +1,7 @@
-﻿import { requireGeoContext } from "@lib/server/geo/auth";
+import { requireGeoContext } from "@/app/dashboard/location/_server/auth";
 import { jsonError, jsonOk } from "@lib/server/api-response";
-import { validateFeatureCollection } from "@/lib/geo/validation";
-import { previewImport, detectFormat, convertToGeoJSON } from "@/lib/geo/conversion";
+import { validateFeatureCollection } from "@/app/dashboard/location/_lib/validation";
+import { previewImport, detectFormat, convertToGeoJSON } from "@/app/dashboard/location/_lib/conversion";
 
 export async function POST(req: Request) {
   try {

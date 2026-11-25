@@ -25,7 +25,7 @@ export const navigationDestinations: readonly NavigationDestination[] = [
   { href: "/dashboard/applications", label: "Applications", iconName: "FileText", permission: PERMISSIONS.FRANCHISE_READ, status: "live" },
   { href: "/dashboard/agreements", label: "Agreements", iconName: "ScrollText", permission: PERMISSIONS.FRANCHISE_READ, status: "live" },
   { href: "/dashboard/brands", label: "Brands", iconName: "GitBranch", permission: PERMISSIONS.BRAND_READ, status: "live" },
-  { href: "/dashboard/locations", label: "Locations", iconName: "MapPin", permission: PERMISSIONS.BRANCH_READ, status: "live" },
+  { href: "/dashboard/location/directory", label: "Location Directory", iconName: "MapPin", permission: PERMISSIONS.BRANCH_READ, status: "live" },
   { href: "/dashboard/location", label: "Location Intelligence", iconName: "Globe", permission: PERMISSIONS.BRANCH_READ, status: "live" },
   { href: "/dashboard/location/territories", label: "Territories", iconName: "Map", permission: PERMISSIONS.BRANCH_READ, status: "live" },
   { href: "/dashboard/location/site-selection", label: "Site Selection", iconName: "Target", permission: PERMISSIONS.BRANCH_READ, status: "live" },
@@ -68,7 +68,7 @@ export function findNavLabel(groups: readonly NavigationGroup[], pathname: strin
 }
 
 export const dashboardNavigation: readonly NavigationGroup[] = [
-  { label: "Workspace", items: navigationDestinations.filter((d) => ["/dashboard", "/dashboard/franchises", "/dashboard/applications", "/dashboard/agreements", "/dashboard/brands", "/dashboard/locations"].includes(d.href)) },
+  { label: "Workspace", items: navigationDestinations.filter((d) => ["/dashboard", "/dashboard/franchises", "/dashboard/applications", "/dashboard/agreements", "/dashboard/brands", "/dashboard/location/directory"].includes(d.href)) },
   { label: "Geospatial", items: navigationDestinations.filter((d) => ["/dashboard/location", "/dashboard/location/territories", "/dashboard/location/site-selection", "/dashboard/location/coverage", "/dashboard/location/cannibalization", "/dashboard/location/heatmaps", "/dashboard/location/import", "/dashboard/location/export"].includes(d.href)) },
   { label: "Operations", items: navigationDestinations.filter((d) => ["/dashboard/finance", "/dashboard/finance/invoices", "/dashboard/finance/payments", "/dashboard/pos", "/dashboard/documents", "/dashboard/support"].includes(d.href)) },
   { label: "Management", items: navigationDestinations.filter((d) => ["/dashboard/audit", "/dashboard/workflows", "/dashboard/reporting", "/dashboard/notifications", "/dashboard/ai", "/dashboard/settings"].includes(d.href)) },

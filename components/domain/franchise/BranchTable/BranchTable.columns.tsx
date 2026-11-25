@@ -12,7 +12,7 @@ export const branchColumns = [
     cell: (row: BranchView) => (
       <div>
         <Link
-          href={`/dashboard/locations/${row.id}`}
+          href={`/dashboard/location/directory/${row.id}`}
           className="font-medium underline-offset-4 hover:underline"
         >
           {row.name}

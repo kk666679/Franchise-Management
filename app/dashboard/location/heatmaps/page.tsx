@@ -1,6 +1,6 @@
 import { PageHeader } from "@/components/layout/page-header";
-import { requireGeoContext } from "@lib/server/geo/auth";
-import { listGeoLocations } from "@lib/server/geo/locations";
+import { requireGeoContext } from "@/app/dashboard/location/_server/auth";
+import { listGeoLocations } from "@/app/dashboard/location/_server/locations";
 import { HeatmapWorkspace } from "./_components/HeatmapWorkspace";
 
 export default async function LocationHeatmapsPage() {

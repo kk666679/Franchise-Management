@@ -1,4 +1,4 @@
-import type { PosCartItemView } from "../mappers"
+import type { PosCartItemView } from "../types"
 
 export type PosCartProps = {
   items: PosCartItemView[]
