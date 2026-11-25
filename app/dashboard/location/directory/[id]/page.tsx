@@ -16,7 +16,7 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
 
   return (
     <div className="space-y-6">
-      <PageHeader title={location.name} description={${location.code} · } actions={<Badge variant="secondary">{location.status}</Badge>} />
+      <PageHeader title={location.name} description={`${location.code} · ${location.city}`} actions={<Badge variant="secondary">{location.status}</Badge>} />
       <div className="grid gap-6 lg:grid-cols-2">
         <div className="space-y-4 rounded-2xl p-6 glass">
           <h2 className="font-semibold">Location details</h2>

@@ -1,5 +1,5 @@
-import { Card } from '@/components/ui/Card'
-import { PageHeader } from '@/components/layout/PageHeader'
+import { Card } from '@/components/ui/card'
+import { PageHeader } from '@/components/layout/page-header'
 import { Section } from '@/components/layout/Section'
 import { FormattedDate } from '@/components/common/FormattedDate'
 import { ContractLifecycleBadge } from '../ContractLifecycleBadge'

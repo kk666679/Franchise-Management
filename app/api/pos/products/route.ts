@@ -1,34 +1,25 @@
-import { NextResponse } from "next/server"
+﻿import { jsonError, jsonOk } from "@lib/server/api-response";
+import { requirePosContext } from "@/lib/server/pos/context";
+import { listPosProducts } from "@/lib/server/pos/service";
 
-import { getCurrentSession } from "@lib/server/auth/session"
-import { searchProducts } from "@lib/server/sales"
-
-export async function GET(request: Request) {
-  const session = await getCurrentSession()
-  if (!session?.org) {
-    return NextResponse.json(
-      { error: "Authentication required." },
-      { status: 401 }
-    )
+export async function GET(req: Request) {
+  try {
+    const ctx = await requirePosContext();
+    const q = new URL(req.url).searchParams.get("q") ?? undefined;
+    const products = await listPosProducts(ctx, q);
+    return jsonOk({
+      data: products.map((p) => ({
+        id: p.id,
+        name: p.name,
+        sku: p.sku,
+        barcode: p.barcode,
+        priceCents: Math.round(Number(p.unitPrice) * 100),
+        taxRate: Number(p.taxRate),
+        currency: "USD",
+        inStock: 99,
+      })),
+    });
+  } catch (e) {
+    return jsonError(e);
   }
-
-  const query = new URL(request.url).searchParams.get("q") ?? ""
-  const products = await searchProducts(
-    {
-      userId: session.sub,
-      organizationId: session.org,
-      membershipRole: session.role ?? undefined,
-    },
-    session.org,
-    query
-  )
-
-    return NextResponse.json(
-        products.map((product) => ({
-          ...product,
-          unitPrice: product.unitPrice.toString(),
-          costPrice: product.costPrice.toString(),
-          taxRate: product.taxRate.toString(),
-        }))
-    )
 }

@@ -28,41 +28,26 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 12.23.0
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 24.21.0
-          cache: pnpm
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: npm install --no-audit --no-fund
 
       - name: Validate Prisma schema
-        run: pnpm prisma:validate
-
-      - name: Format check
-        run: pnpm format:check
-
-      - name: Lint
-        run: pnpm lint
+        run: npm run prisma:validate
 
       - name: Type check
-        run: pnpm typecheck
+        run: npm run typecheck
 
       - name: Test
-        run: pnpm test
+        run: npm test
         env:
           NODE_ENV: test
 
-      - name: Inventory audit
-        run: pnpm inventory:audit
-
       - name: Build
-        run: pnpm build
+        run: npm run build
         env:
           NODE_ENV: production

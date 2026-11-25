@@ -1,7 +1,7 @@
 'use client'
 
-import { Input } from '@/components/ui/Input'
-import { Label } from '@/components/ui/Label'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import type { TerritoryBounds } from './TerritoryBoundsEditor.types'
 
 const FIELDS: { key: keyof TerritoryBounds; label: string; min: number; max: number }[] = [

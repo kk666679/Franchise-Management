@@ -2,9 +2,9 @@
 
 import { useTransition } from 'react'
 import { Form, FormField, FormSection, FormActions, SubmitButton } from '@/components/form'
-import { Input } from '@/components/ui/Input'
-import { Textarea } from '@/components/ui/Textarea'
-import { Button } from '@/components/ui/Button'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
+import { Button } from '@/components/ui/button'
 import { contractRenewalSchema, type ContractRenewalValues } from './ContractRenewalWizard.schema'
 
 export function ContractRenewalWizard({

@@ -1,4 +1,4 @@
-import { Badge } from '@/components/ui/Badge'
+import { Badge } from '@/components/ui/badge'
 import type { OrganizationStatus } from './OrganizationStatusBadge.types'
 
 const label: Record<OrganizationStatus, string> = {
