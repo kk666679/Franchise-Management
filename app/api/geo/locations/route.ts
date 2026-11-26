@@ -1,4 +1,4 @@
-import { requireGeoContext } from "@/app/dashboard/location/_server/auth";
+import { requireGeoContext } from "@lib/server/auth";
 import { jsonError, jsonOk } from "@lib/server/api-response";
 import { listGeoLocations, createGeoLocation } from "@/app/dashboard/location/_server/locations";
 

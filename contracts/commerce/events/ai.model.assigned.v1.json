@@ -1,0 +1,26 @@
+{
+  "$schema": "https://cloudevents.io/schemas/io.cloudevents",
+  "specversion": "1.0",
+  "type": "com.franchise.commerce.ai.model.assigned.v1",
+  "source": "/commerce/ai/governance",
+  "idempotencykey": "{configId}",
+  "time": "2026-11-26T10:00:00Z",
+  "datacontenttype": "application/json",
+  "data": {
+    "configId": "uuid",
+    "tenantId": "uuid",
+    "territoryId": "uuid",
+    "assignments": {
+      "reasoning": { "primary": "gpt-4o", "fallback": ["claude-3-5-sonnet", "nemotron-3-ultra"] },
+      "voice_stt": { "primary": "nova-2", "fallback": ["whisper-large-v3"] },
+      "voice_tts": { "primary": "tts-1-hd", "fallback": ["aura-asteria"] },
+      "vision": { "primary": "gpt-4o", "fallback": ["claude-3-5-sonnet"] },
+      "embeddings": { "primary": "text-embedding-3-large", "fallback": ["text-embedding-3-small"] }
+    },
+    "updatedBy": "user_franchisor_admin_001",
+    "previousAssignments": {
+      "reasoning": { "primary": "gpt-4o", "fallback": ["claude-3-5-sonnet"] }
+    },
+    "reason": "Added Nemotron 3 Ultra as tertiary fallback for cost optimization"
+  }
+}

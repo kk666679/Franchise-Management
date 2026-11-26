@@ -1,0 +1,19 @@
+{
+  "$schema": "https://cloudevents.io/schemas/io.cloudevents",
+  "specversion": "1.0",
+  "type": "com.franchise.commerce.order.paid.v1",
+  "source": "/commerce/payments",
+  "idempotencykey": "{clientOpId}",
+  "time": "2026-11-26T10:35:00Z",
+  "datacontenttype": "application/json",
+  "data": {
+    "orderId": "uuid",
+    "tenantId": "uuid",
+    "territoryId": "uuid",
+    "customerId": "uuid | null",
+    "totalMinor": 12500,
+    "currency": "USD",
+    "providerRef": "ch_3...",
+    "paidAt": "2026-11-26T10:35:00Z"
+  }
+}

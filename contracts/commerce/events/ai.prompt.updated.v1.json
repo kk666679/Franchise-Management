@@ -1,0 +1,30 @@
+{
+  "$schema": "https://cloudevents.io/schemas/io.cloudevents",
+  "specversion": "1.0",
+  "type": "com.franchise.commerce.ai.prompt.updated.v1",
+  "source": "/commerce/ai/governance",
+  "idempotencykey": "{templateId}",
+  "time": "2026-11-26T11:00:00Z",
+  "datacontenttype": "application/json",
+  "data": {
+    "templateId": "uuid",
+    "agentType": "fulfillment-optimizer",
+    "tenantId": "uuid",
+    "territoryId": "uuid",
+    "version": "2.1.0",
+    "isFranchisorBase": false,
+    "inheritanceChain": [
+      "prompt_fulfillment_optimizer_base_v2.0.0",
+      "prompt_fulfillment_optimizer_franchisee_acme_v2.0.0",
+      "prompt_fulfillment_optimizer_territory_tx_v2.1.0"
+    ],
+    "changes": {
+      "systemPrompt": "added territory-specific carrier preferences",
+      "toolDefinitions": "added reserve_inventory checkpoint requirement",
+      "variables": "added carrier_preference variable"
+    },
+    "safetyScore": 92,
+    "updatedBy": "user_franchisee_acme_001",
+    "previousVersion": "2.0.0"
+  }
+}

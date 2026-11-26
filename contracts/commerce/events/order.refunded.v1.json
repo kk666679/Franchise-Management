@@ -1,0 +1,18 @@
+{
+  "$schema": "https://cloudevents.io/schemas/io.cloudevents",
+  "specversion": "1.0",
+  "type": "com.franchise.commerce.order.refunded.v1",
+  "source": "/commerce/returns",
+  "idempotencykey": "{clientOpId}",
+  "time": "2026-11-27T09:00:00Z",
+  "datacontenttype": "application/json",
+  "data": {
+    "orderId": "uuid",
+    "tenantId": "uuid",
+    "territoryId": "uuid",
+    "returnId": "uuid",
+    "refundMinor": 12500,
+    "currency": "USD",
+    "refundedAt": "2026-11-27T09:00:00Z"
+  }
+}

@@ -1,4 +1,4 @@
-import { requireGeoContext } from "@/app/dashboard/location/_server/auth";
+import { requireGeoContext } from "@lib/server/auth";
 import { jsonError, jsonOk } from "@lib/server/api-response";
 import { validateFeatureCollection } from "@/app/dashboard/location/_lib/validation";
 import { previewImport, detectFormat, convertToGeoJSON } from "@/app/dashboard/location/_lib/conversion";

@@ -1,0 +1,22 @@
+{
+  "$schema": "https://cloudevents.io/schemas/io.cloudevents",
+  "specversion": "1.0",
+  "type": "com.franchise.commerce.order.created.v1",
+  "source": "/commerce/orders",
+  "idempotencykey": "{clientOpId}",
+  "time": "2026-11-26T10:30:00Z",
+  "datacontenttype": "application/json",
+  "data": {
+    "orderId": "uuid",
+    "tenantId": "uuid",
+    "franchiseId": "uuid",
+    "territoryId": "uuid",
+    "customerId": "uuid | null",
+    "totalMinor": 12500,
+    "currency": "USD",
+    "lines": [
+      { "sku": "ETH-001", "qty": 2, "unitPriceMinor": 6250 }
+    ],
+    "createdAt": "2026-11-26T10:30:00Z"
+  }
+}

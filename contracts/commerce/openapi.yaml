@@ -1,0 +1,328 @@
+openapi: 3.0.3
+info:
+  title: Commerce Plane API
+  version: v1
+  description: |
+    Headless, tenant-scoped commerce API for franchise storefronts.
+    Communicates with the control plane through a versioned event bus.
+    Never joins across the franchise schema.
+servers:
+  - url: /api/shop/{tenant}
+    variables:
+      tenant:
+        default: acme
+        description: Tenant slug resolved to tenantId server-side.
+
+paths:
+  /catalog:
+    get:
+      summary: List products for a tenant/territory
+      operationId: listProducts
+      parameters:
+        - $ref: '#/components/parameters/TenantSlug'
+        - $ref: '#/components/parameters/TerritoryId'
+        - in: query
+          name: categorySlug
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Product list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductList'
+  /products/{slug}:
+    get:
+      summary: Get product detail
+      operationId: getProduct
+      parameters:
+        - $ref: '#/components/parameters/TenantSlug'
+        - $ref: '#/components/parameters/TerritoryId'
+        - in: path
+          name: slug
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Product detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '404':
+          description: Product not found in this territory
+  /cart:
+    get:
+      summary: Get current cart
+      operationId: getCart
+      parameters:
+        - $ref: '#/components/parameters/TenantSlug'
+        - $ref: '#/components/parameters/TerritoryId'
+        - in: header
+          name: Idempotency-Key
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Cart
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+    post:
+      summary: Add/update cart line
+      operationId: upsertCartLine
+      parameters:
+        - $ref: '#/components/parameters/TenantSlug'
+        - $ref: '#/components/parameters/TerritoryId'
+        - in: header
+          name: Idempotency-Key
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CartLineInput'
+      responses:
+        '200':
+          description: Updated cart
+  /checkout:
+    post:
+      summary: Place order (atomic, idempotent)
+      operationId: placeOrder
+      parameters:
+        - $ref: '#/components/parameters/TenantSlug'
+        - $ref: '#/components/parameters/TerritoryId'
+        - in: header
+          name: Idempotency-Key
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderInput'
+      responses:
+        '201':
+          description: Order created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '409':
+          description: Idempotency conflict — prior result returned
+        '422':
+          description: Price out of bounds
+  /orders/{orderId}:
+    get:
+      summary: Get order
+      operationId: getOrder
+      parameters:
+        - $ref: '#/components/parameters/TenantSlug'
+        - $ref: '#/components/parameters/TerritoryId'
+        - in: path
+          name: orderId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '404':
+          description: Not found (tenant-scoped — no existence leak)
+  /webhook/payment:
+    post:
+      summary: Idempotent payment webhook receiver
+      operationId: receivePaymentWebhook
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentWebhook'
+      responses:
+        '200':
+          description: Acknowledged
+  /webhook/fulfillment:
+    post:
+      summary: Idempotent fulfillment webhook receiver
+      operationId: receiveFulfillmentWebhook
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FulfillmentWebhook'
+      responses:
+        '200':
+          description: Acknowledged
+
+components:
+  parameters:
+    TenantSlug:
+      in: path
+      name: tenant
+      required: true
+      schema:
+        type: string
+      description: Tenant slug, resolved server-side to tenantId + territoryId.
+    TerritoryId:
+      in: query
+      name: territoryId
+      schema:
+        type: string
+      description: Optional territory override; defaults to session territory.
+
+  schemas:
+    ProductList:
+      type: object
+      properties:
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductView'
+        currency:
+          type: string
+    ProductView:
+      type: object
+      properties:
+        id:
+          type: string
+        sku:
+          type: string
+        name:
+          type: string
+        basePriceMinor:
+          type: integer
+        currency:
+          type: string
+        availableInTerritory:
+          type: boolean
+    Product:
+      type: object
+      properties:
+        id:
+          type: string
+        sku:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        basePriceMinor:
+          type: integer
+        currency:
+          type: string
+        variants:
+          type: array
+          items:
+            $ref: '#/components/schemas/Variant'
+    Variant:
+      type: object
+      properties:
+        id:
+          type: string
+        optionsJson:
+          type: object
+        priceDeltaMinor:
+          type: integer
+    Cart:
+      type: object
+      properties:
+        id:
+          type: string
+        clientOpId:
+          type: string
+        tenantId:
+          type: string
+        territoryId:
+          type: string
+        status:
+          type: string
+        lines:
+          type: array
+          items:
+            $ref: '#/components/schemas/CartLine'
+        totalMinor:
+          type: integer
+    CartLine:
+      type: object
+      properties:
+        id:
+          type: string
+        variantId:
+          type: string
+        qty:
+          type: integer
+        unitPriceMinor:
+          type: integer
+    CartLineInput:
+      type: object
+      properties:
+        variantId:
+          type: string
+        qty:
+          type: integer
+    OrderInput:
+      type: object
+      properties:
+        clientOpId:
+          type: string
+        customerId:
+          type: string
+    Order:
+      type: object
+      properties:
+        id:
+          type: string
+        clientOpId:
+          type: string
+        tenantId:
+          type: string
+        territoryId:
+          type: string
+        status:
+          type: string
+        totalMinor:
+          type: integer
+        currency:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+    PaymentWebhook:
+      type: object
+      properties:
+        idempotencyKey:
+          type: string
+        orderId:
+          type: string
+        providerRef:
+          type: string
+        amountMinor:
+          type: integer
+        status:
+          type: string
+    FulfillmentWebhook:
+      type: object
+      properties:
+        idempotencyKey:
+          type: string
+        orderId:
+          type: string
+        trackingRef:
+          type: string
+        status:
+          type: string
+

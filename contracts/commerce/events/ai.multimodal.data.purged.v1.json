@@ -1,0 +1,22 @@
+{
+  "$schema": "https://cloudevents.io/schemas/io.cloudevents",
+  "specversion": "1.0",
+  "type": "com.franchise.commerce.ai.multimodal.data.purged.v1",
+  "source": "/commerce/ai/multimodal",
+  "idempotencykey": "{purgeBatchId}",
+  "time": "2026-11-26T03:00:00Z",
+  "datacontenttype": "application/json",
+  "data": {
+    "purgeBatchId": "uuid",
+    "trigger": "retention_policy",
+    "tenantId": "uuid",
+    "territoryId": "uuid",
+    "purgedItems": [
+      { "type": "voice_transcript", "count": 147, "oldestDate": "2026-10-26", "newestDate": "2026-11-25" },
+      { "type": "image_original", "count": 23, "oldestDate": "2026-08-28", "newestDate": "2026-10-15" },
+      { "type": "vision_analysis", "count": 23, "oldestDate": "2026-10-26", "newestDate": "2026-11-25" }
+    ],
+    "totalBytesFreed": 204857600,
+    "gdprRequestsProcessed": 0
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "$schema": "https://cloudevents.io/schemas/io.cloudevents",
+  "specversion": "1.0",
+  "type": "com.franchise.commerce.ai.agent.task.started.v1",
+  "source": "/commerce/ai/agent",
+  "idempotencykey": "{taskId}",
+  "time": "2026-11-26T10:30:00Z",
+  "datacontenttype": "application/json",
+  "data": {
+    "taskId": "uuid",
+    "agentName": "fulfillment-optimizer",
+    "tenantId": "uuid",
+    "territoryId": "uuid",
+    "autonomyLevel": "L2",
+    "input": {
+      "orderId": "uuid",
+      "objective": "minimize_split_shipments",
+      "constraints": ["franchisee_payout_optimization", "delivery_sla_24h"]
+    },
+    "plan": [
+      { "step": 1, "tool": "check_inventory", "args": { "territoryId": "..." }, "checkpoint": false },
+      { "step": 2, "tool": "calculate_shipping", "args": { "destinations": [...] }, "checkpoint": false },
+      { "step": 3, "tool": "reserve_inventory", "args": { "items": [...] }, "checkpoint": true },
+      { "step": 4, "tool": "emit_fulfillment", "args": { "shipments": [...] }, "checkpoint": false }
+    ],
+    "promptTemplateVersion": "fulfillment-optimizer@v2.1.0",
+    "model": "gpt-4o"
+  }
+}

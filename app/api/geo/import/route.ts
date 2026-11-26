@@ -1,4 +1,4 @@
-import { requireGeoContext } from "@/app/dashboard/location/_server/auth";
+import { requireGeoContext } from "@lib/server/auth";
 import { jsonError, jsonOk } from "@lib/server/api-response";
 import { previewImport, detectFormat } from "@/app/dashboard/location/_lib/conversion";
 import { createGeoLocation } from "@/app/dashboard/location/_server/locations";
@@ -75,7 +75,7 @@ export async function POST(req: Request) {
             addressLine1: String(p.addressLine1 ?? p.address ?? "Imported address"),
             city: String(p.city ?? "Unknown"),
             postcode: String(p.postcode ?? p.postalCode ?? "00000"),
-            country: String(p.country ?? "US"),
+            country: String(p.country ?? "MY"),
             state: p.state ?? null, district: p.district ?? null,
             latitude: lat, longitude: lng,
             brandId: p.brandId ?? null,

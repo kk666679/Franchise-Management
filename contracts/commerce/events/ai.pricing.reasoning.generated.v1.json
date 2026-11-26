@@ -1,0 +1,30 @@
+{
+  "$schema": "https://cloudevents.io/schemas/io.cloudevents",
+  "specversion": "1.0",
+  "type": "com.franchise.commerce.ai.pricing.reasoning.generated.v1",
+  "source": "/commerce/pricing",
+  "idempotencykey": "{orderId}",
+  "time": "2026-11-26T10:30:00Z",
+  "datacontenttype": "application/json",
+  "data": {
+    "orderId": "uuid",
+    "tenantId": "uuid",
+    "territoryId": "uuid",
+    "reasoning": {
+      "basePriceMinor": 6250,
+      "floorMinor": 5000,
+      "ceilingMinor": 7500,
+      "territoryAdjustments": [
+        { "type": "tax", "rate": 0.0825, "authority": "TX Franchisee Registration #TX-2024" },
+        { "type": "royalty", "rate": 0.06, "basis": "franchise_agreement_v3_section_4.2" }
+      ],
+      "finalPriceMinor": 6750,
+      "chainOfThought": [
+        { "step": "base_lookup", "input": "SKU ETH-001", "output": 6250 },
+        { "step": "floor_ceiling_guard", "input": { "floor": 5000, "ceiling": 7500 }, "output": "pass" },
+        { "step": "tax_resolution", "input": "territory=TX", "output": { "rate": 0.0825, "model": "seller_of_record" } },
+        { "step": "royalty_calculation", "input": { "base": 6250, "rate": 0.06 }, "output": 375 }
+      ]
+    }
+  }
+}

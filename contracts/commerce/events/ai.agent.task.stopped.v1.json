@@ -1,0 +1,29 @@
+{
+  "$schema": "https://cloudevents.io/schemas/io.cloudevents",
+  "specversion": "1.0",
+  "type": "com.franchise.commerce.ai.agent.task.stopped.v1",
+  "source": "/commerce/ai/agent",
+  "idempotencykey": "{taskId}",
+  "time": "2026-11-26T10:33:00Z",
+  "datacontenttype": "application/json",
+  "data": {
+    "taskId": "uuid",
+    "agentName": "fulfillment-optimizer",
+    "status": "stopped",
+    "stoppedAtStep": 3,
+    "stoppedBy": "user_franchisee_123",
+    "stopReason": "Franchisee reviewed inventory reservation and chose to modify quantities",
+    "partialResult": {
+      "inventoryChecked": true,
+      "shippingCalculated": true,
+      "inventoryReserved": false
+    },
+    "executionTrace": [
+      { "step": 1, "tool": "check_inventory", "input": { "territoryId": "...", "skus": ["ETH-001"] }, "output": { "ETH-001": { "available": 50, "reserved": 5 } }, "durationMs": 120, "status": "completed" },
+      { "step": 2, "tool": "calculate_shipping", "input": { "destinations": [{ "territoryId": "...", "zip": "78701" }] }, "output": { "UPS": 850, "FedEx": 920 }, "durationMs": 340, "status": "completed" },
+      { "step": 3, "tool": "reserve_inventory", "input": { "items": [{ "sku": "ETH-001", "qty": 2, "territoryId": "..." }] }, "output": null, "durationMs": 0, "status": "stopped" }
+    ],
+    "durationMs": 2100,
+    "model": "gpt-4o"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "$schema": "https://cloudevents.io/schemas/io.cloudevents",
+  "specversion": "1.0",
+  "type": "com.franchise.commerce.order.fulfilled.v1",
+  "source": "/commerce/fulfillment",
+  "idempotencykey": "{clientOpId}",
+  "time": "2026-11-27T14:00:00Z",
+  "datacontenttype": "application/json",
+  "data": {
+    "orderId": "uuid",
+    "tenantId": "uuid",
+    "territoryId": "uuid",
+    "trackingRef": "1Z999...",
+    "fulfilledAt": "2026-11-27T14:00:00Z"
+  }
+}
