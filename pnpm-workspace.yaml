@@ -3,3 +3,8 @@ allowBuilds:
   esbuild: true
   msgpackr-extract: true
   prisma: true
+permissions:
+  '@tanstack/react-table':
+    skills: true
+  ai:
+    skills: true
