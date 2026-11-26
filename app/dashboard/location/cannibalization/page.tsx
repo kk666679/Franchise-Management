@@ -1,5 +1,5 @@
 import { PageHeader } from "@/components/layout/page-header";
-import { requireGeoContext } from "@/app/dashboard/location/_server/auth";
+import { requireGeoContext } from "@lib/server/auth";
 import { runCannibalizationAnalysis } from "@/app/dashboard/location/_server/analysis";
 import { CannibalizationDashboard } from "./_components/CannibalizationDashboard";
 

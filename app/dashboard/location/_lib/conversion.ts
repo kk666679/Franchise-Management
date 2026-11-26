@@ -170,7 +170,7 @@ export function exportFeatureCollection(
       const wkt = geojsonToWKT(f.geometry as any);
       const id = f.id ?? i + 1;
       return `${id}\t${wkt}`;
-    }).filter(Boolean);
+    }).filter((line): line is string => line !== null);
     return { content: lines.join("\n"), contentType: "text/plain", extension: "wkt" };
   }
   if (format === "csv") {
@@ -180,7 +180,7 @@ export function exportFeatureCollection(
     for (const f of fc.features) {
       if (f.geometry?.type !== "Point") continue;
       const [lng, lat] = f.geometry.coordinates as [number, number];
-      const props = propKeys.map((k) => csvCell((f.properties as any)?.[k]));
+      const props = propKeys.map((k) => csvCell((f.properties as Record<string, unknown> | null)?.[k]));
       rows.push([csvCell(f.id), csvCell(lng), csvCell(lat), ...props].join(","));
     }
     return { content: rows.join("\n"), contentType: "text/csv", extension: "csv" };

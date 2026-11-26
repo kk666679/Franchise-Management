@@ -1,4 +1,3 @@
-import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 
 // Fix default marker icons in bundled environments

@@ -1,5 +1,5 @@
 import { PageHeader } from "@/components/layout/page-header";
-import { requireGeoContext } from "@/app/dashboard/location/_server/auth";
+import { requireGeoContext } from "@lib/server/auth";
 import { listGeoLocations } from "@/app/dashboard/location/_server/locations";
 import { listGeoTerritories } from "@/app/dashboard/location/_server/territories";
 import { GeoWorkspace } from "./_components/GeoWorkspace";

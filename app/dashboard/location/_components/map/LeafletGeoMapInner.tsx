@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup, Polygon, useMap, useMapEvents } from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
 import L from "leaflet";
-import { DEFAULT_CENTER, DEFAULT_ZOOM, TILE_LAYERS, type TileLayerKey } from "../../_lib/map-config";
+import { GEO_CONFIG, TILE_LAYERS, type TileLayerKey } from "../../_lib/map-config";
 import { createColoredIcon } from "../../_lib/leaflet-icons";
 import { LOCATION_TYPE_COLORS, LOCATION_TYPE_LABELS, type FranchiseLocationType } from "../../_lib/constants";
 import { Button } from "@/components/ui/button";
@@ -110,7 +110,7 @@ export function LeafletGeoMapInner({
       if (sel) return [Number(sel.latitude), Number(sel.longitude)];
     }
     if (validLocations.length) return [Number(validLocations[0].latitude), Number(validLocations[0].longitude)];
-    return DEFAULT_CENTER;
+    return [GEO_CONFIG.defaultCenter.lat, GEO_CONFIG.defaultCenter.lng];
   }, [validLocations, selectedLocationId]);
 
   const icons = useMemo(() => {
@@ -134,7 +134,14 @@ export function LeafletGeoMapInner({
           <label className="flex items-center gap-2 text-xs"><input type="checkbox" checked={showTerritories} onChange={(e) => setShowTerritories(e.target.checked)} /> Territories</label>
         </div>
       )}
-      <MapContainer center={center} zoom={DEFAULT_ZOOM} style={{ height: "100%", width: "100%" }} scrollWheelZoom>
+      <MapContainer
+        center={center}
+        zoom={GEO_CONFIG.defaultZoom}
+        minZoom={GEO_CONFIG.minZoom}
+        maxZoom={GEO_CONFIG.maxZoom}
+        style={{ height: "100%", width: "100%" }}
+        scrollWheelZoom
+      >
         <InvalidateSize />
         <TileLayer attribution={TILE_LAYERS[baseLayer].attribution} url={TILE_LAYERS[baseLayer].url} />
         <MapEvents onMapClick={onMapClick} />

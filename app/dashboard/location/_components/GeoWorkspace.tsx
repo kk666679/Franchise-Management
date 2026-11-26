@@ -50,7 +50,7 @@ export function GeoWorkspace({ initialLocations, initialTerritories }: Props) {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name, outletCode: code, locationType: "FRANCHISE_OUTLET", businessStatus: "PLANNED",
-          addressLine1: "TBD", city: "TBD", postcode: "00000", country: "US",
+          addressLine1: "TBD", city: "TBD", postcode: "00000",           country: "MY",
           longitude: geometry.coordinates[0], latitude: geometry.coordinates[1],
         }),
       });

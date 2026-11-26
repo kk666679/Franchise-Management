@@ -1,5 +1,5 @@
 import { PageHeader } from "@/components/layout/page-header";
-import { requireGeoContext } from "@/app/dashboard/location/_server/auth";
+import { requireGeoContext } from "@lib/server/auth";
 import { listGeoTerritories } from "@/app/dashboard/location/_server/territories";
 import { TerritoryManager } from "./_components/TerritoryManager";
 

@@ -1,4 +1,3 @@
-export * from "./auth";
 export * from "./audit";
 export * from "./locations";
 export * from "./territories";

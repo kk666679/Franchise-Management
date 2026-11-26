@@ -1,5 +1,5 @@
 import { PageHeader } from "@/components/layout/page-header";
-import { requireGeoContext } from "@/app/dashboard/location/_server/auth";
+import { requireGeoContext } from "@lib/server/auth";
 import { runCoverageAnalysis } from "@/app/dashboard/location/_server/analysis";
 import { CoverageDashboard } from "./_components/CoverageDashboard";
 
