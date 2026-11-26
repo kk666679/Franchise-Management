@@ -1,37 +1,48 @@
 import { NextResponse } from "next/server"
+
 import { prisma } from "@/lib/prisma"
+import {
+  issuePasswordResetToken,
+  sendPasswordResetEmail,
+} from "@lib/server/auth/password-reset"
+
+const GENERIC_SUCCESS = {
+  success: true,
+  message:
+    "If an account exists for that email, a password reset link has been sent.",
+} as const
 
 export async function POST(request: Request) {
-  const body = await request.json()
-  const { email } = body
-
-  if (!email) {
-    return NextResponse.json({ error: "Missing email" }, { status: 400 })
+  let email = ""
+  try {
+    const body = (await request.json()) as { email?: unknown }
+    email =
+      typeof body.email === "string" ? body.email.trim().toLowerCase() : ""
+  } catch {
+    return NextResponse.json(GENERIC_SUCCESS)
   }
 
-  // Check if user exists
-  const user = await prisma.user.findUnique({
-    where: { email },
-  })
-
-  if (!user) {
-    // Don't reveal whether the user exists
-    return NextResponse.json({ success: true })
+  if (!email || !email.includes("@")) {
+    return NextResponse.json(GENERIC_SUCCESS)
   }
 
-  // Generate reset token
-  const resetToken = Buffer.from(email + Math.random().toString()).toString(
-    "base64"
-  )
+  try {
+    const user = await prisma.user.findUnique({
+      where: { email },
+      select: { id: true, email: true, name: true },
+    })
+    if (user) {
+      const link = await issuePasswordResetToken(user.id)
+      await sendPasswordResetEmail({
+        to: user.email,
+        name: user.name,
+        url: link.url,
+        expiresAt: link.expiresAt,
+      })
+    }
+  } catch {
+    // Return generic success to avoid leaking configuration or account state.
+  }
 
-  // In a real implementation, we'd:
-  // 1. Store the token with expiration in a password reset tokens table
-  // 2. Send an email with the reset link
-  // 3. The GET handler would verify the token and allow password reset
-
-  return NextResponse.json({
-    success: true,
-    resetToken,
-    message: "Password reset link generated. Check your email.",
-  })
+  return NextResponse.json(GENERIC_SUCCESS)
 }

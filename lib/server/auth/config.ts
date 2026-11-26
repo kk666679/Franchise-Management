@@ -135,24 +135,6 @@ export const authOptions: NextAuthOptions = {
   },
 }
 
-export async function getUserByMagicLink(email: string) {
-  const user = await prisma.user.findUnique({ where: { email } })
-  if (!user) return null
-
-  const membership = await prisma.membership.findFirst({
-    where: { userId: user.id },
-    orderBy: { createdAt: "asc" },
-  })
-
-  return {
-    id: user.id,
-    email: user.email,
-    name: user.name,
-    role: (membership?.role ?? "EMPLOYEE") as MembershipRole | "EMPLOYEE",
-    organizationId: membership?.organizationId,
-  }
-}
-
 export type { MembershipRole, PermissionCode }
 export { hasPermission, permissionIsGranted }
 

@@ -2,6 +2,7 @@ import { SignJWT, jwtVerify } from "jose"
 import { cookies } from "next/headers"
 
 import { env } from "@/lib/env"
+import { prisma } from "@/lib/prisma"
 import type { MembershipRole, PermissionCode } from "@/lib/rbac"
 import type { AuthorizationContext } from "@/lib/server/auth/authorization"
 
@@ -28,6 +29,8 @@ export interface SessionPayload {
   org: string | null
   /** Persisted membership role within the active organization. */
   role: MembershipRole | null
+  /** Issued-at timestamp (seconds since epoch), used for password-reset invalidation. */
+  iat?: number
 }
 
 function getSecretKey(): Uint8Array {
@@ -53,7 +56,7 @@ export function sessionCookieOptions() {
 export async function createSessionToken(
   payload: SessionPayload
 ): Promise<string> {
-  const { sub, ...claims } = payload
+  const { sub, iat: _iat, ...claims } = payload
   return new SignJWT(claims)
     .setProtectedHeader({ alg: ALGORITHM })
     .setSubject(sub)
@@ -74,6 +77,20 @@ export async function verifySessionToken(
 
     const role =
       typeof payload.role === "string" ? (payload.role as MembershipRole) : null
+    const iat = typeof payload.iat === "number" ? payload.iat : undefined
+
+    if (iat) {
+      const user = await prisma.user.findUnique({
+        where: { id: payload.sub },
+        select: { passwordChangedAt: true },
+      })
+      if (
+        user?.passwordChangedAt &&
+        user.passwordChangedAt.getTime() > iat * 1000
+      ) {
+        return null
+      }
+    }
 
     return {
       sub: payload.sub,
@@ -81,6 +98,7 @@ export async function verifySessionToken(
       name: typeof payload.name === "string" ? payload.name : null,
       org: typeof payload.org === "string" ? payload.org : null,
       role,
+      iat,
     }
   } catch {
     return null
@@ -116,4 +134,25 @@ export async function requireOrgContext(): Promise<AuthorizationContext> {
     )
   }
   return toAuthorizationContext(payload)
+}
+
+/** Resolve geo API/dashboard context from session; allows dev fallback when DB has an org. */
+export async function requireGeoContext(): Promise<AuthorizationContext> {
+  const payload = await getCurrentSession()
+  if (payload?.org) {
+    return toAuthorizationContext(payload)
+  }
+
+  if (env.NODE_ENV !== "production") {
+    const org = await prisma.organization.findFirst({ select: { id: true } })
+    if (org) {
+      return {
+        userId: payload?.sub ?? "dev-user",
+        organizationId: org.id,
+        membershipRole: payload?.role ?? "OWNER",
+      }
+    }
+  }
+
+  throw new Error("Authentication required.")
 }

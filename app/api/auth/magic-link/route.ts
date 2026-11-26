@@ -1,67 +1,53 @@
 import { NextResponse } from "next/server"
+
 import { prisma } from "@/lib/prisma"
-import { getUserByMagicLink } from "@/lib/server/auth/config"
-import { logLogin } from "@/lib/server/audit/logger"
+import { issueMagicLink, sendMagicLinkEmail } from "@lib/server/auth/magic-link"
+
+const GENERIC_SUCCESS = {
+  success: true,
+  message:
+    "If an account exists for that email, a secure sign-in link has been sent.",
+} as const
 
 export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url)
-  const token = searchParams.get("token")
-
-  if (!token) {
-    return NextResponse.json({ error: "Missing token" }, { status: 400 })
-  }
-
-  // Verify the magic link token and find the user
-  // In a real implementation, we'd verify a signed token
-  // For now, we look up by email from a magic link table
-  const user = await getUserByMagicLink(token ? `magiclink-${token}` : "")
-
-  if (!user) {
-    return NextResponse.json(
-      { error: "Invalid or expired magic link" },
-      { status: 400 }
-    )
-  }
-
-  // Log the login event
-  await logLogin({
-    organizationId: user.organizationId ?? "",
-    actorId: user.id,
-    ipAddress: request.headers.get("x-forwarded-for") || undefined,
-    userAgent: request.headers.get("user-agent") || undefined,
-  })
-
-  // Create session
-  return NextResponse.json({
-    success: true,
-    user: {
-      id: user.id,
-      email: user.email,
-      name: user.name,
-      role: user.role,
-    },
-  })
+  const url = new URL(request.url)
+  const token = url.searchParams.get("token")
+  const verifyUrl = new URL("/auth/magic-link/verify", request.url)
+  if (token) verifyUrl.searchParams.set("token", token)
+  return NextResponse.redirect(verifyUrl)
 }
 
 export async function POST(request: Request) {
-  const body = await request.json()
-  const { email } = body
-
-  if (!email) {
-    return NextResponse.json({ error: "Missing email" }, { status: 400 })
+  let email = ""
+  try {
+    const body = (await request.json()) as { email?: unknown }
+    email =
+      typeof body.email === "string" ? body.email.trim().toLowerCase() : ""
+  } catch {
+    return NextResponse.json(GENERIC_SUCCESS)
   }
 
-  // Generate magic link token
-  const token = Buffer.from(email + Math.random().toString()).toString("base64")
+  if (!email || !email.includes("@")) {
+    return NextResponse.json(GENERIC_SUCCESS)
+  }
 
-  // In a real implementation, we'd:
-  // 1. Store the token with an expiration in a magic links table
-  // 2. Send an email with the magic link URL
-  // 3. The GET handler above verifies the token and logs in the user
+  try {
+    const user = await prisma.user.findUnique({
+      where: { email },
+      select: { id: true, email: true, name: true },
+    })
+    if (user) {
+      const link = await issueMagicLink(user.id)
+      await sendMagicLinkEmail({
+        to: user.email,
+        name: user.name,
+        url: link.url,
+        expiresAt: link.expiresAt,
+      })
+    }
+  } catch {
+    // Return generic success to avoid leaking configuration or account state.
+  }
 
-  return NextResponse.json({
-    success: true,
-    token,
-    message: "Magic link generated. Check your email.",
-  })
+  return NextResponse.json(GENERIC_SUCCESS)
 }
