@@ -45,8 +45,7 @@ function parseXml(text: string): Document {
     if (err?.length) throw new Error("Invalid XML document");
     return doc;
   }
-  // Node/server fallback
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
+
   const { DOMParser } = require("@xmldom/xmldom");
   return new DOMParser().parseFromString(text, "text/xml");
 }
