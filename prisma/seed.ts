@@ -5,7 +5,6 @@ import { PrismaClient } from "@prisma/client"
 import { resolveDatabaseUrls } from "../lib/database-urls"
 
 dotenv.config({ path: ".env.local" })
-dotenv.config({ path: ".env" })
 
 const { directUrl: databaseUrl } = resolveDatabaseUrls(process.env)
 

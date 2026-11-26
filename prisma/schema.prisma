@@ -337,11 +337,13 @@ model User {
   passwordHash String?
   status       UserStatus @default(INVITED)
   lastLoginAt  DateTime?
+  passwordChangedAt DateTime?
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
 
   memberships           Membership[]
   magicLinkTokens       MagicLinkToken[]
+  passwordResetTokens   PasswordResetToken[]
   submittedApplications FranchiseApplication[] @relation("ApplicationSubmitter")
   uploadedDocuments     Document[]             @relation("DocumentUploader")
   createdTickets        SupportTicket[]        @relation("TicketCreator")
@@ -368,6 +370,20 @@ model Membership {
 }
 
 model MagicLinkToken {
+  id         String    @id @default(cuid())
+  userId     String
+  tokenHash  String    @unique
+  expiresAt  DateTime
+  consumedAt DateTime?
+  createdAt  DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, expiresAt])
+  @@index([expiresAt])
+}
+
+model PasswordResetToken {
   id         String    @id @default(cuid())
   userId     String
   tokenHash  String    @unique

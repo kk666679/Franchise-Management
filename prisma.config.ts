@@ -2,7 +2,6 @@ import dotenv from "dotenv"
 import { defineConfig } from "@prisma/prisma7/config"
 
 dotenv.config({ path: ".env.local" })
-dotenv.config({ path: ".env" })
 
 const databaseUrl =
   process.env.DIRECT_DATABASE_URL ??
