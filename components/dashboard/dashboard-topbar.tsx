@@ -1,17 +1,19 @@
 "use client"
 
+import type { ReactNode } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import type { ReactNode } from "react"
 
-import { findNavLabel, type NavigationGroup } from "@/lib/navigation"
+import { findNavLabel, type NavigationDestination, NavigationGroup } from "@/lib/navigation"
 import { cn } from "@/lib/utils"
+
+import { normalizeNavGroups } from "./nav-utils"
 
 type BreadcrumbItem = { label: string; href?: string }
 
 type DashboardTopbarProps = {
   groups?: readonly NavigationGroup[]
-  items?: readonly import("@/lib/navigation").NavigationDestination[]
+  items?: readonly NavigationDestination[]
   organizationName?: string
   breadcrumb?: BreadcrumbItem[]
   actions?: ReactNode
@@ -26,7 +28,7 @@ export function DashboardTopbar({
   actions,
   mobileNav,
 }: DashboardTopbarProps) {
-  const navGroups = groups ?? (items ? [{ label: "Navigation", items }] : [])
+  const navGroups = normalizeNavGroups(groups, items)
   const pathname = usePathname()
   const currentLabel = findNavLabel(navGroups, pathname)
   const crumbs: BreadcrumbItem[] = breadcrumb ?? [

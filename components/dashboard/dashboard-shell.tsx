@@ -1,24 +1,14 @@
 "use client"
 
-import type { ReactNode } from "react"
-
 import { AppShell } from "@/components/layout/app-shell"
-import type { NavigationDestination, NavigationGroup } from "@/lib/navigation"
 
 import { DashboardMobileNav } from "./dashboard-mobile-nav"
-import { DashboardSidebar, type DashboardUser } from "./dashboard-sidebar"
+import { DashboardSidebar } from "./dashboard-sidebar"
 import { DashboardTopbar } from "./dashboard-topbar"
+import { normalizeNavGroups } from "./nav-utils"
+import type { DashboardShellProps } from "./types"
 
-export type DashboardShellProps = {
-  groups?: readonly NavigationGroup[]
-  navigation?: readonly NavigationDestination[]
-  user?: DashboardUser | null
-  onLogout?: () => void
-  organizationName?: string
-  breadcrumb?: { label: string; href?: string }[]
-  actions?: ReactNode
-  children: ReactNode
-}
+export type { DashboardShellProps } from "./types"
 
 export function DashboardShell({
   groups,
@@ -30,7 +20,8 @@ export function DashboardShell({
   actions,
   children,
 }: DashboardShellProps) {
-  const navGroups = groups ?? (navigation ? [{ label: "Navigation", items: navigation }] : [])
+  const navGroups = normalizeNavGroups(groups, navigation)
+
   return (
     <AppShell
       sidebar={

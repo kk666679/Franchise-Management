@@ -9,6 +9,7 @@ import type { NavigationGroup } from "@/lib/navigation"
 import { cn } from "@/lib/utils"
 
 import { DashboardNav } from "./dashboard-nav"
+import { normalizeNavGroups } from "./nav-utils"
 
 type DashboardMobileNavProps = {
   groups?: readonly NavigationGroup[]
@@ -29,7 +30,7 @@ export function DashboardMobileNav({ groups, items, organizationName = "Franchis
     return () => document.removeEventListener("keydown", onKey)
   }, [open])
 
-  const navGroups = groups ?? (items ? [{ label: "Navigation", items }] : [])
+  const navGroups = normalizeNavGroups(groups, items)
 
   return (
     <>
@@ -54,7 +55,7 @@ export function DashboardMobileNav({ groups, items, organizationName = "Franchis
           />
           <aside
             id="mobile-dashboard-nav"
-            className={cn("absolute inset-y-0 left-0 flex w-[min(20rem,85vw)] flex-col border-r border-border/60 bg-background shadow-xl")}
+            className={cn("absolute inset-y-0 left-0 flex w-[min(260px,85vw)] flex-col overflow-x-hidden border-r border-border/60 bg-background shadow-xl")}
           >
             <div className="flex h-14 items-center justify-between border-b border-border/60 px-4">
               <div className="min-w-0">
@@ -65,7 +66,7 @@ export function DashboardMobileNav({ groups, items, organizationName = "Franchis
                 <X className="size-4" aria-hidden="true" />
               </Button>
             </div>
-            <div className="flex-1 overflow-y-auto px-3 py-4">
+            <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden px-3 py-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
               <DashboardNav groups={navGroups} />
             </div>
           </aside>

@@ -8,7 +8,7 @@ export function FranchiseSummaryCard({ franchise }: { franchise: FranchiseView }
     <Card className="p-4">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <Link href={`/franchises/${franchise.id}`} className="text-base font-semibold hover:underline">
+          <Link href={`/dashboard/franchises/${franchise.id}`} className="text-base font-semibold hover:underline">
             {franchise.name}
           </Link>
           <p className="text-sm text-muted">{franchise.legalName}</p>

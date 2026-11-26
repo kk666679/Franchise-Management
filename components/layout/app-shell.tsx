@@ -14,22 +14,22 @@ export type AppShellProps = {
 
 export function AppShell({ sidebar, topbar, footer, children, className }: AppShellProps) {
   return (
-    <div className={cn("min-h-svh bg-background lg:flex", className)}>
+    <div className={cn("flex min-h-screen w-full overflow-x-hidden bg-background", className)}>
       {sidebar}
-      <div className="flex min-w-0 flex-1 flex-col">
+      <main className="min-w-0 flex-1 flex flex-col">
         {topbar}
-        <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6 lg:px-8">
+        <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6 lg:px-8">
           {children}
-        </main>
+        </div>
         {footer ?? (
-          <footer className="border-t border-border/60">
+          <footer className="shrink-0 border-t border-border/60">
             <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 text-xs text-muted-foreground sm:px-6 lg:px-8">
               <span>Franchise Management</span>
               <span className="hidden sm:inline">Operations dashboard</span>
             </div>
           </footer>
         )}
-      </div>
+      </main>
     </div>
   )
 }

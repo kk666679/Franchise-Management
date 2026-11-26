@@ -9,11 +9,7 @@ export const organizationColumns: DataColumn<OrganizationView>[] = [
   {
     accessorKey: "name",
     header: "Organization",
-    cell: (row) => (
-      <Link href={`/organizations/${row.id}`} className="font-medium hover:underline">
-        {row.name}
-      </Link>
-    ),
+    cell: (row) => <span className="font-medium">{row.name}</span>,
   },
   {
     accessorKey: "legalName",
